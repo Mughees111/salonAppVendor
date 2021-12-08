@@ -7,6 +7,7 @@ import { acolors } from '../Components/AppColors';
 import CustomTextInput from '../Components/CustomTextInput';
 import PrivacyPicker from '../Components/PrivacyPicker';
 import { MainButton } from '../Components/Buttons';
+import { OnBoardingHeader } from '../Components/Header';
 
 const SearchAddress = () => {
     return (
@@ -17,16 +18,8 @@ const SearchAddress = () => {
             />
 
             <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <TouchableOpacity
-                        onPress={() => goBack()}
-                        style={{ width: 34, height: 34, borderRadius: 34 / 2, backgroundColor: 'rgba(255,255,255,0.1)', alignItems: 'center', justifyContent: 'center' }}>
-                        <ArrowLeft />
-                    </TouchableOpacity>
-                    <Text style={{ fontFamily: 'AbRe', fontSize: 16, color: acolors.white }}>Your Address</Text>
-                    <Text>          </Text>
-                </View>
-
+                <OnBoardingHeader title="Your Address" />
+               
                 <ScrollView>
                     <Text style={{ marginTop: 30, fontFamily: 'AbRe', fontSize: 16, color: acolors.white }}>Where can clients find you?</Text>
                     <CustomTextInput
