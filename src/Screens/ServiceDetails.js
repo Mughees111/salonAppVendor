@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, FlatList } from 'react-native'
 import { goBack, navigate } from '../../Navigations';
 import { ArrowDown, ArrowLeft, ArrowRight, CloseDropDown, FbIcon, GoogleIcon } from '../Components/Svgs';
@@ -8,8 +8,16 @@ import CustomTextInput from '../Components/CustomTextInput';
 import PrivacyPicker from '../Components/PrivacyPicker';
 import { MainButton } from '../Components/Buttons';
 import { OnBoardingHeader } from '../Components/Header';
+import { update_dp, update_dp_2, retrieveItem, storeItem } from '../utils/functions';
+import DropdownAlert from 'react-native-dropdownalert';
+import { useFocusEffect } from '@react-navigation/native';
+import { apiRequest } from '../utils/apiCalls';
+import Loader from '../utils/Loader';
 
-const ServiceDetails = () => {
+
+var alertRef;
+
+const ServiceDetails = (props) => {
 
     const [expandList, setExpandList] = useState(false)
     const prices = [
@@ -19,7 +27,67 @@ const ServiceDetails = () => {
         "Free",
         "Don’t Show"
     ];
+    const [s_time_mins, setSTimeMins] = useState(props?.route?.params?.params?.s_time_mins ? props.route.params?.params.s_time_mins : '');
+    const [s_name, setSname] = useState(props?.route?.params?.params?.s_name ? props.route.params?.params.s_name : '');
+    const [s_price, setSPrice] = useState(props?.route?.params?.params?.s_price ? props.route.params?.params.s_price : '');
+    const [s_desc, setSDesc] = useState(props?.route?.params?.params?.s_desc ? props.route.params?.params.s_desc : '');
+    const [loading, setLoading] = useState(false)
 
+    console.log(props.route.params)
+    function next() {
+
+        if (s_name.length < 2) {
+            alertRef.alertWithType("error", "Error", "Please provide a valid name");
+            return;
+        }
+
+        if (s_time_mins.length < 2) {
+            alertRef.alertWithType("error", "Error", "Please provide a valid duration");
+            return;
+        }
+        if (s_price.length < 1) {
+            alertRef.alertWithType("error", "Error", "Please provide a valid price");
+            return;
+        }
+
+
+        retrieveItem('login_data')
+            .then(data1 => {
+
+                const reqObj = {
+                    s_name,
+                    s_price,
+                    s_time_mins,
+                    s_desc,
+                    token: data1.token
+                };
+                console.log(data1)
+                setLoading(true)
+                apiRequest(reqObj, 'add_salon_services')
+                    .then(data => {
+                        setLoading(false)
+                        if (data.action == 'success') {
+                            alertRef.alertWithType("success", "Success", "");
+                            storeItem('login_data', data.data)
+                                .then(() => {
+                                    goBack();
+                                    // navigate('PaymentMethd')
+                                })
+                        }
+                        else {
+                            alertRef.alertWithType("error", "Error", data.error);
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        alertRef.alertWithType("error", "Error", "Internet Error");
+                        setLoading(false)
+                    })
+            })
+
+
+
+    }
 
     return (
         <View style={{ flex: 1, backgroundColor: '#111111' }}>
@@ -27,21 +95,34 @@ const ServiceDetails = () => {
                 style="light"
                 backgroundColor="#111111"
             />
-
+            {
+                loading && <Loader />
+            }
+            <DropdownAlert ref={(ref) => alertRef = ref} />
             <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
                 <OnBoardingHeader title="Service Details" />
                 <ScrollView>
-                    <Text style={{ marginTop: 30, fontFamily: 'AbRe', fontSize: 16, color: acolors.white }}>You’ll be able to add a description and adjust advanced settings</Text>
+                    <Text style={{ marginTop: 30, fontFamily: 'ABRe', fontSize: 16, color: acolors.white }}>You’ll be able to add a description and adjust advanced settings</Text>
                     <CustomTextInput
-                        placeholder="Service name"
+                        onChangeText={setSname}
+                        placeholder={"Service name"}
                         style={{ marginTop: 20 }}
+                        value={s_name}
+
                     />
-                    <CustomTextInput
-                        placeholder="Duration"
-                        style={{ marginTop: 20 }}
-                    />
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <CustomTextInput
+                            onChangeText={setSTimeMins}
+                            keyboardType={'numeric'}
+                            placeholder={"Duration"}
+                            value={s_time_mins}
+                            style={{ marginTop: 20 }}
+
+                        />
+                        <Text style={{ fontFamily: 'ABRe', fontSize: 15, color: 'white', position: 'absolute', right: 20, alignSelf: 'center', top: 30 }}>mins</Text>
+                    </View>
                     <View style={{ flexDirection: 'row', marginTop: 20, justifyContent: 'space-between' }}>
-                        <TouchableOpacity
+                        {/* <TouchableOpacity
                             disabled={expandList ? true : false}
                             onPress={() => setExpandList(true)}
                             style={{ flexDirection: 'row', width: "42%", paddingVertical: 10, justifyContent: 'space-between', borderWidth: 1, borderColor: 'white', borderRadius: 10, paddingHorizontal: 10 }}>
@@ -58,7 +139,7 @@ const ServiceDetails = () => {
                                                     <TouchableOpacity
                                                         onPress={() => { setExpandList(false) }}
                                                     >
-                                                        <Text style={{ fontFamily: 'AbRe', fontSize: 14, color: '#FCFCFC', }}>{item}</Text>
+                                                        <Text style={{ fontFamily: 'ABRe', fontSize: 14, color: '#FCFCFC', }}>{item}</Text>
                                                     </TouchableOpacity>
                                                     {
                                                         index == 0 &&
@@ -74,18 +155,23 @@ const ServiceDetails = () => {
                                     />
                                     :
                                     <>
-                                        <Text style={{ fontFamily: 'AbRe', fontSize: 14, color: '#FCFCFC', }}>Fixed</Text>
+                                        <Text style={{ fontFamily: 'ABRe', fontSize: 14, color: '#FCFCFC', }}>Fixed</Text>
                                         <ArrowDown style={{ marginTop: 5 }} />
                                     </>
 
                             }
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <CustomTextInput
+                                placeholder={"Price"}
+                                value={s_price}
+                                keyboardType="number-pad"
+                                onChangeText={setSPrice}
+                                style={{ marginTop: 0, width: "100%" }}
+                            />
+                            <Text style={{ fontFamily: 'ABRe', fontSize: 15, color: 'white', position: 'absolute', right: 20, alignSelf: 'center', top: 10 }}>$</Text>
+                        </View>
 
-                        <CustomTextInput
-                            placeholder="Price-$"
-                            keyboardType="number-pad"
-                            style={{ marginTop: 0, width: "50%" }}
-                        />
                     </View>
 
 
@@ -94,9 +180,13 @@ const ServiceDetails = () => {
 
 
                     <MainButton
+
                         text="Save"
                         btnStyle={{ marginTop: 30 }}
-                        onPress={() => { navigate('PaymentMethd') }}
+                        onPress={() => {
+                            next();
+                            // navigate('PaymentMethd') 
+                        }}
                     />
                 </ScrollView>
 

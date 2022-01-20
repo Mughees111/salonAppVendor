@@ -2,10 +2,11 @@ import React from 'react'
 import { StyleSheet, TouchableOpacity, Text } from 'react-native'
 import { acolors } from './AppColors';
 
-export const MainButton = ({ btnStyle, text, textStyle, onPress }) => {
+export const MainButton = ({ btnStyle, text, textStyle, onPress,disabled }) => {
     return (
         <TouchableOpacity
             onPress={onPress}
+            disabled={disabled ? disabled : false}
             style={[styles.mainBtn, btnStyle]}>
             <Text style={[styles.textStyle, textStyle]}>{text}</Text>
         </TouchableOpacity>
@@ -23,7 +24,7 @@ const styles = StyleSheet.create({
     },
     textStyle: {
         color: '#111111',
-        fontFamily: 'AbRe',
+        fontFamily: 'ABRe',
         fontSize: 16
     }
 })

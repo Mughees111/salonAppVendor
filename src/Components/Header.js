@@ -12,7 +12,7 @@ export const OnBoardingHeader = ({title}) => {
                 style={{ width: 34, height: 34, borderRadius: 34 / 2, backgroundColor: 'rgba(255,255,255,0.1)', alignItems: 'center', justifyContent: 'center' }}>
                 <ArrowLeft />
             </TouchableOpacity>
-            <Text style={{ fontFamily: 'AbRe', fontSize: 16, color: acolors.white }}>{title}</Text>
+            <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: acolors.white }}>{title}</Text>
             <Text>          </Text>
         </View>
     )

@@ -22,13 +22,13 @@ const MapLocation = () => {
                
 
                 <ScrollView>
-                    <Text style={{ marginTop: 30, fontFamily: 'AbRe', fontSize: 16, color: acolors.white }}>Pin your Saloon Location on Map to continue</Text>
+                    <Text style={{ marginTop: 30, fontFamily: 'ABRe', fontSize: 16, color: acolors.white }}>Pin your Saloon Location on Map to continue</Text>
                     <Image
                         style={{ marginTop: 10, width: '100%', resizeMode: 'stretch' }}
                         source={require('../assets/mapImg.png')}
                     />
-                    <Text style={{ marginTop: 20, fontFamily: 'AbRe', fontSize: 16, color: acolors.white }}>Address</Text>
-                    <Text style={{ marginTop: 10, fontFamily: 'AbRe', fontSize: 16, color: acolors.white }}>123 street, 11 apartment ,USA,11221</Text>
+                    <Text style={{ marginTop: 20, fontFamily: 'ABRe', fontSize: 16, color: acolors.white }}>Address</Text>
+                    <Text style={{ marginTop: 10, fontFamily: 'ABRe', fontSize: 16, color: acolors.white }}>123 street, 11 apartment ,USA,11221</Text>
 
                 </ScrollView>
             </SafeAreaView>

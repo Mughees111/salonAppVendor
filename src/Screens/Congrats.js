@@ -7,6 +7,7 @@ import { acolors } from '../Components/AppColors';
 import CustomTextInput from '../Components/CustomTextInput';
 import PrivacyPicker from '../Components/PrivacyPicker';
 import { MainButton } from '../Components/Buttons';
+import { changeLoggedIn } from '../../Common';
 
 const Congrats = () => {
 
@@ -34,15 +35,18 @@ const Congrats = () => {
 
             <SafeAreaView style={{ marginTop: 75, width: "90%", alignSelf: 'center', alignItems: 'center' }}>
                 <SuccessIcon />
-                <Text style={{ fontSize: 24, color: '#fff', fontFamily: 'AbRe', textAlign: 'center', marginTop: 10 }}>Congratulations{"\n"}You’re All Set</Text>
-                <Text style={{ fontSize: 14, color: '#fff', fontFamily: 'AbRe', textAlign: 'center', marginTop: 20 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Felis mauris at at nullam. Risus enim tellus pretium faucibus.</Text>
+                <Text style={{ fontSize: 24, color: '#fff', fontFamily: 'ABRe', textAlign: 'center', marginTop: 10 }}>Congratulations{"\n"}You’re All Set</Text>
+                <Text style={{ fontSize: 14, color: '#fff', fontFamily: 'ABRe', textAlign: 'center', marginTop: 20 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Felis mauris at at nullam. Risus enim tellus pretium faucibus.</Text>
 
 
             </SafeAreaView>
             <MainButton
                 text="Continue"
                 btnStyle={{ position: 'absolute', bottom: 100,width:"90%",alignSelf:'center' }}
-                // onPress={() => { navigate('Congrats') }}
+                onPress={() => { 
+                    // navigate('BottomTabNavigator') 
+                    changeLoggedIn.changeNow(1);
+                }}
             />
 
 

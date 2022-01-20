@@ -2,18 +2,20 @@ import React from 'react'
 import { TextInput, StyleSheet } from 'react-native'
 import { acolors } from './AppColors';
 
-const CustomTextInput = ({ style, onChangeText, placeholder, placeholderTextColor,secureTextEntry=false,autoFocus = false,keyboardType,keyboardAppearance}) => {
+const CustomTextInput = ({ value, style, onChangeText, placeholder, placeholderTextColor, secureTextEntry = false, autoFocus = false, keyboardType, keyboardAppearance }) => {
     return (
         <TextInput
+            autoCapitalize='none'
+            value={value}
             placeholder={placeholder}
             placeholderTextColor={placeholderTextColor ? placeholder : acolors.white}
             style={[styles.textInput, style]}
-            onChangeText={(v) => onChangeText(v)}
+            onChangeText={(v) => onChangeText ? onChangeText(v) : null}
             secureTextEntry={secureTextEntry}
             autoFocus={autoFocus}
             keyboardType={keyboardType}
             keyboardAppearance={keyboardAppearance ? keyboardAppearance : "default"}
-            // {...props}
+        // {...props}
         />
     )
 }
@@ -26,10 +28,10 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: acolors.white,
         color: acolors.white,
-        fontFamily: 'AbRe',
+        fontFamily: 'ABRe',
         fontSize: 14,
         paddingHorizontal: 10,
-        marginTop:10
+        marginTop: 10
 
     }
 })

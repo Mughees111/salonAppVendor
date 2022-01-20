@@ -14,8 +14,9 @@ import {
 
 import { Container, Right, Body, Title, Content, DatePicker, Header, Left, Button, ListItem, Radio } from 'native-base';
 // import DownA from "./Svgs/DownA";
-import { ArrowDown as PickerArrowDown  } from "./Svgs";
+import { ArrowDown as PickerArrowDown } from "./Svgs";
 import { acolors } from './AppColors';
+import { StatusBar } from "expo-status-bar";
 
 
 interface dataType {
@@ -36,8 +37,8 @@ const PrivacyPicker = (props: Props) => {
   const [filteredData, setFilteredData] = React.useState(props.data);
   const [modal, setModal] = React.useState(false);
   var temp = props.selected
-  if(!temp.title) temp.title = 'Select'
-  console.log(temp)
+  if (!temp.title) temp.title = 'Select'
+
   const [current, setCurrnet] = React.useState(temp);
 
 
@@ -56,7 +57,7 @@ const PrivacyPicker = (props: Props) => {
 
   const headerPicker = () => {
     return (
-      <Header style={{ backgroundColor: "#161527" }}>
+      <Header style={{ backgroundColor: acolors.bgColor }}>
         <Left>
           <Button
             style={{
@@ -75,9 +76,10 @@ const PrivacyPicker = (props: Props) => {
           </Button>
         </Left>
         <Body>
-          <Title style={{ color: "#A047C8", fontSize: 20 }}>Choose</Title>
+          <Title style={{ color: "white", fontSize: 20, }}>Choose</Title>
         </Body>
-        <Right />
+        {/* <Right /> */}
+
       </Header>
     )
   }
@@ -114,14 +116,18 @@ const PrivacyPicker = (props: Props) => {
   }
   return (
     <View style={{ width: '100%', paddingLeft: 10, paddingRight: 10, }} >
+      <StatusBar
+        style="light"
+        backgroundColor="#111111"
+      />
       <TouchableOpacity
         onPress={() => {
           fresh_start()
 
         }}
-        style={[{width:"100%"}]}>
-        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center",}}>
-          <Text style={{ color: acolors.white, fontSize: 14, fontFamily: "AbRe" }}>{current.title}</Text>
+        style={[{ width: "100%" }]}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
+          <Text style={{ color: acolors.white, fontSize: 14, fontFamily: "ABRe" }}>{current.title}</Text>
           <PickerArrowDown />
         </View>
       </TouchableOpacity>
@@ -152,7 +158,7 @@ const PrivacyPicker = (props: Props) => {
                 }}
               >
                 <Left>
-                  <Text style={{ color: '#363636', fontSize: 20, fontFamily: "AbRe" }}>
+                  <Text style={{ color: '#363636', fontSize: 20, fontFamily: "ABRe" }}>
                     {item.title}
                   </Text>
                 </Left>

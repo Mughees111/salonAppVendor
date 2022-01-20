@@ -21,16 +21,16 @@ const SearchAddress = () => {
                 <OnBoardingHeader title="Your Address" />
                
                 <ScrollView>
-                    <Text style={{ marginTop: 30, fontFamily: 'AbRe', fontSize: 16, color: acolors.white }}>Where can clients find you?</Text>
+                    <Text style={{ marginTop: 30, fontFamily: 'ABRe', fontSize: 16, color: acolors.white }}>Where can clients find you?</Text>
                     <CustomTextInput
                         placeholder="Search street & number"
                         style={{ marginTop: 20 }}
                     />
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',marginTop:20 }}>
-                        <Text style={{ fontFamily: 'AbRe', fontSize: 16, color: acolors.white }}>Can’t find your address?</Text>
+                        <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: acolors.white }}>Can’t find your address?</Text>
                         <TouchableOpacity style={{ alignItems: 'center',flexDirection:'row' }}>
                             <PlusCircle/>
-                            <Text style={{ fontFamily: 'AbRe', fontSize: 16, color: acolors.white ,marginLeft:5}}>Add Location</Text>
+                            <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: acolors.white ,marginLeft:5}}>Add Location</Text>
                         </TouchableOpacity>
 
                     </View>

@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView } from 'react-native'
 import { goBack, navigate } from '../../Navigations';
 import { ArrowLeft, ArrowRight, FbIcon, GoogleIcon } from '../Components/Svgs';
@@ -8,25 +8,71 @@ import CustomTextInput from '../Components/CustomTextInput';
 import PrivacyPicker from '../Components/PrivacyPicker';
 import { MainButton } from '../Components/Buttons';
 import { OnBoardingHeader } from '../Components/Header';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { storeItem, validateEmail } from '../utils/functions';
+import Loader from '../utils/Loader';
+import DropdownAlert from 'react-native-dropdownalert';
+import { apiRequest } from '../utils/apiCalls';
+
+
+var alertRef;
 const EmailAddress = () => {
+
+    const [sal_email, setSalEmail] = useState('')
+    const [loading, setLoading] = useState(false)
+
+    function next() {
+        if (!validateEmail(sal_email)) {
+            alertRef.alertWithType("error", "Error", "Please provide a valid email");
+            return;
+        }
+        setLoading(true)
+
+        apiRequest({ sal_email: sal_email }, 'check_sal_email_exists')
+            .then(data => {
+                if (data.action == 'success') {
+                    setLoading(false)
+                    alertRef.alertWithType('success', 'Success');
+                    const data1 = {
+                        "step": 1,
+                        "sal_email": sal_email
+                    }
+                    storeItem('login_data', data1)
+                        .then(data => {
+                            navigate('AboutInfo')
+                        })
+                }
+                else {
+                    setLoading(false)
+                    alertRef.alertWithType('error', 'Error', data.error);
+                }
+            })
+            .catch(err => {
+                setLoading(false)
+            })
+
+    }
+
     return (
         <View style={{ flex: 1, backgroundColor: '#111111' }}>
             <StatusBar
                 style="light"
                 backgroundColor="#111111"
             />
-
+            {loading && <Loader />}
+            <DropdownAlert ref={(ref) => alertRef = ref} />
             <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
-               <OnBoardingHeader title="Email Address" />
+                <OnBoardingHeader title="Email Address" />
 
                 <ScrollView>
-                    <Text style={{ marginTop: 30, fontFamily: 'AbRe', fontSize: 16, color: acolors.white }}>Fill your Email Address to continue</Text>
+                    <Text style={{ marginTop: 30, fontFamily: 'ABRe', fontSize: 16, color: acolors.white }}>Fill your Email Address to continue</Text>
                     <CustomTextInput
                         placeholder="Email Address"
+                        onChangeText={setSalEmail}
                         style={{ marginTop: 20 }}
                     />
-                    <Text style={{ alignSelf: 'center', fontSize: 16, color: acolors.white, marginTop: 55, fontFamily: 'AbRe' }}>or continue with</Text>
+                    <Text style={{ alignSelf: 'center', fontSize: 16, color: acolors.white, marginTop: 55, fontFamily: 'ABRe' }}>or continue with</Text>
 
 
 
@@ -42,7 +88,10 @@ const EmailAddress = () => {
                     <MainButton
                         text="Continue"
                         btnStyle={{ marginTop: 30 }}
-                        onPress={() => { navigate('AboutInfo') }}
+                        onPress={() => {
+                            next()
+                            // navigate('AboutInfo') 
+                        }}
                     />
                 </ScrollView>
 

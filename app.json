@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "salonAppVendor",
+    "name": "COUAFF Vendor",
     "slug": "salonAppVendor",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,7 +8,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "cover",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#111111"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -20,11 +20,13 @@
       "supportsTablet": true
     },
     "android": {
-      
       "package": "com.mughees1512.salonAppVendor"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-dev-client"
+    ]
   }
 }

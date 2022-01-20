@@ -49,7 +49,7 @@ const SalonTimingSet = () => {
                 <OnBoardingHeader title="Your Saloon Hours" />
                 <ScrollView>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Text style={{ marginTop: 30, fontFamily: 'AbRe', fontSize: 16, color: acolors.white, marginBottom: 10 }}>Set your saloon hours here.</Text>
+                        <Text style={{ marginTop: 30, fontFamily: 'ABRe', fontSize: 16, color: acolors.white, marginBottom: 10 }}>Set your saloon hours here.</Text>
                         <View>
                             <Switch
                                 style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }], marginTop: 15 }}
@@ -59,7 +59,7 @@ const SalonTimingSet = () => {
                                 onValueChange={() => setIsEnabled(!isEnabled)}
                                 value={isEnabled}
                             />
-                            <Text style={{ fontFamily: 'AbRe', fontSize: 7.8, color: acolors.white, alignSelf: 'center', marginTop: Platform.OS == 'android' ? -8 : 0 }}>{isEnabled ? "Open" : "Closed"}</Text>
+                            <Text style={{ fontFamily: 'ABRe', fontSize: 7.8, color: acolors.white, alignSelf: 'center', marginTop: Platform.OS == 'android' ? -8 : 0 }}>{isEnabled ? "Open" : "Closed"}</Text>
                             {/* <View style={{backgroundColor:'#111111'}}>
                                 <DateTimePicker
                                     // testID="dateTimePicker"
