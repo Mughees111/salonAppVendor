@@ -15,9 +15,10 @@ const SendFeedBack = () => {
         <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
             <StatusBar
                 style='light'
-            // translucent={false}
+                translucent={false}
+                backgroundColor={acolors.bgColor}
             />
-            <SafeAreaView style={{ flex: 1, marginTop: 25 }}>
+            <SafeAreaView style={{ flex: 1, marginTop: 10 }}>
                 <View style={{ paddingHorizontal: 20 }}>
                     <OnBoardingHeader title="Send Feedback" />
                     <Text style={{ marginTop: 20, fontFamily: 'ABRe', fontSize: 13, color: 'white', lineHeight: 21.5 }}>Let us Know what you like and what you’d like us to work on.{"\n"}

@@ -6,6 +6,7 @@ import { acolors } from '../Components/AppColors';
 import { FlatList } from 'react-native-gesture-handler';
 import { MainButton } from '../Components/Buttons';
 import RNModal from 'react-native-modal';
+import { StatusBar } from 'expo-status-bar';
 
 
 const Confirmed = (props) => {
@@ -14,7 +15,7 @@ const Confirmed = (props) => {
 
     const [cancellationModal, setCancellationModal] = useState(false)
 
-    const params = props.route.params;
+    const params = props?.route?.params;
 
     const Header = () => (
         <View style={{ width: "100%", flexDirection: 'row', justifyContent: 'space-between' }} >
@@ -94,7 +95,13 @@ const Confirmed = (props) => {
 
     return (
         <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
-            <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
+            <StatusBar
+                style='light'
+                backgroundColor={acolors.bgColor}
+                translucent={false}
+            // translucent={false}
+            />
+            <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
                 <Header />
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', paddingVertical: 8, backgroundColor: '#1E1F25', borderRadius: 10, marginTop: 20 }}>
@@ -150,7 +157,7 @@ const Confirmed = (props) => {
                             text={"Checkout"}
                             btnStyle={{ width: "40%", height: 45 }}
                             textStyle={{ fontSize: 11.94, }}
-                            onPress={() => navigate('CheckOut',params)}
+                            onPress={() => navigate('CheckOut', params)}
                         />
                     }
 

@@ -69,10 +69,12 @@ const PendingAppoint = (props) => {
             {loading && <Loader />}
             <DropdownAlert ref={(ref) => alertRef = ref} />
             <StatusBar
-                style="light"
-                backgroundColor="#111111"
+                style='light'
+                backgroundColor={acolors.bgColor}
+                translucent={false}
+            // translucent={false}
             />
-            <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
+            <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
                 <Text style={{ fontFamily: 'ABRe', fontSize: 20.67, color: 'white', alignSelf: 'center' }}>Pending Appointment</Text>
                 <TouchableOpacity
                     onPress={() => goBack()}

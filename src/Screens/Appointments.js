@@ -243,6 +243,7 @@ const Appointments = () => {
             <StatusBar
                 style="light"
                 backgroundColor="#111111"
+                translucent={false}
             />
 
             <TouchableOpacity onPress={() => navigate('Notifications')}>

@@ -43,10 +43,16 @@ const ProfileLinks = () => {
 
     return (
         <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
-            <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
+            <StatusBar
+                style='light'
+                backgroundColor={acolors.bgColor}
+                translucent={false}
+            // translucent={false}
+            />
+            <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
                 <Header />
                 <Text style={{ fontFamily: "ABRe", fontSize: 15.37, color: 'white', lineHeight: 21, marginTop: 30 }}>Setup your profile link</Text>
-                <View style={{ flexDirection: 'row', marginTop: 10 ,paddingBottom:20,borderBottomWidth:1,borderColor:'rgba(255,255,255,0.3'}}>
+                <View style={{ flexDirection: 'row', marginTop: 10, paddingBottom: 20, borderBottomWidth: 1, borderColor: 'rgba(255,255,255,0.3' }}>
                     <View style={{ width: "80%", height: 29, borderRadius: 10, backgroundColor: '#262626', justifyContent: 'center', paddingHorizontal: 10 }}>
                         <Text style={{ fontSize: 12.52, color: 'white', fontFamily: 'ABRe', }}>www.couaff.com/0hihd039</Text>
                     </View>
@@ -54,7 +60,7 @@ const ProfileLinks = () => {
                         <Text style={{ fontSize: 12.52, color: 'white', fontFamily: 'ABRe', }}>COPY</Text>
                     </TouchableOpacity>
                 </View>
-                
+
 
 
             </SafeAreaView>

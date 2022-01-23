@@ -21,13 +21,13 @@ const Clients = () => {
     const Header = () => (
         <View style={{ width: "100%", flexDirection: 'row', justifyContent: 'space-between' }} >
             <TouchableOpacity
-                onPress={()=>navigate('Notifications')}
+                onPress={() => navigate('Notifications')}
             >
                 <NotificationIcon />
             </TouchableOpacity>
             <Text style={{ fontFamily: 'ABRe', fontSize: 20.67, color: 'white' }}>Clients</Text>
             <TouchableOpacity
-                onPress={()=>navigate('Chats')}
+                onPress={() => navigate('Chats')}
             >
                 <ChatSendIcon />
             </TouchableOpacity>
@@ -57,7 +57,13 @@ const Clients = () => {
 
     return (
         <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
-            <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
+            <StatusBar
+                style='light'
+                backgroundColor={acolors.bgColor}
+                translucent={false}
+            // translucent={false}
+            />
+            <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
                 <Header />
                 <TabView />
                 <View style={{ width: "100%", height: 42, borderWidth: 1, borderColor: 'white', borderRadius: 8, paddingHorizontal: 10, alignItems: 'center', flexDirection: 'row', marginTop: 20 }}>

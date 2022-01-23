@@ -27,7 +27,13 @@ const NewAppoint = () => {
     )
     return (
         <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
-            <SafeAreaView style={{ marginTop: 35, }}>
+            <StatusBar
+                style='light'
+                backgroundColor={acolors.bgColor}
+                translucent={false}
+            // translucent={false}
+            />
+            <SafeAreaView style={{ marginTop: 10, }}>
                 <View style={{ width: "90%", alignSelf: 'center' }}>
                     <Header />
                 </View>
@@ -76,7 +82,7 @@ const NewAppoint = () => {
                 </ScrollView>
             </SafeAreaView>
             <MainButton
-                btnStyle={{ position: 'absolute', bottom: 40,width:"90%",alignSelf:'center' }}
+                btnStyle={{ position: 'absolute', bottom: 40, width: "90%", alignSelf: 'center' }}
                 text={"Save"}
             />
         </View>

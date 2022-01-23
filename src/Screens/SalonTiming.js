@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Dimensions, Modal, Switch } from 'react-native'
+import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Dimensions, Modal, Switch, Alert } from 'react-native'
 import { goBack, navigate } from '../../Navigations';
 import { ArrowLeft, ArrowRight, ArrowRight1, FbIcon, GoogleIcon, PlusCircle } from '../Components/Svgs';
 import { acolors } from '../Components/AppColors';
@@ -63,39 +63,27 @@ const SalonTiming = () => {
         "Sunday",
     ]
 
-    // const ItsYourBirthday = () => {
-    const initialBirthday = [
-        { id: "day", value: 16 },
-        { id: "month", value: 4 },
-        { id: "year", value: 1970 },
-    ];
-    // }
-
-    const [birthday, setBirtday] = useState(initialBirthday);
-
-    const date1 = [
-        { id: "day", label: "", min: 0, max: 31 },
-        { id: "month", label: "", min: 0, max: 12 },
-        { id: "year", label: "", min: 1900, max: new Date().getFullYear() },
-    ]
 
 
 
     async function next() {
 
-
+        // storeItem('login_data',{test:'123'})
         retrieveItem('login_data')
             .then(async (dataa) => {
                 var data1 = dataa;
+                
                 data1.step = 6;
                 data1.sal_hours = salon_hours;
+                console.log('data i am sending');
                 console.log(data1)
                 setLoading(true)
 
                 apiRequest(data1, 'salon_signup')
                     .then(data => {
                         setLoading(false)
-                        console.log('console1')
+                        // console.log('console1')
+                        console.log('data i get from server');
                         console.log(data)
                         if (data.action == 'success') {
                             alertRef.alertWithType("success", "Success", "");
@@ -357,9 +345,10 @@ const SalonTiming = () => {
             <StatusBar
                 style="light"
                 backgroundColor="#111111"
+                translucent={false}
             />
 
-            <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
+            <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
                 <OnBoardingHeader title="Your Saloon Hours" />
                 <ScrollView>
                     <Text style={{ marginTop: 30, fontFamily: 'ABRe', fontSize: 16, color: acolors.white, marginBottom: 10 }}>When your clients book with you?</Text>

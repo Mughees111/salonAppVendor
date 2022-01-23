@@ -35,28 +35,34 @@ const NotificationsS = () => {
 
     return (
         <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
-            <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
+            <StatusBar
+                style='light'
+                backgroundColor={acolors.bgColor}
+                translucent={false}
+            // translucent={false}
+            />
+            <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
                 <Header />
                 <Text style={{ fontFamily: 'ABRe', fontSize: 12.47, color: '#FFFFFF', marginTop: 20 }}>My Notifications</Text>
                 <TouchableOpacity
                     activeOpacity={0.8}
                     onPress={() => setIsEnabled(!isEnabled)}
-                style={{ marginTop: 10, backgroundColor: '#262626', alignItems: 'center', justifyContent: 'space-between', padding: 15, borderRadius: 10, flexDirection: 'row' }}>
-                <Text style={{ color: 'white', fontFamily: 'ABRe' }}>Send me push notification (this device)</Text>
-                <Switch
-                    // Platform="ios"
-                    style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }], }}
-                    trackColor={{ false: acolors.bgColor, true: acolors.primary, }}
-                    thumbColor={isEnabled ? acolors.bgColor : 'white'}
-                    ios_backgroundColor={isEnabled ? acolors.bgColor : 'white'}
-                    onValueChange={() => setIsEnabled(!isEnabled)}
-                    value={isEnabled}
-                />
+                    style={{ marginTop: 10, backgroundColor: '#262626', alignItems: 'center', justifyContent: 'space-between', padding: 15, borderRadius: 10, flexDirection: 'row' }}>
+                    <Text style={{ color: 'white', fontFamily: 'ABRe' }}>Send me push notification (this device)</Text>
+                    <Switch
+                        // Platform="ios"
+                        style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }], }}
+                        trackColor={{ false: acolors.bgColor, true: acolors.primary, }}
+                        thumbColor={isEnabled ? acolors.bgColor : 'white'}
+                        ios_backgroundColor={isEnabled ? acolors.bgColor : 'white'}
+                        onValueChange={() => setIsEnabled(!isEnabled)}
+                        value={isEnabled}
+                    />
 
-            </TouchableOpacity>
+                </TouchableOpacity>
 
-        </SafeAreaView>
-            
+            </SafeAreaView>
+
         </View >
     )
 }

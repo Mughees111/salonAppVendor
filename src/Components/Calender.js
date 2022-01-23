@@ -68,16 +68,17 @@ export class Calender extends React.Component {
 
 
     _onPress = (item) => {
-        this.setState(() => {
-            if (!item.match && item != -1) {
-                let date = this.state.activeDate
+        if (!item.match && item != -1) {
+            var date = this.state.activeDate
+            date.setDate(item);
+            this?.props?.onDayPress(date)
+            this.setState(() => {
                 this.state.activeDate.setDate(item);
-                this.setState({ showOneRow: true })
-                date.setDate(item);
-                this?.props?.onDayPress(date)
                 return this.state;
-            }
-        });
+
+            })
+
+        }
     };
 
     changeMonth = (n) => {
@@ -89,7 +90,7 @@ export class Calender extends React.Component {
         });
     }
 
-    
+
     render() {
 
         var matrix = this.generateMatrix();
@@ -143,9 +144,10 @@ export class Calender extends React.Component {
                             }}
                             onPress={() => {
                                 this._onPress(item)
-
+                                // this.setState({ showOneRow: true })
                                 this.setState({
                                     activeRow: row,
+                                    showOneRow: true
                                 })
                             }}>
                             {item != -1 ? item : ''}
@@ -189,6 +191,7 @@ export class Calender extends React.Component {
                         style={{ textAlign: 'center', color: 'white', fontFamily: 'ABRe', fontSize: 12.67 }}
                         onPress={() => {
                             this._onPress(item)
+                            console.log('pressed')
                         }}>
                         {item != -1 ? item : ''}
                     </Text>

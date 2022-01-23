@@ -43,11 +43,13 @@ const PasswordSetup = () => {
     return (
         <View style={{ flex: 1, backgroundColor: '#111111' }}>
             <StatusBar
-                style="light"
-                backgroundColor="#111111"
+                style='light'
+                backgroundColor={acolors.bgColor}
+                translucent={false}
+            // translucent={false}
             />
             <DropdownAlert ref={(ref) => alertRef = ref} />
-            <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
+            <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
                 <OnBoardingHeader title="Password Setup" />
                 <ScrollView>
                     <Text style={{ marginTop: 30, fontFamily: 'ABRe', fontSize: 16, color: acolors.white }}>Please create a strong password to secure your account </Text>

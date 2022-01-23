@@ -5,6 +5,7 @@ import { goBack, navigate } from '../../Navigations';
 import { acolors } from '../Components/AppColors';
 import { FlatList } from 'react-native-gesture-handler';
 import { MainButton } from '../Components/Buttons';
+import { StatusBar } from 'expo-status-bar';
 
 
 const CheckOut = (props) => {
@@ -66,7 +67,13 @@ const CheckOut = (props) => {
 
     return (
         <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
-            <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
+            <StatusBar
+                style='light'
+                backgroundColor={acolors.bgColor}
+                translucent={false}
+            // translucent={false}
+            />
+            <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
                 <Header />
                 <PendingAppintView />
             </SafeAreaView>

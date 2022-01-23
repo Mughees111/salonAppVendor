@@ -15,14 +15,16 @@ const MassMsg = () => {
         <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
             <StatusBar
                 style='light'
+                backgroundColor={acolors.bgColor}
+                translucent={false}
             // translucent={false}
             />
-            <SafeAreaView style={{ flex: 1, marginTop: 25 }}>
+            <SafeAreaView style={{ flex: 1, marginTop: 10 }}>
                 <View style={{ paddingHorizontal: 20 }}>
                     <OnBoardingHeader title="Mass Message" />
                     <Text style={{ marginTop: 20, fontFamily: 'ABRe', fontSize: 13, color: 'white', lineHeight: 21.5 }}>Send a mass notification message to all your clients</Text>
 
-                   
+
                     <TextInput
                         textAlignVertical='top'
                         multiline={true}

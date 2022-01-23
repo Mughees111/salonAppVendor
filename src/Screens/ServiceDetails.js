@@ -110,12 +110,13 @@ const ServiceDetails = (props) => {
             <StatusBar
                 style="light"
                 backgroundColor="#111111"
+                translucent={false}
             />
             {
                 loading && <Loader />
             }
             <DropdownAlert ref={(ref) => alertRef = ref} />
-            <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
+            <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
                 <OnBoardingHeader title="Service Details" />
                 <ScrollView>
                     <Text style={{ marginTop: 30, fontFamily: 'ABRe', fontSize: 16, color: acolors.white }}>You’ll be able to add a description and adjust advanced settings</Text>

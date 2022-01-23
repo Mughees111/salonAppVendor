@@ -42,16 +42,16 @@ const Address = () => {
     const [sal_lat, setSalLat] = useState('')
     const [sal_lng, setSalLng] = useState('')
 
-    const [GOOGLE_MAPS, setGOOGLE_MAPS] = useState('AIzaSyBCcRdOVZFoGUabErTjle8HTXP0R5arBuw')
+    // const [GOOGLE_MAPS, setGOOGLE_MAPS] = useState('AIzaSyBCcRdOVZFoGUabErTjle8HTXP0R5arBuw')
 
 
-    const [userSelectedLocation, setUserSelectedLocation] = useState({
-        latitude: 0,
-        longitude: 0,
-        latitudeDelta: 0,
-        longitudeDelta: 0,
-        locationTitle: ''
-    });
+    // const [userSelectedLocation, setUserSelectedLocation] = useState({
+    //     latitude: 0,
+    //     longitude: 0,
+    //     latitudeDelta: 0,
+    //     longitudeDelta: 0,
+    //     locationTitle: ''
+    // });
 
     async function handleUserLocation() {
         let { status } = await Location.requestForegroundPermissionsAsync();
@@ -61,7 +61,7 @@ const Address = () => {
         }
         setLoading(true)
         var locationn
-        try{
+        try {
             locationn = await Location.getCurrentPositionAsync({});
         }
         catch{
@@ -69,66 +69,67 @@ const Address = () => {
             return;
         }
         
-        const oneDegreeOfLongitudeInMeters = 111.32 * 1000;
-        const circumference = (40075 / 360) * 1000;
-        const latDelta = locationn?.coords?.accuracy * (1 / (Math.cos(locationn.coords?.latitude) * circumference));
-        const lonDelta = (locationn?.coords?.accuracy / oneDegreeOfLongitudeInMeters);
+        // const oneDegreeOfLongitudeInMeters = 111.32 * 1000;
+        // const circumference = (40075 / 360) * 1000;
+        // const latDelta = locationn?.coords?.accuracy * (1 / (Math.cos(locationn.coords?.latitude) * circumference));
+        // const lonDelta = (locationn?.coords?.accuracy / oneDegreeOfLongitudeInMeters);
 
         var r = locationn?.coords
-
-        var pkey = GOOGLE_MAPS;
-        var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + r?.latitude + "," + r?.longitude + "&key=" + pkey;
-        console.log(url);
+        setSalLat(r.latitude);
+        setSalLng(r.longitude);
+        setLoading(false)
+        // var pkey = GOOGLE_MAPS;
+        // var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + r?.latitude + "," + r?.longitude + "&key=" + pkey;
+        // console.log(url);
         
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify([]),
-        }).then((response) => response.json())
-            .then((responseJson) => {
-                setLoading(false)
-                console.log("I get:");
+        // fetch(url, {
+        //     method: 'POST',
+        //     headers: {
+        //         Accept: 'application/json',
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify([]),
+        // }).then((response) => response.json())
+        //     .then((responseJson) => {
+        //         setLoading(false)
+        //         console.log("I get:");
 
-                if (responseJson.status == "OK") {
-                    const address_components = responseJson.results[0].address_components;
-                    let country = address_components[address_components.length - 1].long_name;
-                    let state = address_components[address_components.length - 2].long_name;
-                    let city = address_components[address_components.length - 3].long_name;
-                    var address = responseJson.results[0].formatted_address;
+        //         if (responseJson.status == "OK") {
+        //             const address_components = responseJson.results[0].address_components;
+        //             let country = address_components[address_components.length - 1].long_name;
+        //             let state = address_components[address_components.length - 2].long_name;
+        //             let city = address_components[address_components.length - 3].long_name;
+        //             var address = responseJson.results[0].formatted_address;
 
-                    setSalLat(r.latitude);
-                    setSalLng(r.longitude);
-                    setSallAddress(address);
-                    setSalCountry(country);
-                    setSalState(state);
-                    setSalCity(city);
+                    
+        //             setSallAddress(address);
+        //             setSalCountry(country);
+        //             setSalState(state);
+        //             setSalCity(city);
 
-                    setUserSelectedLocation({
-                        ...userSelectedLocation,
-                        latitude: locationn.coords.latitude,
-                        longitude: locationn.coords.longitude,
-                        latitudeDelta: Math.max(0, latDelta),
-                        longitudeDelta: Math.max(0, lonDelta),
-                        locationTitle: address
-                    })
-                }
+        //             setUserSelectedLocation({
+        //                 ...userSelectedLocation,
+        //                 latitude: locationn.coords.latitude,
+        //                 longitude: locationn.coords.longitude,
+        //                 latitudeDelta: Math.max(0, latDelta),
+        //                 longitudeDelta: Math.max(0, lonDelta),
+        //                 locationTitle: address
+        //             })
+        //         }
 
-            })
-            .catch((error) => {
-                setLoading(false)
-                setTimeout(() => {
-                    dropDownAlertRef.alertWithType('error', 'error', "Network Request Failed, Please check your internet connect and try again");
-                    //   alert(error);
-                }, 500);
+        //     })
+        //     .catch((error) => {
+        //         setLoading(false)
+        //         setTimeout(() => {
+        //             dropDownAlertRef.alertWithType('error', 'error', "Network Request Failed, Please check your internet connect and try again");
+        //             //   alert(error);
+        //         }, 500);
 
-            });
-
+        //     });
 
 
-        forceUpdate();
+
+        // forceUpdate();
         // setSelectPickepLocation(true)
     }
 
@@ -188,10 +189,11 @@ const Address = () => {
             <StatusBar
                 style="light"
                 backgroundColor="#111111"
+                translucent={false}
             />
             {loading && <Loader />}
             <DropdownAlert ref={(ref) => alertRef = ref} />
-            <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
+            <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
                 <OnBoardingHeader title="Your Address" />
                 <ScrollView>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 30, alignItems: 'center' }}>

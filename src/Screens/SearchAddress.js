@@ -15,9 +15,10 @@ const SearchAddress = () => {
             <StatusBar
                 style="light"
                 backgroundColor="#111111"
+                translucent={false}
             />
 
-            <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
+            <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
                 <OnBoardingHeader title="Your Address" />
                
                 <ScrollView>

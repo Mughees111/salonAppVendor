@@ -126,6 +126,7 @@ const CancelAppointment = (props) => {
             <StatusBar
                 style='light'
                 backgroundColor={acolors.bgColor}
+                translucent={false}
             // translucent={false}
             />
             {loading && <Loader />}
@@ -180,7 +181,7 @@ const CancelAppointment = (props) => {
             </ReactNativeModal>
 
 
-            <SafeAreaView style={{ flex: 1, marginTop: 25 }}>
+            <SafeAreaView style={{ flex: 1, marginTop: 10 }}>
                 <View style={{ paddingHorizontal: 20 }}>
                     <OnBoardingHeader title="Cancellation" />
                     <Text style={{ marginTop: 20, fontFamily: 'ABRe', fontSize: 13, color: 'white', lineHeight: 21.5 }}>Write down the reason why you canceling the appointment</Text>

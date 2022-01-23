@@ -350,11 +350,13 @@ const EditHours = (props) => {
             <DropdownAlert ref={(ref) => alertRef = ref} />
 
             <StatusBar
-                style="light"
-                backgroundColor="#111111"
+                style='light'
+                backgroundColor={acolors.bgColor}
+                translucent={false}
+            // translucent={false}
             />
 
-            <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
+            <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
                 <OnBoardingHeader title="Your Saloon Hours" />
                 <ScrollView>
                     <Text style={{ marginTop: 30, fontFamily: 'ABRe', fontSize: 16, color: acolors.white, marginBottom: 10 }}>When your clients book with you?</Text>

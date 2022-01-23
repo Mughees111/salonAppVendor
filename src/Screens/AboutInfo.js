@@ -34,7 +34,7 @@ const AboutInfo = () => {
             return;
         }
         if (sal_phone.length < 10) {
-            alertRef.alertWithType("error", "Error", "Please provide a valid phone");
+            alertRef.alertWithType("error", "Error", "Please provide a valid 10 digit phone");
             return;
         }
         if (sal_type == '') {
@@ -65,10 +65,11 @@ const AboutInfo = () => {
             <StatusBar
                 style="light"
                 backgroundColor="#111111"
+                translucent={false}
             />
             {loading && <Loader />}
             <DropdownAlert ref={(ref) => alertRef = ref} />
-            <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
+            <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
                 <OnBoardingHeader title="About You" />
                 <ScrollView>
                     <Text style={{ marginTop: 30, fontFamily: 'ABRe', fontSize: 16, color: acolors.white }}>Tell us more about yourself and your saloon</Text>

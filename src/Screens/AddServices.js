@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, FlatList } from 'react-native'
+import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, FlatList, Alert } from 'react-native'
 import { goBack, navigate } from '../../Navigations';
 import { ArrowLeft, ArrowRight1, CameraIcon, CrossIcon, FbIcon, GoogleIcon, PlusCircle, PlusIcon } from '../Components/Svgs';
 import { acolors } from '../Components/AppColors';
@@ -76,6 +76,10 @@ const AddServices = () => {
         () => {
             retrieveItem('login_data')
                 .then(data => {
+                    if(data.sal_hours.length<1){
+                        Alert.alert('i have no sal hours')
+                        return
+                    }
                     if (data.sal_services.length) {
                         setServices(data.sal_services);
                         setCanNext(true);
@@ -98,10 +102,11 @@ const AddServices = () => {
             <StatusBar
                 style="light"
                 backgroundColor="#111111"
+                translucent={false}
             />
             {loading && <Loader />}
             <DropdownAlert ref={(ref) => alertRef = ref} />
-            <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
+            <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
                 <OnBoardingHeader title="Add Services" />
                 {/* <ScrollView> */}
                 {!services.length &&

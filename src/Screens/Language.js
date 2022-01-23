@@ -34,8 +34,11 @@ const Language = () => {
         <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
             <StatusBar
                 style='light'
+                backgroundColor={acolors.bgColor}
+                translucent={false}
+            // translucent={false}
             />
-            <SafeAreaView style={{ flex: 1, marginTop: 30 }}>
+            <SafeAreaView style={{ flex: 1, marginTop: 10 }}>
                 <View style={{ paddingHorizontal: 20 }}>
                     <Header title="Settings" />
                     <TouchableOpacity

@@ -11,9 +11,11 @@ const TermsOfUse = () => {
         <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
             <StatusBar
                 style='light'
+                translucent={false}
+                backgroundColor={acolors.bgColor}
             // translucent={false}
             />
-            <SafeAreaView style={{ flex: 1, marginTop: 25 }}>
+            <SafeAreaView style={{ flex: 1, marginTop: 10 }}>
                 <View style={{ paddingHorizontal: 20 }}>
                     <OnBoardingHeader title="Term of Use" />
                     <Text style={{ marginTop: 20, fontFamily: 'ABRe', fontSize: 13, color: 'white', lineHeight: 21.5 }}>

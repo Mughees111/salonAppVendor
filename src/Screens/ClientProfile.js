@@ -38,7 +38,13 @@ const ClientProfile = () => {
 
     return (
         <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
-            <SafeAreaView style={{ marginTop: 35, }}>
+              <StatusBar
+                style='light'
+                backgroundColor={acolors.bgColor}
+                translucent={false}
+            // translucent={false}
+            />
+            <SafeAreaView style={{ marginTop: 10, }}>
                 <View style={{ width: "90%", alignSelf: 'center' }}>
                     <Header />
                 </View>

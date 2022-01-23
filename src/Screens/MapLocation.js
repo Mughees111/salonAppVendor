@@ -13,13 +13,15 @@ const MapLocation = () => {
     return (
         <View style={{ flex: 1, backgroundColor: '#111111' }}>
             <StatusBar
-                style="light"
-                backgroundColor="#111111"
+                style='light'
+                backgroundColor={acolors.bgColor}
+                translucent={false}
+            // translucent={false}
             />
 
-            <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
+            <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
                 <OnBoardingHeader title="Map Location" />
-               
+
 
                 <ScrollView>
                     <Text style={{ marginTop: 30, fontFamily: 'ABRe', fontSize: 16, color: acolors.white }}>Pin your Saloon Location on Map to continue</Text>

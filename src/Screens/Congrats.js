@@ -28,9 +28,11 @@ const Congrats = () => {
 
     return (
         <View style={{ flex: 1, backgroundColor: '#111111' }}>
-            <StatusBar
-                style="light"
-                backgroundColor="#111111"
+              <StatusBar
+                style='light'
+                backgroundColor={acolors.bgColor}
+                translucent={false}
+            // translucent={false}
             />
 
             <SafeAreaView style={{ marginTop: 75, width: "90%", alignSelf: 'center', alignItems: 'center' }}>

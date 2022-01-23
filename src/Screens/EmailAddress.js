@@ -57,8 +57,10 @@ const EmailAddress = () => {
     return (
         <View style={{ flex: 1, backgroundColor: '#111111' }}>
             <StatusBar
-                style="light"
-                backgroundColor="#111111"
+                style='light'
+                backgroundColor={acolors.bgColor}
+                translucent={false}
+            // translucent={false}
             />
             {loading && <Loader />}
             <DropdownAlert ref={(ref) => alertRef = ref} />
@@ -66,7 +68,7 @@ const EmailAddress = () => {
                 <OnBoardingHeader title="Email Address" />
 
                 <ScrollView>
-                    <Text style={{ marginTop: 30, fontFamily: 'ABRe', fontSize: 16, color: acolors.white }}>Fill your Email Address to continue</Text>
+                    <Text style={{ marginTop: 10, fontFamily: 'ABRe', fontSize: 16, color: acolors.white }}>Fill your Email Address to continue</Text>
                     <CustomTextInput
                         placeholder="Email Address"
                         onChangeText={setSalEmail}
