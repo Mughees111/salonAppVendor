@@ -142,9 +142,10 @@ const AddSalonPhoto = () => {
                     step: 7,
 
                 }
+                setLoading(true)
                 apiRequest(reqObj, 'update_salon')
                     .then(data => {
-                        setLoading(true)
+                        setLoading(false)
                         if (data.action == 'success') {
                             console.log(data)
                             storeItem('login_data', data.data)

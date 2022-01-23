@@ -59,19 +59,27 @@ const Address = () => {
             Alert.alert('Permission to access location was denied');
             return;
         }
-
-        let locationn = await Location.getCurrentPositionAsync({});
+        setLoading(true)
+        var locationn
+        try{
+            locationn = await Location.getCurrentPositionAsync({});
+        }
+        catch{
+            setLoading(false)
+            return;
+        }
+        
         const oneDegreeOfLongitudeInMeters = 111.32 * 1000;
         const circumference = (40075 / 360) * 1000;
-        const latDelta = locationn.coords.accuracy * (1 / (Math.cos(locationn.coords.latitude) * circumference));
-        const lonDelta = (locationn.coords.accuracy / oneDegreeOfLongitudeInMeters);
+        const latDelta = locationn?.coords?.accuracy * (1 / (Math.cos(locationn.coords?.latitude) * circumference));
+        const lonDelta = (locationn?.coords?.accuracy / oneDegreeOfLongitudeInMeters);
 
-        var r = locationn.coords
+        var r = locationn?.coords
 
         var pkey = GOOGLE_MAPS;
-        var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + r.latitude + "," + r.longitude + "&key=" + pkey;
+        var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + r?.latitude + "," + r?.longitude + "&key=" + pkey;
         console.log(url);
-        setLoading(true)
+        
         fetch(url, {
             method: 'POST',
             headers: {

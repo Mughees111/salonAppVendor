@@ -37,14 +37,14 @@ export async function apiRequest(body_data, url_plus) {
     body: JSON.stringify(body_data),
   }
   // console.log('configs')
-  console.log(configs)
-  console.log(url + url_plus)
+  // console.log(configs)
+  // console.log(url + url_plus)
   return (
     fetch(url + url_plus, configs)
       .then((response) => response.json())
       // .then((response) => response.text())
       .then((responseJson) => {
-        console.log(responseJson)
+        // console.log(responseJson)
         return responseJson
       }).catch((error) => {
         console.log(error)
@@ -71,7 +71,7 @@ async function doPostDoc(response, url_plus, token = "", path) {
   var _ext = my_ext[my_ext.length - 1];
 
 
-  var real_name = response.uri.split('/');
+  var real_name = response?.uri?.split('/');
   var _real_name = real_name[real_name.length - 1];
 
 
@@ -81,7 +81,7 @@ async function doPostDoc(response, url_plus, token = "", path) {
   formData.append("photo", {
     name: _real_name,
     type: Platform.OS === "android" ? "image/jpeg" : response.type,
-    uri: Platform.OS === "android" ? response.uri : response.uri.replace("file://", "")
+    uri: Platform.OS === "android" ? response?.uri : response?.uri?.replace("file://", "")
   });
   formData.append("token", token);
   formData.append("path", path);

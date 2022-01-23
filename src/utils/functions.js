@@ -140,7 +140,7 @@ export async function checkLoginSteps() {
         if (step == 0 || step == null) { return null }
         else if (step == 1) navigate('AboutInfo')
         else if (step == 2) navigate('PasswordSetup')
-        else if (step == 3) navigate('SearchAddress')
+        else if (step == 3) navigate('Address')
         else if (step == 4) navigate('SalonTiming')
         else if (step == 5) navigate('SalonTiming')
         else if (step == 6) navigate('AddSalonPhoto')
@@ -271,7 +271,7 @@ async function do_update_dp(url, response, type__, userToken, url_plus) {
   data.append("photo", {
     name: _real_name,
     type: Platform.OS === "android" ? "image/jpeg" : response.type,
-    uri: Platform.OS === "android" ? response.uri : response.uri.replace("file://", "")
+    uri: Platform.OS === "android" ? response?.uri : response.uri?.replace("file://", "")
   });
   data.append("token", userToken);
   console.log("this is wat I'm submitting");
@@ -334,6 +334,35 @@ async function do_update_dp(url, response, type__, userToken, url_plus) {
 export const useForceUpdate = () => {
   const [, updateState] = useState();
   return useCallback(() => updateState({}), []);
+}
+
+
+export function formatDate(dateObj) {
+  var month = dateObj.getMonth() + 1;
+  if (month < 10) {
+      month = "0" + month;
+      if (dateObj.getDate() < 10) {
+          const dat = "0" + dateObj.getDate();
+          let date = dateObj.getFullYear() + "-" + month + "-" + dat;
+          return date
+      }
+      else {
+          let date = dateObj.getFullYear() + "-" + month + "-" + dateObj.getDate()
+          return date
+      }
+  }
+  else {
+      if (dateObj.getDate() < 10) {
+          const dat = "0" + dateObj.getDate()
+          let date = dateObj.getFullYear() + "-" + month + "-" + dat
+          return date
+      }
+      else {
+          let date = dateObj.getFullYear() + "-" + month + "-" + dateObj.getDate()
+          return date
+      }
+
+  }
 }
 
 

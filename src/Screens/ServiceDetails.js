@@ -27,13 +27,13 @@ const ServiceDetails = (props) => {
         "Free",
         "Don’t Show"
     ];
-    const [s_time_mins, setSTimeMins] = useState(props?.route?.params?.params?.s_time_mins ? props.route.params?.params.s_time_mins : '');
-    const [s_name, setSname] = useState(props?.route?.params?.params?.s_name ? props.route.params?.params.s_name : '');
-    const [s_price, setSPrice] = useState(props?.route?.params?.params?.s_price ? props.route.params?.params.s_price : '');
-    const [s_desc, setSDesc] = useState(props?.route?.params?.params?.s_desc ? props.route.params?.params.s_desc : '');
+    const [s_time_mins, setSTimeMins] = useState(props?.route?.params?.s_time_mins ? props.route?.params.s_time_mins : '');
+    const [s_name, setSname] = useState(props?.route?.params?.s_name ? props.route.params.s_name : '');
+    const [s_price, setSPrice] = useState(props?.route?.params?.s_price ? props.route.params.s_price : '');
+    const [s_desc, setSDesc] = useState(props?.route?.params?.s_desc ? props.route.params.s_desc : '');
     const [loading, setLoading] = useState(false)
 
-    console.log(props.route.params)
+
     function next() {
 
         if (s_name.length < 2) {
@@ -49,21 +49,37 @@ const ServiceDetails = (props) => {
             alertRef.alertWithType("error", "Error", "Please provide a valid price");
             return;
         }
-
-
         retrieveItem('login_data')
             .then(data1 => {
 
-                const reqObj = {
-                    s_name,
-                    s_price,
-                    s_time_mins,
-                    s_desc,
-                    token: data1.token
-                };
-                console.log(data1)
+                var urlPlus;
+                var reqObj = {}
+                if (props?.route?.params?.id) {
+                    reqObj = {
+                        s_name,
+                        s_price,
+                        s_time_mins,
+                        s_desc,
+                        token: data1.token,
+                        id: props.route.params.id
+                    };
+                    urlPlus = 'update_salon_service'
+                }
+                else {
+                    reqObj = {
+                        s_name,
+                        s_price,
+                        s_time_mins,
+                        s_desc,
+                        token: data1.token,
+                    };
+                    urlPlus = 'add_salon_services'
+                }
+
+                console.log(reqObj)
                 setLoading(true)
-                apiRequest(reqObj, 'add_salon_services')
+
+                apiRequest(reqObj, urlPlus)
                     .then(data => {
                         setLoading(false)
                         if (data.action == 'success') {

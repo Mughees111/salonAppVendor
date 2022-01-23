@@ -8,11 +8,13 @@ import { MainButton } from '../Components/Buttons';
 import RNModal from 'react-native-modal';
 
 
-const Confirmed = () => {
+const Confirmed = (props) => {
 
 
 
     const [cancellationModal, setCancellationModal] = useState(false)
+
+    const params = props.route.params;
 
     const Header = () => (
         <View style={{ width: "100%", flexDirection: 'row', justifyContent: 'space-between' }} >
@@ -23,7 +25,8 @@ const Confirmed = () => {
             </TouchableOpacity>
             <Text style={{ fontFamily: 'ABRe', fontSize: 20.67, color: 'white' }}>Confirmed</Text>
             <TouchableOpacity>
-                <Text style={{ fontFamily: 'ABRe', fontSize: 14.67, color: 'white' }}>Edit</Text>
+                <Text style={{ fontFamily: 'ABRe', fontSize: 14.67, color: 'white' }}>      </Text>
+                {/* Edit */}
             </TouchableOpacity>
         </View>
     )
@@ -33,19 +36,22 @@ const Confirmed = () => {
             <View onPress={() => navigate('ClientProfile')} style={{ flexDirection: 'row', marginTop: 15, width: "100%" }}>
                 <Image
                     style={{ width: 49, height: 49, borderRadius: 49 / 2 }}
-                    source={require('../assets/img1.png')}
+                    source={{ uri: params?.profile_pic }
+                        // require('../assets/img1.png')
+                    }
                 />
                 <View style={{ marginLeft: 15 }}>
-                    <Text style={{ fontFamily: "ABRe", fontSize: 12.89, color: 'white', lineHeight: 21, }}>Bongani</Text>
-                    <Text style={{ fontFamily: "ABRe", fontSize: 12.89, color: 'white', lineHeight: 21 }}>bongani@gmail.com</Text>
+                    <Text style={{ fontFamily: "ABRe", fontSize: 12.89, color: 'white', lineHeight: 21, }}>{params?.name}</Text>
+                    <Text style={{ fontFamily: "ABRe", fontSize: 12.89, color: 'white', lineHeight: 21 }}>{params?.email}</Text>
                 </View>
             </View>
             <View style={{ flexDirection: 'row', width: "100%", marginTop: 10 }}>
-                <View style={{ backgroundColor: '#1E1F25', borderRadius: 2, flexDirection: 'row', width: "100%", height: 40 }}>
+                <View style={{ backgroundColor: '#1E1F25', borderRadius: 2, flexDirection: 'row', width: "100%", }}>
                     <View style={{ height: "100%", width: 10, backgroundColor: "rgba(163, 163, 163, 0.7)", borderTopRightRadius: 6, borderBottomRightRadius: 8 }}></View>
-                    <View style={{ marginLeft: 10, alignSelf: 'center' }}>
-                        <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', }}>09:45 am - 10:00 am (20-10-2021)</Text>
-                        <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', }}>Mens’s New Hair Cut</Text>
+                    <View style={{ marginLeft: 10, alignSelf: 'center', marginVertical: 5, justifyContent: 'space-between' }}>
+                        <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', }}>{params?.app_start_time} - {params?.app_end_time} ({params?.app_date})</Text>
+                        <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', }}>{params?.app_services}</Text>
+                        <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 5 }}>{params?.is_paid == 1 ? "Paid: $" + params?.app_price : "Cash Appointment"}</Text>
                     </View>
                 </View>
             </View>
@@ -69,7 +75,7 @@ const Confirmed = () => {
                     onPress={() => {
                         setCancellationModal(false)
                         setTimeout(() => {
-                            navigate('CancelAppointment')
+                            navigate('CancelAppointment', params)
                         }, 200);
 
                     }}
@@ -94,12 +100,12 @@ const Confirmed = () => {
                 <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', paddingVertical: 8, backgroundColor: '#1E1F25', borderRadius: 10, marginTop: 20 }}>
                     <View>
                         <Text style={{ fontFamily: 'ABRe', fontSize: 8, color: 'white' }}>Start</Text>
-                        <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: 'white' }}>09:45 am</Text>
+                        <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: 'white' }}>{params?.app_start_time}</Text>
                     </View>
                     <View style={{ width: 1, height: "100%", backgroundColor: 'rgba(255,255,255,0.5)' }}></View>
                     <View>
                         <Text style={{ fontFamily: 'ABRe', fontSize: 8, color: 'white' }}>Date</Text>
-                        <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: 'white' }}>Taday</Text>
+                        <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: 'white' }}>{params?.app_date}</Text>
                     </View>
                 </View>
 
@@ -117,32 +123,36 @@ const Confirmed = () => {
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 8, borderRadius: 10, marginTop: 20 }}>
                     <View>
                         <Text style={{ fontFamily: 'ABRe', fontSize: 8, color: 'white' }}>Total</Text>
-                        <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: 'white' }}>$10.05</Text>
+                        <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: 'white' }}>${params?.app_price}</Text>
                     </View>
                     <View style={{ width: 1, height: "100%", backgroundColor: 'rgba(255,255,255,0.5)' }}></View>
                     <View>
                         <Text style={{ fontFamily: 'ABRe', fontSize: 8, color: 'white' }}>Due To</Text>
-                        <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: 'white' }}>$10.60</Text>
+                        <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: 'white' }}>${params?.app_price}</Text>
                     </View>
                 </View>
 
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 15 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', marginTop: 15 }}>
                     <TouchableOpacity
                         onPress={() => setCancellationModal(true)}
                     >
                         <CancelIcon />
                     </TouchableOpacity>
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
 
                         style={{ width: "40%", height: 45, borderRadius: 26, borderWidth: 1, borderColor: 'white', alignItems: 'center', justifyContent: 'center' }}>
                         <Text style={{ fontFamily: 'ABRe', fontSize: 11.94, color: 'white' }}>Book Again</Text>
-                    </TouchableOpacity>
-                    <MainButton
-                        text={"Checkout"}
-                        btnStyle={{ width: "40%", height: 45 }}
-                        textStyle={{ fontSize: 11.94, }}
-                        onPress={() => navigate('CheckOut')}
-                    />
+                    </TouchableOpacity> */}
+                    {
+                        params?.is_paid == 0 &&
+
+                        <MainButton
+                            text={"Checkout"}
+                            btnStyle={{ width: "40%", height: 45 }}
+                            textStyle={{ fontSize: 11.94, }}
+                            onPress={() => navigate('CheckOut',params)}
+                        />
+                    }
 
                 </View>
 

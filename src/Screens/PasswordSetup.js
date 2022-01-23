@@ -31,7 +31,7 @@ const PasswordSetup = () => {
                 data1.sal_password = sal_password;
                 storeItem('login_data', data1)
                     .then(data => {
-                        navigate('SearchAddress')
+                        navigate('Address')
                     })
             })
 

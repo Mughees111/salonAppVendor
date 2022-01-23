@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Dimensions, Modal, Switch } from 'react-native'
 import { goBack, navigate } from '../../Navigations';
 import { ArrowLeft, ArrowRight, ArrowRight1, FbIcon, GoogleIcon, PlusCircle } from '../Components/Svgs';
@@ -30,7 +30,9 @@ const useForceUpdate = () => {
 }
 
 var alertRef;
-const SalonTiming = () => {
+
+
+const EditHours = (props) => {
 
     const forceUpdate = useForceUpdate();
     const [mode, setMode] = useState('time');
@@ -42,15 +44,16 @@ const SalonTiming = () => {
     const [setSalonTiming, setSetSalonTiming] = useState(false)
     const [salOnOf, setSalOnOf] = useState(true)
 
+    const hoursParams = props?.route?.params?.sal_hours ? props?.route?.params?.sal_hours : null
 
     const [salon_hours, setSalonHours] = useState([
-        ["00:00", "00:00"],
-        ["00:00", "00:00"],
-        ["00:00", "00:00"],
-        ["00:00", "00:00"],
-        ["00:00", "00:00"],
-        ["00:00", "00:00"],
-        ["00:00", "00:00"],
+        [hoursParams && hoursParams[0][0] ? hoursParams[0][0] : "00:00", hoursParams && hoursParams[0][1] ? hoursParams[0][1] : "00:00"],
+        [hoursParams && hoursParams[1][0] ? hoursParams[1][0] : "00:00", hoursParams && hoursParams[1][1] ? hoursParams[1][1] : "00:00"],
+        [hoursParams && hoursParams[2][0] ? hoursParams[2][0] : "00:00", hoursParams && hoursParams[2][1] ? hoursParams[2][1] : "00:00"],
+        [hoursParams && hoursParams[3][0] ? hoursParams[3][0] : "00:00", hoursParams && hoursParams[3][1] ? hoursParams[3][1] : "00:00"],
+        [hoursParams && hoursParams[4][0] ? hoursParams[4][0] : "00:00", hoursParams && hoursParams[4][1] ? hoursParams[4][1] : "00:00"],
+        [hoursParams && hoursParams[5][0] ? hoursParams[5][0] : "00:00", hoursParams && hoursParams[5][1] ? hoursParams[5][1] : "00:00"],
+        [hoursParams && hoursParams[6][0] ? hoursParams[6][0] : "00:00", hoursParams && hoursParams[6][1] ? hoursParams[6][1] : "00:00"],
     ])
 
     const daysArr = [
@@ -63,59 +66,44 @@ const SalonTiming = () => {
         "Sunday",
     ]
 
-    // const ItsYourBirthday = () => {
-    const initialBirthday = [
-        { id: "day", value: 16 },
-        { id: "month", value: 4 },
-        { id: "year", value: 1970 },
-    ];
-    // }
-
-    const [birthday, setBirtday] = useState(initialBirthday);
-
-    const date1 = [
-        { id: "day", label: "", min: 0, max: 31 },
-        { id: "month", label: "", min: 0, max: 12 },
-        { id: "year", label: "", min: 1900, max: new Date().getFullYear() },
-    ]
 
 
 
-    async function next() {
 
+    function next() {
 
         retrieveItem('login_data')
-            .then(async (dataa) => {
-                var data1 = dataa;
-                data1.step = 6;
-                data1.sal_hours = salon_hours;
-                console.log(data1)
+            .then(data1 => {
+                const reqObj = {
+                    sal_hours: salon_hours,
+                    token: data1.token
+                }
                 setLoading(true)
-
-                apiRequest(data1, 'salon_signup')
+                apiRequest(reqObj, 'update_salon')
                     .then(data => {
-                        setLoading(false)
-                        console.log('console1')
-                        console.log(data)
+                        setLoading(false);
                         if (data.action == 'success') {
-                            alertRef.alertWithType("success", "Success", "");
-                            storeItem('login_data', data.data)
-                                .then(data => {
-                                    navigate('AddSalonPhoto')
-                                })
+
+                            alertRef.alertWithType("success", "Success");
+                            storeItem('login_data', data.data);
+                            setTimeout(() => {
+                                goBack();
+                            }, 800);
+                            // setSalData(data.data);
+                            // clean up states
+
                         }
                         else {
                             alertRef.alertWithType("error", "Error", data.error);
+                            setLoading(false);
                         }
+
                     })
                     .catch(err => {
-                        console.log('console2')
-                        console.log(err)
-                        alertRef.alertWithType("error", "Error", "Internet Error");
                         setLoading(false)
+                        doConsole('error is this')
+                        console.log(err)
                     })
-
-
             })
 
 
@@ -123,10 +111,17 @@ const SalonTiming = () => {
 
     }
 
+    useEffect(() => {
+        if (!props?.route?.params?.sal_id) {
+            goBack()
+        }
+
+    }, [])
+
 
 
     const DatePickerModel = () => (
-    
+
         <DateTimePicker
             value={new Date(-1232403882588)}
             mode='time'
@@ -169,7 +164,7 @@ const SalonTiming = () => {
 
         />
 
-     
+
     )
 
     const DatePickerModel2 = () => (
@@ -416,6 +411,7 @@ const SalonTiming = () => {
                                     return
                                 }
                             }
+                            console.log(salon_hours)
                             next();
                             // navigate('AddSalonPhoto')
                         }}
@@ -446,28 +442,5 @@ const styles = StyleSheet.create({
 
 })
 
-export default SalonTiming
+export default EditHours
 
-{/* <MainButton
-                    text={"Closed"}
-                    onPress={() => {
-                        let arr = salon_hours;
-                        arr[idToSetTime][0] = 'closed';
-                        // arr.splice()
-                        arr[idToSetTime][1] = '';
-                        console.log(arr)
-                        setSalonHours(arr)
-                        forceUpdate()
-                        setSetSalonTiming(false)
-                    }}
-                /> */}
-{/* <MainButton
-                    btnStyle={{ marginTop: 20 }}
-                    text={"Set Time"}
-                    onPress={() => {
-                        setPickerModal(true);
-                        setSetSalonTiming(false)
-                        forceUpdate()
-
-                    }}
-                /> */}
