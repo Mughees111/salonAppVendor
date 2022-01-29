@@ -10,7 +10,7 @@ import { MainButton } from '../Components/Buttons';
 import { OnBoardingHeader } from '../Components/Header';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { storeItem, validateEmail } from '../utils/functions';
+import { storeItem, validateEmail,useForceUpdate } from '../utils/functions';
 import Loader from '../utils/Loader';
 import DropdownAlert from 'react-native-dropdownalert';
 import { apiRequest } from '../utils/apiCalls';
@@ -19,17 +19,22 @@ import { apiRequest } from '../utils/apiCalls';
 var alertRef;
 const EmailAddress = () => {
 
+    const forceUpdate = useForceUpdate();
     const [sal_email, setSalEmail] = useState('')
     const [loading, setLoading] = useState(false)
 
     function next() {
-        if (!validateEmail(sal_email)) {
+
+        var email = sal_email;
+        email = email.trim();
+
+        if (!validateEmail(email)) {
             alertRef.alertWithType("error", "Error", "Please provide a valid email");
             return;
         }
         setLoading(true)
 
-        apiRequest({ sal_email: sal_email }, 'check_sal_email_exists')
+        apiRequest({ sal_email: email }, 'check_sal_email_exists')
             .then(data => {
                 if (data.action == 'success') {
                     setLoading(false)
@@ -74,22 +79,22 @@ const EmailAddress = () => {
                         onChangeText={setSalEmail}
                         style={{ marginTop: 20 }}
                     />
-                    <Text style={{ alignSelf: 'center', fontSize: 16, color: acolors.white, marginTop: 55, fontFamily: 'ABRe' }}>or continue with</Text>
+                    {/* <Text style={{ alignSelf: 'center', fontSize: 16, color: acolors.white, marginTop: 55, fontFamily: 'ABRe' }}>or continue with</Text> */}
 
 
 
-                    <View style={{ alignSelf: 'center', flexDirection: 'row', marginTop: 15 }}>
+                    {/* <View style={{ alignSelf: 'center', flexDirection: 'row', marginTop: 15 }}>
                         <TouchableOpacity style={{ width: 92, height: 48, borderWidth: 1, borderColor: acolors.white, borderRadius: 56, alignItems: 'center', justifyContent: 'center', }}>
                             <FbIcon />
                         </TouchableOpacity>
                         <TouchableOpacity style={{ width: 92, height: 48, borderWidth: 1, borderColor: acolors.white, borderRadius: 56, alignItems: 'center', justifyContent: 'center', marginLeft: 10 }}>
                             <GoogleIcon />
                         </TouchableOpacity>
-                    </View>
+                    </View> */}
 
                     <MainButton
                         text="Continue"
-                        btnStyle={{ marginTop: 30 }}
+                        btnStyle={{ marginTop: 50 }}
                         onPress={() => {
                             next()
                             // navigate('AboutInfo') 

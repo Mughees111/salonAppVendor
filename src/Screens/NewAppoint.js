@@ -1,5 +1,6 @@
+
+import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, TextInput, Dimensions } from 'react-native'
 import { goBack, navigate } from '../../Navigations';
 
@@ -10,9 +11,20 @@ import { MainButton } from '../Components/Buttons';
 import { ArrowForward, ArrowRight, ChatSendIcon, GroupIcon, NotificationIcon, SearchIcon, ArrowLeft, MsgIcon, CallIcon, MailIcon, ArrowRight1, PlusIcon, PlusCircle, PlusIcon1, ArrowDown } from '../Components/Svgs';
 import { Entypo } from '@expo/vector-icons';
 
+import { useFocusEffect } from '@react-navigation/native';
+import { apiRequest } from '../utils/apiCalls';
+import {
+    retrieveItem, useForceUpdate, doConsole, storeItem
+} from '../utils/functions';
+import Loader from '../utils/Loader';
+import DropdownAlert from 'react-native-dropdownalert';
 
-const NewAppoint = () => {
 
+const NewAppoint = (props) => {
+
+    const forceUpdate = useForceUpdate();
+    const params = props.route.params;
+    const [userData, setUserData] = useState()
     const Header = () => (
         <View style={{ width: "100%", flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
             <TouchableOpacity
@@ -25,6 +37,19 @@ const NewAppoint = () => {
 
         </View>
     )
+
+    useFocusEffect(React.useCallback(
+        () => {
+            retrieveItem('login_data')
+                .then(data => {
+                    setUserData(data)
+                    forceUpdate()
+                })
+        },
+        [],
+    ))
+
+
     return (
         <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
             <StatusBar
@@ -42,21 +67,25 @@ const NewAppoint = () => {
                     contentContainerStyle={{ paddingBottom: 100 }}
                     style={{ marginTop: 10 }}>
                     <View style={{ width: "90%", alignSelf: 'center' }}>
-                        <TouchableOpacity onPress={() => navigate('ClientProfile')} style={{ flexDirection: 'row', marginTop: 15, width: "100%" }}>
+                        <TouchableOpacity
+                            onPress={() => navigate('ClientProfile')}
+                            style={{ marginTop: 15, flexDirection: 'row', width: "100%", alignSelf: 'center' }}>
                             <Image
-                                style={{ width: 49, height: 49, borderRadius: 49 / 2 }}
-                                source={require('../assets/img1.png')}
+                                style={{ width: 109, height: 109, borderRadius: 109 / 2, }}
+                                source={{ uri: params?.profile_pic }}
                             />
-                            <View style={{ marginLeft: 15 }}>
-                                <Text style={{ fontFamily: "ABRe", fontSize: 12.89, color: 'white', lineHeight: 21, }}>Bongani</Text>
-                                <Text style={{ fontFamily: "ABRe", fontSize: 12.89, color: 'white', lineHeight: 21 }}>bongani@gmail.com</Text>
+                            <View style={{ marginLeft: 25, }}>
+                                <Text style={{ fontFamily: "ABRe", fontSize: 16.89, color: 'white', lineHeight: 21, marginTop: 10 }}>{params?.name}</Text>
+                                <Text style={{ fontFamily: "ABRe", fontSize: 16.89, color: 'white', lineHeight: 21, marginTop: 10, }}>{params?.email}</Text>
+                                <Text style={{ fontFamily: "ABRe", fontSize: 16.89, color: 'white', lineHeight: 21, marginTop: 10, }}>{params?.phone}</Text>
                             </View>
                         </TouchableOpacity>
 
 
-                        <Text style={{ fontFamily: 'ABRe', fontSize: 14, color: '#FCFCFC', marginTop: 10 }}>Choose Sevice</Text>
+
+                        {/* <Text style={{ fontFamily: 'ABRe', fontSize: 14, color: '#FCFCFC', marginTop: 10 }}>Choose Sevice</Text>
                         <View style={{ width: "100%", height: 42, marginTop: 5, borderWidth: 1, borderColor: '#FCFCFC', borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
-                            {/* <Text>92</Text> */}
+                            
                             <PrivacyPicker
                                 selected={{ title: "Men’s new hair cut" }}
                                 data={{ title: "Men’s new hair cut" }, { title: "service 2" }, { title: "service 3" }}
@@ -74,7 +103,7 @@ const NewAppoint = () => {
                         <TouchableOpacity style={{ width: "100%", paddingHorizontal: 10, height: 42, marginTop: 5, borderWidth: 1, borderColor: '#FCFCFC', borderRadius: 8, alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row' }}>
                             <Text style={{ fontFamily: 'ABRe', fontSize: 14, color: '#FCFCFC' }}>11:15 am</Text>
                             <ArrowDown />
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
 
                     </View>
 
@@ -83,7 +112,11 @@ const NewAppoint = () => {
             </SafeAreaView>
             <MainButton
                 btnStyle={{ position: 'absolute', bottom: 40, width: "90%", alignSelf: 'center' }}
-                text={"Save"}
+                text={"Next"}
+                onPress={() => {
+                    userData.user_id = props.route.params.id
+                    navigate('SeeAllServices', userData)
+                }}
             />
         </View>
     )

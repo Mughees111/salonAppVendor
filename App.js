@@ -62,6 +62,11 @@ import { Provider } from './src/Context/DataContext';
 import EditProfile from './src/Screens/EditProfile';
 import EditHours from './src/Screens/EditHours';
 import EditServices from './src/Screens/EditServices';
+import SignIn from './src/Screens/SignIn';
+import AllAppoints from './src/Screens/AllAppoints';
+import SeeAllServices from './src/Screens/SeeAllServices';
+import BookAppointment from './src/Screens/BookAppointment';
+import MakeGroup from './src/Screens/MakeGroup';
 
 
 const Stack = createStackNavigator()
@@ -72,6 +77,7 @@ function AuthStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }} >
       <Stack.Screen name="GetStarted" component={GetStarted} />
+      <Stack.Screen name="SignIn" component={SignIn} />
       <Stack.Screen name="EmailAddress" component={EmailAddress} />
       <Stack.Screen name="AboutInfo" component={AboutInfo} />
       <Stack.Screen name="PasswordSetup" component={PasswordSetup} />
@@ -107,7 +113,12 @@ function AppointmentStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }} >
       <Stack.Screen name="Appointments" component={Appointments} />
+      <Stack.Screen name="AllAppoints" component={AllAppoints} />
       <Stack.Screen name="PendingAppoint" component={PendingAppoint} />
+      <Stack.Screen name="SeeAllServices" component={SeeAllServices} />
+      <Stack.Screen name="BookAppointment" component={BookAppointment} />
+      <Stack.Screen name="AddNewClient" component={AddNewClient} />
+      <Stack.Screen name="NewAppoint" component={NewAppoint} />
     </Stack.Navigator>
 
   )
@@ -354,6 +365,8 @@ export default function App() {
 
             <Stack.Screen name="Chats" component={Chats} />
             <Stack.Screen name="MassMsg" component={MassMsg} />
+
+            <Stack.Screen name="MakeGroup" component={MakeGroup} />
 
           </Stack.Navigator>
         }

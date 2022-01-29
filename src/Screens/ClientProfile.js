@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, TextInput, Dimensions } from 'react-native'
 import { goBack, navigate } from '../../Navigations';
 
@@ -10,12 +10,60 @@ import { MainButton } from '../Components/Buttons';
 import { ArrowForward, ArrowRight, ChatSendIcon, GroupIcon, NotificationIcon, SearchIcon, ArrowLeft, MsgIcon, CallIcon, MailIcon, ArrowRight1, PlusIcon, PlusCircle, PlusIcon1 } from '../Components/Svgs';
 import { Entypo } from '@expo/vector-icons';
 
+import { useFocusEffect } from '@react-navigation/native';
+import { apiRequest } from '../utils/apiCalls';
+import { retrieveItem, useForceUpdate, doConsole, storeItem } from '../utils/functions';
+import Loader from '../utils/Loader';
+import DropdownAlert from 'react-native-dropdownalert';
 
-const ClientProfile = () => {
+var alertRef;
+
+
+
+const ClientProfile = (props) => {
 
 
     const [tabs, setTabs] = useState('appointments')
+    const [clients, setSalClients] = useState([]);
+    const [clientApps, setClientApps] = useState([]);
+    const [cancellation, setCancellation] = useState([]);
 
+    const forceUpdate = useForceUpdate();
+    // const { state } = useContext(Context);
+    const [loading, setLoading] = useState(false);
+
+    function get_client_apps(date) {
+        setLoading(true)
+        doConsole(props.route.params)
+        retrieveItem('login_data')
+            .then(data => {
+                apiRequest({ token: data.token, user_id: props?.route?.params?.id }, 'get_client_apps')
+                    .then(data1 => {
+                        setLoading(false)
+                        // console.log(data1)
+                        if (data1.action == 'success') {
+                            setClientApps(data1.data)
+                            // let cancelled = appoints.filter(item => item.app_status == 'cancelled')
+                            const cancel = data1.data.filter(v=>v.app_status == 'cancelled')
+                            doConsole('cancel = ')
+                            doConsole(cancel)
+                            setCancellation(cancel)
+                            forceUpdate();
+                        }
+                        else {
+                            alertRef.alertWithType("error", "Error", data.error);
+                        }
+
+                    })
+                    .catch(err => {
+                        setLoading(false)
+                    })
+            })
+    }
+
+    useEffect(() => {
+        get_client_apps()
+    }, []);
 
 
     const Header = () => (
@@ -27,7 +75,7 @@ const ClientProfile = () => {
             </TouchableOpacity>
             <Text style={{ fontFamily: 'ABRe', fontSize: 20.67, color: 'white', marginTop: -15 }}>Client Profile</Text>
             <TouchableOpacity onPress={() => navigate('EditClientsProfile')}>
-                <Text style={{ fontFamily: 'ABRe', fontSize: 14.67, color: 'white' }}>Edit</Text>
+                <Text style={{ fontFamily: 'ABRe', fontSize: 14.67, color: 'white' }}>  </Text>
             </TouchableOpacity>
 
         </View>
@@ -38,12 +86,16 @@ const ClientProfile = () => {
 
     return (
         <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
-              <StatusBar
+            <StatusBar
                 style='light'
                 backgroundColor={acolors.bgColor}
                 translucent={false}
             // translucent={false}
             />
+
+            {loading && <Loader />}
+            <DropdownAlert ref={(ref) => alertRef = ref} />
+
             <SafeAreaView style={{ marginTop: 10, }}>
                 <View style={{ width: "90%", alignSelf: 'center' }}>
                     <Header />
@@ -58,9 +110,11 @@ const ClientProfile = () => {
                             <View>
                                 <Image
                                     style={{ width: 99, height: 95, borderRadius: 6.31, }}
-                                    source={require('../assets/img3.png')}
+                                    source={{ uri: props?.route?.params?.profile_pic }
+                                        // require('../assets/img3.png')
+                                    }
                                 />
-                                <Text style={{ fontFamily: 'ABRe', fontSize: 30.3, color: 'white', alignSelf: 'center', marginTop: 20 }}>Bongani</Text>
+                                <Text style={{ fontFamily: 'ABRe', fontSize: 30.3, color: 'white', alignSelf: 'center', marginTop: 20 }}>{props?.route?.params?.name}</Text>
 
                             </View>
                             <View>
@@ -80,43 +134,44 @@ const ClientProfile = () => {
                         </View>
 
                         <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 10 }}>
-                            <Text style={{ fontFamily: 'ABRe', fontSize: 12, color: 'white' }}>4 Appointment</Text>
-                            <Text style={{ fontFamily: 'ABRe', fontSize: 12, color: 'white' }}>1 Calcellations</Text>
+                              <Text style={{ fontFamily: 'ABRe', fontSize: 12, color: 'white' }}>{clientApps.length} Appointment</Text>
+                            <Text style={{ fontFamily: 'ABRe', fontSize: 12, color: 'white' }}>{cancellation.length} Calcellations</Text>
                         </View>
                     </View>
                     <View style={{ flexDirection: 'row', marginTop: 20, width: "100%" }}>
                         <TouchableOpacity
                             onPress={() => { setTabs('appointments') }}
-                            activeOpacity={0.7} style={{ borderBottomWidth: 1, borderColor: tabs == 'appointments' ? acolors.primary : 'white', width: "25%", alignItems: 'center' }}>
+                            activeOpacity={0.7} style={{ borderBottomWidth: 1, borderColor: tabs == 'appointments' ? acolors.primary : 'white', width: "50%", alignItems: 'center' }}>
                             <Text style={styles.tabsText}>Appointments</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity
+                        {/* <TouchableOpacity
                             onPress={() => { setTabs('photos') }}
                             activeOpacity={0.7} style={{ borderBottomWidth: 1, borderColor: tabs == 'photos' ? acolors.primary : 'white', width: "25%", alignItems: 'center' }}>
                             <Text style={styles.tabsText}>Photos</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                         <TouchableOpacity
                             onPress={() => { setTabs('about') }}
-                            activeOpacity={0.7} style={{ borderBottomWidth: 1, borderColor: tabs == 'about' ? acolors.primary : 'white', width: "25%", alignItems: 'center' }}>
+                            activeOpacity={0.7} style={{ borderBottomWidth: 1, borderColor: tabs == 'about' ? acolors.primary : 'white', width: "50%", alignItems: 'center' }}>
                             <Text style={styles.tabsText}>About Client</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity
+                        {/* <TouchableOpacity
                             onPress={() => { setTabs('payments') }}
-                            activeOpacity={0.7} style={{ borderBottomWidth: 1, borderColor: tabs == 'payments' ? acolors.primary : 'white', width: "25%", alignItems: 'center' }}>
+                            activeOpacity={0.7} style={{ borderBottomWidth: 1, borderColor: tabs == 'payments' ? acolors.primary : 'white', width: "35%", alignItems: 'center' }}>
                             <Text style={styles.tabsText}>Payments</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                     </View>
                     {
                         tabs == 'appointments' &&
-                        [1, 2, 4, 5].map((v, i) => {
+                        clientApps?.map((v, i) => {
                             return (
                                 <TouchableOpacity key={i} style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, marginTop: 20, justifyContent: 'space-between' }}>
                                     <View>
-                                        <Text style={{ fontFamily: 'ABRe', fontSize: 15.37, color: 'white' }}>09:45 am - 10:00 am</Text>
-                                        <Text style={{ fontFamily: 'ABRe', fontSize: 17.85, color: 'white' }}>Mens’s New Hair Cut</Text>
+                                        <Text style={{ fontFamily: 'ABRe', fontSize: 15.37, color: 'white' }}>{v.app_start_time} - {v.app_end_time}</Text>
+                                        <Text style={{ fontFamily: 'ABRe', fontSize: 17.85, color: 'white' }}>{v.app_services}</Text>
                                     </View>
-                                    <Text style={{ fontFamily: 'ABRe', fontSize: 15.97, color: 'white', marginLeft: 30 }}>$90</Text>
-                                    <ArrowRight1 />
+                                    <Text style={{ fontFamily: 'ABRe', fontSize: 15.97, color: 'white', marginLeft: 30 }}>${v.app_price}</Text>
+                                    <Text style={{ fontFamily: 'ABRe', fontSize: 15.97, color: 'white', marginLeft: 30,textTransform:'capitalize' }}>{v.app_status}</Text>
+                                    {/* <ArrowRight1 /> */}
                                 </TouchableOpacity>
                             )
                         })
@@ -134,16 +189,16 @@ const ClientProfile = () => {
                         tabs == 'about' &&
                         <View style={{ paddingHorizontal: 20, marginTop: 15, }}>
                             <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-between', paddingBottom: 10, paddingHorizontal: 2, borderBottomWidth: 1, borderColor: 'rgba(255,255,255,0.15)', }}>
-                                <Text style={{ fontFamily: 'ABRe', fontSize: 14, color: 'white' }}>Clients Notes</Text>
-                                <ArrowRight1 />
+                                <Text style={{ fontFamily: 'ABRe', fontSize: 14, color: 'white' }}>Phone: {props?.route?.params?.phone}</Text>
+                                {/* <ArrowRight1 /> */}
                             </View>
                             <View style={{ flexDirection: 'row', marginTop: 15, justifyContent: 'space-between', paddingBottom: 10, paddingHorizontal: 2, borderBottomWidth: 1, borderColor: 'rgba(255,255,255,0.15)', }}>
-                                <Text style={{ fontFamily: 'ABRe', fontSize: 14, color: 'white' }}>Email</Text>
-                                <ArrowRight1 />
+                                <Text style={{ fontFamily: 'ABRe', fontSize: 14, color: 'white' }}>Email: {props?.route?.params?.email}</Text>
+                                {/* <ArrowRight1 /> */}
                             </View>
                             <View style={{ flexDirection: 'row', marginTop: 15, justifyContent: 'space-between', paddingBottom: 10, paddingHorizontal: 2, borderBottomWidth: 1, borderColor: 'rgba(255,255,255,0.15)', }}>
-                                <Text style={{ fontFamily: 'ABRe', fontSize: 14, color: 'white' }}>Address</Text>
-                                <ArrowRight1 />
+                                <Text style={{ fontFamily: 'ABRe', fontSize: 14, color: 'white' }}>Address:{props?.route?.params?.address} </Text>
+                                {/* <ArrowRight1 /> */}
                             </View>
 
                         </View>
@@ -156,7 +211,7 @@ const ClientProfile = () => {
 
             </SafeAreaView>
             <TouchableOpacity
-                onPress={() => navigate('NewAppoint')}
+                onPress={() => navigate('NewAppoint',props?.route?.params)}
                 style={{ width: 58, height: 58, borderRadius: 58 / 2, backgroundColor: 'black', alignItems: 'center', justifyContent: 'center', position: 'absolute', right: 20, bottom: 20 }}>
                 <Entypo name='plus' size={30} color={"white"} />
             </TouchableOpacity>

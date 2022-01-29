@@ -45,9 +45,10 @@ const PrivacyPicker = (props: Props) => {
   const do_filter = (str) => {
     str = str.toLowerCase();
     var all = data;
-
+    console.log(all)
     var filtered_data = all.filter((v) => {
       var value = v.title.toLowerCase();
+      console.log(value)
       return value.includes(str) ? true : false
     })
     setFilteredData(filtered_data);
@@ -119,6 +120,7 @@ const PrivacyPicker = (props: Props) => {
       <StatusBar
         style="light"
         backgroundColor="#111111"
+        translucent={false}
       />
       <TouchableOpacity
         onPress={() => {

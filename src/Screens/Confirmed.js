@@ -7,6 +7,13 @@ import { FlatList } from 'react-native-gesture-handler';
 import { MainButton } from '../Components/Buttons';
 import RNModal from 'react-native-modal';
 import { StatusBar } from 'expo-status-bar';
+import { useFocusEffect } from '@react-navigation/native';
+
+
+import { apiRequest } from '../utils/apiCalls';
+import { retrieveItem, useForceUpdate, doConsole } from '../utils/functions';
+import Loader from '../utils/Loader';
+import DropdownAlert from 'react-native-dropdownalert';
 
 
 const Confirmed = (props) => {
@@ -14,8 +21,19 @@ const Confirmed = (props) => {
 
 
     const [cancellationModal, setCancellationModal] = useState(false)
+    const [userData, setUserData] = useState();
 
     const params = props?.route?.params;
+
+    useFocusEffect(React.useCallback(
+        () => {
+            retrieveItem('login_data')
+                .then(data => {
+                    setUserData(data)
+                })
+        },
+        [],
+    ))
 
     const Header = () => (
         <View style={{ width: "100%", flexDirection: 'row', justifyContent: 'space-between' }} >
@@ -140,11 +158,11 @@ const Confirmed = (props) => {
                 </View>
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', marginTop: 15 }}>
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                         onPress={() => setCancellationModal(true)}
                     >
                         <CancelIcon />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     {/* <TouchableOpacity
 
                         style={{ width: "40%", height: 45, borderRadius: 26, borderWidth: 1, borderColor: 'white', alignItems: 'center', justifyContent: 'center' }}>
@@ -154,10 +172,24 @@ const Confirmed = (props) => {
                         params?.is_paid == 0 &&
 
                         <MainButton
-                            text={"Checkout"}
+                            text={"Rescheduled"}
                             btnStyle={{ width: "40%", height: 45 }}
                             textStyle={{ fontSize: 11.94, }}
-                            onPress={() => navigate('CheckOut', params)}
+                            onPress={() => {
+
+                                let makeBookedServices = params.app_services.split(",");
+                                params.sal_services = userData?.sal_services;
+                                doConsole(makeBookedServices);
+                                for (let i = 0; i < userData?.sal_services.length; i++) {
+                                    if (makeBookedServices.includes(userData?.sal_services[i].s_name)) {
+                                        params.sal_services[i].isAdded = true;
+                                    }
+                                }
+                                // doConsole(params)
+                                navigate('SeeAllServices', params)
+
+                            }}
+                        // navigate('CheckOut', params)}
                         />
                     }
 

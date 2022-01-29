@@ -3,9 +3,9 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollVi
 import { ArrowDown, ArrowForward, ArrowRight, ChatSendIcon, GroupIcon, NotificationIcon, SearchIcon } from '../Components/Svgs';
 import { Entypo } from '@expo/vector-icons';
 import { acolors } from '../Components/AppColors';
-import { navigate } from '../../Navigations';
+import { navigate, navigateFromStack } from '../../Navigations';
 import { StatusBar } from 'expo-status-bar';
-import { Calender } from '../Components/Calender';
+import Calender from '../Components/Calender';
 
 import { useFocusEffect } from '@react-navigation/native';
 import { apiRequest } from '../utils/apiCalls';
@@ -91,16 +91,19 @@ const Appointments = () => {
                 if (!date) {
                     date = new Date();
                 }
-                
+
 
                 setCurrentDate(date);
                 let day = date.getDay();
-                let sal_day_hours = data.sal_hours[day - 1];
-
+                
+                if (day == 0) day = 6
+                else day = day - 1
+                let sal_day_hours = data.sal_hours[day];
                 if (sal_day_hours) {
                     var sal_start_time = time_slots.indexOf(sal_day_hours[0]);
                     var sal_end_time = time_slots.indexOf(sal_day_hours[1]);
                 }
+                
                 var temp = []; // salon_hours
                 let j = 0;
                 for (let i = parseInt(sal_start_time); i <= parseInt(sal_end_time); i++) {
@@ -117,6 +120,7 @@ const Appointments = () => {
                     app_date: date1
                 }
                 if (!temp[0]) {
+                    // Alert.alert('asd')
                     setLoading(false)
                     setMyAppoints([]);
                     return
@@ -177,7 +181,9 @@ const Appointments = () => {
                 }
             }
         }
+        doConsole('t,emp')
         var temp = myAppointsLocal;
+        // doConsole(temp)
 
         for (let i = 0; i < myAppointsLocal.length; i++) {
             if (i == 0 && myAppointsLocal[i].app_start_time != salHours[0]) {
@@ -192,18 +198,24 @@ const Appointments = () => {
                 });
             }
 
-            var time1 = new Date("January 22, 2022 " + myAppointsLocal[i].app_end_time)
-            var time2 = new Date("January 22, 2022 " + temp[i + 1]?.app_start_time)
+            var time1 = new Date("January 31, 2022 " + myAppointsLocal[i].app_end_time)
+            var time2 = new Date("January 31, 2022 " + temp[i + 1]?.app_start_time)
 
-            var temp1 = time1.getMinutes();
+
+            var temp1 = time1?.getMinutes();
+            var temp2 = time2.getMinutes();
             if (temp1 > 0 && temp1 < 30) {
                 time1.setMinutes(30)
             }
             else if (temp1 > 30 && temp1 != 0) {
-                time1.setHours(time1.getHours() + 1)
+                time1.setHours(time1.getHours() + 1);
+                time1.setMinutes(0);    // reset the minutes also
             }
+
             var diff = (time2 - time1) / 1000;
             diff /= 60;
+            console.log('diff')
+            console.log(diff)
             final.push(myAppointsLocal[i]);
             if (diff > 0) {
                 final.push({
@@ -219,20 +231,14 @@ const Appointments = () => {
 
 
     useFocusEffect(React.useCallback(() => {
-        // doConsole(currentDate)
-        // if(!state.lastFetchDate){
-            // get_sal_appoints(state.lastFetchDate)
-        // }
-        
-        // forceUpdate();
-    }, [],
-    ))
-
-    useEffect(() => {
-        // makeAppointsB()
         get_sal_appoints()
+    }, []))
 
-    }, []);
+    // useEffect(() => {
+    //     // makeAppointsB()
+
+
+    // }, []);
 
 
 
@@ -255,9 +261,16 @@ const Appointments = () => {
             </View>
             <TouchableOpacity
                 onPress={() => {
-                    let arr = myAppoints;
-                    let pendings = arr.filter(item => item.app_status == 'pending');
-                    navigate('PendingAppoint', pendings);
+                    setLoading(true);
+                    // let arr = appoints;
+                    let arr1 = [];
+                    let pendings = appoints.filter(item => item.app_status == 'pending');
+                    let scheduled = appoints.filter(item => item.app_status == 'scheduled')
+                    let cancelled = appoints.filter(item => item.app_status == 'cancelled')
+
+                    arr1.push({ pendings, scheduled, cancelled })
+                    setLoading(false)
+                    navigate('AllAppoints', arr1);
                 }}
             >
                 <Text style={{ fontFamily: 'ABRe', fontSize: 14.67, color: 'white' }}>See All</Text>
@@ -276,9 +289,11 @@ const Appointments = () => {
             <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
                 <Header />
                 {/* <Text style={{ fontFamily: 'ABRe', fontSize: 14.67, color: 'white', alignSelf: 'center', marginTop: 5 }}>10:00 am - 7:00 pm     </Text> */}
-                
+
                 <Calender
                     onDayPress={(v) => {
+                        // doConsole('v = ')
+                        // doConsole(v)
                         get_sal_appoints(v)
                         // setAppDate(v)
                     }}
@@ -350,8 +365,15 @@ const Appointments = () => {
                         </View>
                     </View>
                 </ScrollView>
-
             </SafeAreaView >
+            <TouchableOpacity
+                onPress={() => {
+                    navigateFromStack('AddNewClient');
+                    // navigate('NewAppoint', props?.route?.params)
+                }}
+                style={{ width: 58, height: 58, borderRadius: 58 / 2, backgroundColor: 'black', alignItems: 'center', justifyContent: 'center', position: 'absolute', right: 20, bottom: 20 }}>
+                <Entypo name='plus' size={30} color={"white"} />
+            </TouchableOpacity>
         </View >
     )
 }

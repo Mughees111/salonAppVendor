@@ -671,8 +671,8 @@ const SalonProfile = () => {
                         }
 
                         {/* Reviews */}
-                        <Text style={{ marginTop: 20, fontSize: 17, fontFamily: 'ABRe', color: 'white' }}>Reviews (113)</Text>
-                        <View>
+                        <Text style={{ marginTop: 20, fontSize: 17, fontFamily: 'ABRe', color: 'white' }}>Reviews</Text>
+                        {/* <View>
                             <Reviews
                                 name="William David:"
                                 image={require("../assets/reviewImg1.png")}
@@ -700,14 +700,14 @@ const SalonProfile = () => {
                             >
                                 <Text style={{ color: acolors.primary, fontFamily: 'ABRe', fontSize: 12, }}>View all reviews</Text>
                             </TouchableOpacity>
-                        </View>
+                        </View> */}
 
-                        <MainButton
+                        {/* <MainButton
                             btnStyle={{ marginTop: 15 }}
                             onPress={() => navigate('BookAppointment')}
                             text="Save"
 
-                        />
+                        /> */}
                     </View>
                 </ScrollView>
             </SafeAreaView>

@@ -104,7 +104,7 @@ const AboutInfo = () => {
                             {/* <Text>92</Text> */}
                             <PrivacyPicker
                                 selected={{ title: "+1" }}
-                                data={{ title: "+1" }}
+                                data={[{ title: "+1" }]}
                                 onValueChange={(index, title) => {
                                     // setCondition(title.title)
                                 }}

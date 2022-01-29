@@ -22,6 +22,7 @@ const PendingAppoint = (props) => {
     const forceUpdate = useForceUpdate();
     // const { state, setUserGlobal } = useContext(Context);
     const [loading, setLoading] = useState(false);
+    const [userData, setUserData] = useState();
 
     function confirm_app(app_id) {
 
@@ -36,7 +37,7 @@ const PendingAppoint = (props) => {
                     .then(data => {
                         setLoading(false)
                         if (data.action == 'success') {
-                            alertRef.alertWithType("success","Success");
+                            alertRef.alertWithType("success", "Success");
                             setTimeout(() => {
                                 goBack();
                             }, 600);
@@ -58,6 +59,16 @@ const PendingAppoint = (props) => {
 
 
     }
+
+    useFocusEffect(React.useCallback(
+        () => {
+            retrieveItem('login_data')
+                .then(data => {
+                    setUserData(data)
+                })
+        },
+        [],
+    ))
 
 
 
@@ -106,16 +117,27 @@ const PendingAppoint = (props) => {
                                     <View style={{ marginLeft: 10 }}>
                                         <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 5 }}>{item?.app_start_time} - {item?.app_end_time} ({item?.app_date})</Text>
                                         <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 10 }}>{item?.app_services}</Text>
-                                        <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 10,marginBottom:3 }}>{item?.is_paid == 1 ? "Paid: $"+ item?.app_price : "Cash Appointment" }</Text>
+                                        <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 10, marginBottom: 3 }}>{item?.is_paid == 1 ? "Paid: $" + item?.app_price : "Cash Appointment"}</Text>
                                     </View>
                                 </View>
+
                                 <TouchableOpacity
                                     onPress={() => {
                                         // doConsole(item)
-                                        navigate('CancelAppointment', item)
+                                        // navigate('CancelAppointment', item)
+                                        let makeBookedServices = item.app_services.split(",");
+                                        item.sal_services = userData?.sal_services;
+                                        doConsole(makeBookedServices);
+                                        for (let i = 0; i < userData?.sal_services.length; i++) {
+                                            if (makeBookedServices.includes(userData?.sal_services[i].s_name)) {
+                                                item.sal_services[i].isAdded = true
+                                            }
+                                        }
+                                        // doConsole(item)
+                                        navigate('SeeAllServices', item)
                                     }}
                                     style={{ alignSelf: 'center', width: "21%", height: 26, marginLeft: 10, borderRadius: 28, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'white', }}>
-                                    <Text style={{ fontFamily: 'ABRe', fontSize: 9.24, color: 'white', }}>Cancel</Text>
+                                    <Text style={{ fontFamily: 'ABRe', fontSize: 9.24, color: 'white', }}>Reschedule</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={() => {
@@ -125,6 +147,7 @@ const PendingAppoint = (props) => {
                                     style={{ alignSelf: 'center', width: "21%", marginLeft: 10, height: 26, borderRadius: 28, alignItems: 'center', justifyContent: 'center', backgroundColor: acolors.primary }}>
                                     <Text style={{ fontFamily: 'ABRe', fontSize: 9.24, color: '#000000', }}>Confirm</Text>
                                 </TouchableOpacity>
+
                             </View>
                         </View>
                     )}

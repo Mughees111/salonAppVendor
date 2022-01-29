@@ -20,7 +20,7 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.mughees1512.salonAppVendor"
+      "package": "com.mughees1512.salonAppVendor"      
     },
     "web": {
       "favicon": "./assets/favicon.png"

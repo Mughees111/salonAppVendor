@@ -57,6 +57,7 @@ const PasswordSetup = () => {
                         placeholder="Password"
                         style={{ marginTop: 20 }}
                         onChangeText={setSalPass}
+                        secureTextEntry={true}
                     />
 
                     <MainButton
