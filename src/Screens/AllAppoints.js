@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, TextInput, Alert } from 'react-native'
-import { ArrowDown, ArrowForward, ArrowLeft, ArrowRight, ChatSendIcon, GroupIcon, NotificationIcon, SearchIcon } from '../Components/Svgs';
+import { ArrowDown, ArrowForward, ArrowLeft, ArrowRight, ChatSendIcon, GroupIcon, NotificationIcon, RattingStarIcon, SearchIcon } from '../Components/Svgs';
 import { Entypo } from '@expo/vector-icons';
 import { acolors } from '../Components/AppColors';
 import { goBack, navigate } from '../../Navigations';
@@ -25,11 +25,16 @@ const AllAppoints = (props) => {
     const [loading, setLoading] = useState(false);
     const [tabs, setTabs] = useState('pendings');
 
+    const [pendings, setPendings] = useState(data[0]?.pendings);
+    const [scheduled, setScheduled] = useState(data[0]?.scheduled);
+    const [cancelled, setCancelled] = useState(data[0]?.cancelled);
+    const [completed, setCompleted] = useState(data[0]?.completed);
+
 
     function confirm_app(app_id) {
 
         if (!app_id) {
-            alert.alertWithType("error", "Error", 'Error while cancelling, Please try again later');
+            alertRef.alertWithType("error", "Error", 'Error while cancelling, Please try again later');
             return
         }
         setLoading(true)
@@ -62,6 +67,81 @@ const AllAppoints = (props) => {
 
     }
 
+
+    function complete_app(dataParam) {
+
+        if (!dataParam.app_id) {
+            alertRef.alertWithType("error", "Error", 'Error while updating, Please try again later');
+            return
+        }
+        setLoading(true)
+        retrieveItem('login_data')
+            .then(d => {
+                const reqObj = {
+                    token: d.token,
+                    app_id: dataParam.app_id,
+                    app_status: "completed"
+                }
+                apiRequest(reqObj, 'complete_app')
+                    .then(data => {
+                        // setLoading(false)
+                        if (data.action == 'success') {
+                            get_sal_appoints(dataParam.app_date, d.token)
+                            // alertRef.alertWithType("success", "Success");
+                            // forceUpdate();
+                        }
+                        else {
+                            alertRef.alertWithType("error", "Error", data.error);
+                        }
+
+                    })
+                    .catch(err => {
+                        setLoading(false)
+                    })
+            })
+
+
+    }
+
+
+    function get_sal_appoints(app_date, token) {
+
+        const reqObj = {
+            token,
+            app_date: app_date
+        }
+        doConsole(reqObj)
+        apiRequest(reqObj, 'get_sal_appoints')
+            .then(data1 => {
+                setLoading(false)
+                console.log(data1)
+                if (data1.action == 'success') {
+                    let item = data1.data;
+                    let pendings = item.filter(item => item.app_status == 'pending');
+                    let scheduled = item.filter(item => item.app_status == 'scheduled')
+                    let cancelled = item.filter(item => item.app_status == 'cancelled')
+                    let completed = item.filter(item => item.app_status == 'completed' || item.app_status == 'completed & reviewed')
+                    setPendings(pendings);
+                    setScheduled(scheduled);
+                    setCancelled(cancelled);
+                    setCompleted(completed);
+                    setTabs('completed');
+
+                }
+                else {
+                    alertRef.alertWithType("error", "Error", data.error);
+                }
+
+            })
+            .catch(err => {
+                setLoading(false)
+            })
+
+
+    }
+
+
+
     useFocusEffect(React.useCallback(
         () => {
             retrieveItem('login_data')
@@ -74,32 +154,46 @@ const AllAppoints = (props) => {
     ))
 
 
+
     const Tabs = () => (
         <View style={{ width: "100%", flexDirection: 'row', height: 40, marginTop: 20 }}>
             <TouchableOpacity
                 onPress={() => setTabs('pendings')}
-                style={{ width: "33%", height: 40, alignItems: 'center', justifyContent: 'center', backgroundColor: tabs == 'pendings' ? acolors.primary : acolors.bgColor, borderRadius: 10 }}>
-                <Text style={{ fontFamily: 'ABRe', fontSize: 18, color: tabs == 'pendings' ? acolors.bgColor : acolors.primary }}>Pendings</Text>
+                style={{ width: "25%", height: 40, alignItems: 'center', justifyContent: 'center', backgroundColor: tabs == 'pendings' ? acolors.primary : acolors.bgColor, borderRadius: 10 }}>
+                <Text style={{ fontFamily: 'ABRe', fontSize: 15, color: tabs == 'pendings' ? acolors.bgColor : acolors.primary }}>Pendings</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 onPress={() => setTabs('scheduled')}
-                style={{ width: "33%", height: 40, alignItems: 'center', justifyContent: 'center', backgroundColor: tabs == 'scheduled' ? acolors.primary : acolors.bgColor, borderRadius: 10 }}>
-                <Text style={{ fontFamily: 'ABRe', fontSize: 18, color: tabs == 'scheduled' ? acolors.bgColor : acolors.primary }}>Scheduled</Text>
+                style={{ width: "25%", height: 40, alignItems: 'center', justifyContent: 'center', backgroundColor: tabs == 'scheduled' ? acolors.primary : acolors.bgColor, borderRadius: 10 }}>
+                <Text style={{ fontFamily: 'ABRe', fontSize: 15, color: tabs == 'scheduled' ? acolors.bgColor : acolors.primary }}>Scheduled</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 onPress={() => setTabs('cancelled')}
-                style={{ width: "33%", height: 40, alignItems: 'center', justifyContent: 'center', backgroundColor: tabs == 'cancelled' ? acolors.primary : acolors.bgColor, borderRadius: 10 }}>
-                <Text style={{ fontFamily: 'ABRe', fontSize: 18, color: tabs == 'cancelled' ? acolors.bgColor : acolors.primary }}>Cancelled</Text>
+                style={{ width: "25%", height: 40, alignItems: 'center', justifyContent: 'center', backgroundColor: tabs == 'cancelled' ? acolors.primary : acolors.bgColor, borderRadius: 10 }}>
+                <Text style={{ fontFamily: 'ABRe', fontSize: 15, color: tabs == 'cancelled' ? acolors.bgColor : acolors.primary }}>Cancelled</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                onPress={() => setTabs('completed')}
+                style={{ width: "25%", height: 40, alignItems: 'center', justifyContent: 'center', backgroundColor: tabs == 'completed' ? acolors.primary : acolors.bgColor, borderRadius: 10 }}>
+                <Text style={{ fontFamily: 'ABRe', fontSize: 15, color: tabs == 'completed' ? acolors.bgColor : acolors.primary }}>Completed</Text>
             </TouchableOpacity>
         </View>
     )
 
 
-    const ScheduledActions = ({ item }) => (
-        <>
+    const MakeReview = ({ number }) => {
+        var stars = [];
+        for (let i = 1; i <= 5; i++) {
+            stars.push(
+                <View>
+                    <RattingStarIcon color={i > number ? "grey" : null} />
+                </View>
+            )
+        }
+        return <View style={{ flexDirection: 'row' }}>{stars}</View>
 
-        </>
-    )
+    }
+
 
 
     return (
@@ -125,7 +219,14 @@ const AllAppoints = (props) => {
                 <Tabs />
                 <FlatList
                     contentContainerStyle={{ paddingBottom: 100 }}
-                    data={tabs == 'pendings' ? data[0]?.pendings : tabs == 'scheduled' ? data[0]?.scheduled : tabs == 'cancelled' ? data[0]?.cancelled : null}
+                    data=
+                    {
+                        tabs == 'pendings' ? pendings :
+                            tabs == 'scheduled' ? scheduled :
+                                tabs == 'cancelled' ? cancelled :
+                                    tabs == 'completed' ? completed :
+                                        null
+                    }
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item, index }) => (
                         <View style={{ paddingBottom: 15, borderBottomWidth: 1, borderColor: 'rgba(255,255,255,0.1)', marginTop: 5 }}>
@@ -173,32 +274,53 @@ const AllAppoints = (props) => {
                                                 confirm_app(item.app_id)
                                             }}
                                             style={{ alignSelf: 'center', width: "21%", marginLeft: 10, height: 26, borderRadius: 28, alignItems: 'center', justifyContent: 'center', backgroundColor: acolors.primary }}>
-                                              <Text style={{ fontFamily: 'ABRe', fontSize: 9.24, color: '#000000', }}>Confirm</Text>
+                                            <Text style={{ fontFamily: 'ABRe', fontSize: 9.24, color: '#000000', }}>Confirm</Text>
                                         </TouchableOpacity>
                                     </>
                                 }
                                 {
                                     tabs == 'scheduled' &&
-                                    <TouchableOpacity
-                                        onPress={() => {
-                                            let makeBookedServices = item.app_services.split(",");
-                                            item.sal_services = userData?.sal_services;
-                                            doConsole(makeBookedServices);
-                                            for (let i = 0; i < userData?.sal_services.length; i++) {
-                                                if (makeBookedServices.includes(userData?.sal_services[i].s_name)) {
-                                                    item.sal_services[i].isAdded = true
+                                    <View style={{ flexDirection: 'row', width: "100%" }}>
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                let makeBookedServices = item.app_services.split(",");
+                                                item.sal_services = userData?.sal_services;
+                                                doConsole(makeBookedServices);
+                                                for (let i = 0; i < userData?.sal_services.length; i++) {
+                                                    if (makeBookedServices.includes(userData?.sal_services[i].s_name)) {
+                                                        item.sal_services[i].isAdded = true
+                                                    }
                                                 }
-                                            }
-                                            navigate('SeeAllServices', item)
+                                                navigate('SeeAllServices', item)
 
-                                        }}
-                                        style={{ alignSelf: 'center', width: "21%", height: 26, marginLeft: 10, borderRadius: 28, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'white', }}>
-                                        <Text style={{ fontFamily: 'ABRe', fontSize: 9.24, color: 'white', }}>Reschedule</Text>
-                                    </TouchableOpacity>
+                                            }}
+                                            style={{ alignSelf: 'center', width: "21%", height: 26, marginLeft: 10, borderRadius: 28, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'white', }}>
+                                            <Text style={{ fontFamily: 'ABRe', fontSize: 9.24, color: 'white', }}>Reschedule</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            onPress={() => {
+
+                                                complete_app(item)
+                                                // confirm_app(item.app_id)
+                                            }}
+                                            style={{ alignSelf: 'center', width: "21%", marginLeft: 10, height: 26, borderRadius: 28, alignItems: 'center', justifyContent: 'center', backgroundColor: acolors.primary }}>
+                                            <Text style={{ fontFamily: 'ABRe', fontSize: 9.24, color: '#000000', }}>Completed</Text>
+                                        </TouchableOpacity>
+
+                                    </View>
                                 }
-
-
                             </View>
+                            {
+                                tabs == 'completed' &&
+                                <View style={{}}>
+                                    <View style={{ flexDirection: 'row', marginTop: 10, alignItems: 'center' }}>
+                                        <Text style={{ fontFamily: 'ABRe', fontSize: 14, color: acolors.primary, marginRight: 5 }}>Rating</Text>
+                                        {item.app_rating && <MakeReview number={item.app_rating} />}
+                                    </View>
+                                    <Text numberOfLines={5} style={{ marginTop: 10, fontFamily: 'ABRe', fontSize: 14, color: 'white' }}><Text style={{ color: acolors.primary }}>Review: </Text>{item.app_review} </Text>
+                                </View>
+
+                            }
                         </View>
                     )}
                 />

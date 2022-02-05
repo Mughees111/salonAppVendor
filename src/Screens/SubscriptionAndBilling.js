@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, FlatList, ScrollView, TextInput } from 'react-native'
 import { goBack, navigate } from '../../Navigations';
 
@@ -7,11 +7,24 @@ import { acolors } from '../Components/AppColors';
 import CustomTextInput from '../Components/CustomTextInput';
 import PrivacyPicker from '../Components/PrivacyPicker';
 import { MainButton } from '../Components/Buttons';
-import { ArrowForward, ArrowRight, ChatSendIcon, GroupIcon, NotificationIcon, SearchIcon, VerticalDots, ArrowRight1, ArrowLeft, CloseDropDown, ArrowDown } from '../Components/Svgs';
+import { ArrowForward, ArrowRight, ChatSendIcon, GroupIcon, NotificationIcon, SearchIcon, VerticalDots, ArrowRight1, ArrowLeft, CloseDropDown, ArrowDown, MarkedIcon, UnMarkedIcon } from '../Components/Svgs';
 import { Entypo } from '@expo/vector-icons';
 
+import { useFocusEffect } from '@react-navigation/native';
+import { apiRequest } from '../utils/apiCalls';
+import { retrieveItem, useForceUpdate, doConsole, storeItem } from '../utils/functions';
+import Loader from '../utils/Loader';
+import DropdownAlert from 'react-native-dropdownalert';
+
+var alertRef;
 
 const SubscriptionAndBiiling = () => {
+
+
+    const [userData, setUserData] = useState({});
+    const forceUpdate = useForceUpdate();
+    const [loading, setLoading] = useState(false);
+    const [packages, setPackages] = useState([]);
 
     const [expandList, setExpandList] = useState(false)
     const prices = [
@@ -21,6 +34,66 @@ const SubscriptionAndBiiling = () => {
         "Owner + 3 Staffer",
 
     ];
+
+    function get_packages() {
+        retrieveItem('login_data')
+            .then(d => {
+                const reqObj = {
+                    token: d.token
+                }
+                setLoading(true)
+                apiRequest(reqObj, 'get_packages')
+                    .then(data => {
+                        console.log(data)
+                        setLoading(false)
+                        if (data.action == 'success') {
+                            setPackages(data.data)
+                        }
+                        else alertRef.alertWithType('error', 'Error', data.error)
+                    })
+                    .catch(err => {
+                        setLoading(false)
+                    })
+            })
+    }
+    function subscribe_package(id) {
+        retrieveItem('login_data')
+            .then(d => {
+                const reqObj = {
+                    token: d.token,
+                    sal_id: d.sal_id,
+                    id: id
+                }
+                console.log(reqObj);
+                setLoading(true);
+                apiRequest(reqObj, 'subscribe_package')
+                    .then(data => {
+                        setLoading(false);
+                        console.log(data)
+                        if (data.action == 'success') {
+                            get_packages();
+                            setLoading(false)
+                        }
+                        else alertRef.alertWithType('error', 'Error', data.error)
+                    })
+                    .catch(err => {
+                        setLoading(false)
+                    })
+            })
+    }
+
+
+    useEffect(() => {
+        get_packages();
+        retrieveItem('login_data')
+            .then(d => {
+                setUserData(d)
+                forceUpdate();
+            })
+
+
+    }, []);
+
 
 
     const Header = () => (
@@ -37,50 +110,61 @@ const SubscriptionAndBiiling = () => {
 
 
 
-
-
-
-
     return (
         <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
+            {loading && <Loader />}
+            <DropdownAlert ref={(ref) => alertRef = ref} />
             <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
                 <Header />
                 <Text style={{ fontFamily: "ABRe", fontSize: 14, color: 'white', lineHeight: 21, marginTop: 20 }}>Change your subscription at any time</Text>
                 <Text style={{ fontFamily: "ABRe", fontSize: 14, color: 'white', marginTop: 20 }}>Choose Your Plan</Text>
                 <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-between' }}>
-                    <TouchableOpacity
+                    <FlatList
+                        data={packages}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({ item, index }) => {
+                            console.log(index)
+                            return (
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 15, width: "100%", paddingVertical: 10, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(255,255,255,0.5)', paddingHorizontal: 10 }}>
+                                    <TouchableOpacity
+                                        style={{ width: "100%" }}
+                                        onPress={() => {
+                                            // if (item.is_subscribed == '0') {
+                                            navigate('PaymentMethod1', {
+                                                app_id: item.id,
+                                            })
+                                            // subscribe_package(item.id)
+                                            // }  // setExpandList(false) 
+                                        }}
+                                    >
+                                        <Text style={{ fontFamily: 'ABRe', fontSize: 17, color: '#FCFCFC', textTransform: 'capitalize' }}>{item.title}</Text>
+                                        <Text style={{ fontFamily: 'ABRe', fontSize: 14, color: '#FCFCFC', textTransform: 'capitalize', marginTop: 3 }}>{item.type} (${item.price})</Text>
+                                        <Text style={{ fontFamily: 'ABRe', fontSize: 12, color: 'rgba(255,255,255,0.5)', marginTop: 3 }}>{item.description}</Text>
+                                        <View
+                                            style={{ position: 'absolute', right: 15, top: 15 }}>
+                                            {item.is_subscribed == '1' ? <MarkedIcon /> : <UnMarkedIcon />}
+                                        </View>
+                                    </TouchableOpacity>
+                                    {/* {
+                                        index == 0 &&
+                                        <TouchableOpacity
+                                            style={{ width: "100%" }}
+                                            onPress={() => { setExpandList(false) }}
+                                        >
+                                            <CloseDropDown />
+                                        </TouchableOpacity>
+                                    } */}
+                                </View>
+                            )
+                        }}
+                    />
+                    {/* <TouchableOpacity
                         disabled={expandList ? true : false}
                         onPress={() => setExpandList(true)}
                         style={{ flexDirection: 'row', width: "100%", paddingVertical: 10, justifyContent: 'space-between', borderWidth: 1, borderColor: 'white', borderRadius: 10, paddingHorizontal: 10 }}>
-
                         {
                             expandList ?
-                                <FlatList
-                                    data={prices}
-                                    keyExtractor={(item, index) => index.toString()}
-                                    renderItem={({ item, index }) => {
-                                        console.log(index)
-                                        return (
-                                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 5 }}>
-                                                <TouchableOpacity
-                                                    style={{ width: "100%" }}
-                                                    onPress={() => { setExpandList(false) }}
-                                                >
-                                                    <Text style={{ fontFamily: 'ABRe', fontSize: 14, color: '#FCFCFC', }}>{item}</Text>
-                                                </TouchableOpacity>
-                                                {
-                                                    index == 0 &&
-                                                    <TouchableOpacity
-                                                        style={{ width: "100%" }}
-                                                        onPress={() => { setExpandList(false) }}
-                                                    >
-                                                        <CloseDropDown />
-                                                    </TouchableOpacity>
-                                                }
-                                            </View>
-                                        )
-                                    }}
-                                />
+                                
                                 :
                                 <>
                                     <Text style={{ fontFamily: 'ABRe', fontSize: 14, color: '#FCFCFC', }}>Owner Only</Text>
@@ -88,7 +172,7 @@ const SubscriptionAndBiiling = () => {
                                 </>
 
                         }
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
 
 
                 </View>

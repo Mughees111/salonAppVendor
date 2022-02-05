@@ -1,11 +1,11 @@
 
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, Button } from 'react-native';
 import ReactNativeModal from 'react-native-modal';
 import { useForceUpdate } from '../utils/functions';
 import { acolors } from './AppColors';
-import { ArrowDown } from './Svgs';
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowRight1 } from './Svgs';
 
 
 
@@ -20,13 +20,7 @@ const Calender = (props) => {
     const [rows, setRows] = useState([])
     const [renderOneRow, setRenderOneRow] = useState();
 
-    // state = {
-    //     activeDate: new Date(),
-    //     activeRow: [],
-    //     activeRowIndex: '',
-    //     showOneRow: true,
-    // }
-
+    const [tempDate, setTempDate] = useState(new Date());
 
     var months = ["January", "February", "March", "April",
         "May", "June", "July", "August", "September", "October",
@@ -82,6 +76,7 @@ const Calender = (props) => {
             var date = activeDate
             date.setDate(item);
             setActiveDate(date)
+            setTempDate(date)
             forceUpdate();
             props?.onDayPress(date)
 
@@ -95,13 +90,24 @@ const Calender = (props) => {
     };
 
     function changeMonth(n) {
-        activeDate.setMonth(activeDate.getMonth() + n)
-        // this.setState(() => {
-        //     this.state.activeDate.setMonth(
-        //         this.state.activeDate.getMonth() + n
-        //     )
-        // return this.state;
-        // });
+        let date = activeDate
+        let month = parseInt(date.getMonth() * 1) + parseInt(n * 1);
+        console.log('month = ')
+        console.log(month)
+        date.setMonth(month)
+        setActiveDate(date);
+        // activeDate.setMonth(month)
+        forceUpdate();
+        var currentDate = activeDate.getDate()
+        generateMatrix().forEach(function (currentValue, index, arr) {
+            var find = currentValue.includes(currentDate);
+            if (find) {
+                setActiveRow(arr[index]);
+                forceUpdate();
+                return
+            }
+        })
+        forceUpdate();
     }
 
     const RenderOneRow1 = useCallback(() => {
@@ -141,6 +147,7 @@ const Calender = (props) => {
                 if (rowIndex == 0) {
                     return null
                 }
+
                 return (
                     <TouchableOpacity
                         key={colIndex}
@@ -168,6 +175,7 @@ const Calender = (props) => {
             return (
 
                 <View
+                    key={rowIndex}
                     style={{
                         // flex: 1,
                         marginTop: -10,
@@ -184,11 +192,15 @@ const Calender = (props) => {
     }, [activeDate, activeRow])
 
 
+
     // render() {
     useFocusEffect(React.useCallback(() => {
         // useEffect(() => {
         // var matrix = ;
         setActiveDate(new Date());
+        console.log('active date = ')
+        console.log(activeDate)
+        setTempDate(new Date());
         forceUpdate();
         var currentDate = activeDate.getDate()
 
@@ -206,9 +218,9 @@ const Calender = (props) => {
 
     return (
         <View >
-            <View style={{ justifyContent: 'space-between', alignItems: 'center', marginTop: -20 }}>
-                {/* <RN.Button title="Previous"
-                        onPress={() => this.changeMonth(-1)} /> */}
+            <View style={{ justifyContent: 'space-between', alignItems: 'center', marginTop: -20, }}>
+                {/* <Button title="Previous"
+                    onPress={() => changeMonth(-1)} /> */}
                 <TouchableOpacity
                     onPress={() => {
                         // console.log(this.state.activeRow)
@@ -231,8 +243,11 @@ const Calender = (props) => {
                     </Text>
                     <ArrowDown style={{ marginLeft: 10 }} />
                 </TouchableOpacity>
-                {/* <RN.Button title="Next"
-                        onPress={() => this.changeMonth(+1)} /> */}
+                {/* <TouchableOpacity>
+                    <ArrowRight />
+                </TouchableOpacity> */}
+                {/* <Button title="Next"
+                    onPress={() => changeMonth(+1)} /> */}
             </View>
 
             {
@@ -270,7 +285,11 @@ const Calender = (props) => {
                     :
                     <ReactNativeModal
                         onBackdropPress={() => {
+                            // setActiveDate(tempDate);
+                            props.onDayPress(activeDate)
+                            forceUpdate();
                             setShowOneRow(true)
+
                             // this.setState({
                             //     showOneRow: true
                             // })
@@ -280,14 +299,53 @@ const Calender = (props) => {
                         animationOutTiming={500}
                         animationOut={"slideOutUp"}
                         backdropOpacity={0}
-                        style={{ position: 'absolute', width: "100%", backgroundColor: acolors.bgColor, top: 50, margin: 0, paddingHorizontal: 10 }}
+                        style={{ position: 'absolute', width: "100%", backgroundColor: acolors.bgColor, top: 0, margin: 0, }}
                         isVisible={showOneRow ? false : true} >
 
-                        <View style={{ marginTop: 10, }}>
+                        <View style={{ width: "100%", height: "100%", paddingTop: 15, }}>
+
+                            <View style={{ justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row' }}>
+
+                                <TouchableOpacity
+                                    onPress={() => changeMonth(-1)}
+                                    style={{ paddingHorizontal: 15, height: 30, alignItems: 'center', justifyContent: 'center' }}>
+                                    <ArrowLeft />
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        // console.log(this.state.activeRow)
+                                        setShowOneRow(!showOneRow)
+                                        // this.setState({
+                                        //     showOneRow: !this.state.showOneRow
+                                        // })
+                                    }}
+                                    style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Text style={{
+                                        fontFamily: 'ABRe',
+                                        fontSize: 18,
+                                        textAlign: 'center',
+                                        color: 'white'
+                                    }}>
+                                        {activeDate.getDate()}&nbsp;
+                                        {months[activeDate.getMonth()]} &nbsp;
+                                        {activeDate.getFullYear()}
+
+                                    </Text>
+                                    <ArrowDown style={{ marginLeft: 10 }} />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => changeMonth(+1)}
+                                    style={{ paddingHorizontal: 15, height: 30, alignItems: 'center', justifyContent: 'center' }}>
+                                    <ArrowRight1 width={10} height={15} />
+                                </TouchableOpacity>
+
+                            </View>
+
+
+
                             <View style={{
                                 flexDirection: 'row',
                                 paddingTop: 15,
-
+                                paddingHorizontal: 15,
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
                             }}>
@@ -301,8 +359,9 @@ const Calender = (props) => {
                                     })
                                 }
                             </View>
-
-                            {rows1()}
+                            <View style={{ paddingHorizontal: 15, }}>
+                                {rows1()}
+                            </View>
                         </View>
                     </ReactNativeModal>
             }

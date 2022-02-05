@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Switch } from 'react-native'
 import { goBack, navigate } from '../../Navigations';
 
@@ -11,6 +11,15 @@ import { ArrowForward, ArrowRight, ChatSendIcon, GroupIcon, NotificationIcon, Se
 import { Entypo } from '@expo/vector-icons';
 import RNModal from 'react-native-modal'
 
+import { useFocusEffect } from '@react-navigation/native';
+import { apiRequest } from '../utils/apiCalls';
+import { retrieveItem, useForceUpdate, doConsole, storeItem } from '../utils/functions';
+import Loader from '../utils/Loader';
+import DropdownAlert from 'react-native-dropdownalert';
+
+var alertRef;
+
+
 
 const BookingSettings = () => {
 
@@ -19,9 +28,21 @@ const BookingSettings = () => {
     const [logoutModal, setLogoutModal] = useState(false)
     const [isEnabled, setIsEnabled] = useState(true)
 
+    const [auto_app_accept, setauto_app_accept] = useState('')
+    const [userData, setUserData] = useState({});
+    const forceUpdate = useForceUpdate();
+    const [loading, setLoading] = useState(false);
+
+
+
+
     const settingsArr = [
-        { title: "Automatically confirm bookings", desc: "When you turn on automatic confirmations,you save time and make it easier for your clients to book", navigateTo: "NotificationsS" ,},
-        { title: "Avoid gaps between services", desc: "Schedule Optimization adjusts your available time slots to remove gaps in your calender", navigateTo: "Language" },
+        {
+            title: "Automatically confirm bookings",
+            desc: "When you turn on automatic confirmations,you save time and make it easier for your clients to book",
+            navigateTo: "NotificationsS",
+        },
+        // { title: "Avoid gaps between services", desc: "Schedule Optimization adjusts your available time slots to remove gaps in your calender", navigateTo: "Language" },
     ]
 
     const LogoutModal = () => (
@@ -64,11 +85,30 @@ const BookingSettings = () => {
     )
 
 
+    useEffect(() => {
+        setLoading(true)
+        retrieveItem('login_data')
+            .then(d => {
+                setUserData(d)
+                setauto_app_accept(d.auto_app_accept);
+                forceUpdate();
+                setLoading(false)
+            })
+
+
+    }, []);
+
+
+
 
 
     return (
         <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
+            {loading && <Loader />}
+            <DropdownAlert ref={(ref) => alertRef = ref} />
             <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
+
+
                 <Header />
 
 
@@ -86,20 +126,47 @@ const BookingSettings = () => {
                                         }
                                         else navigate(v.navigateTo)
                                     }}
-                                    key={i} style={{ flexDirection: 'row',width:"100%", justifyContent:'space-between',alignItems: 'center', marginTop: 15, width: "100%", paddingBottom: 20, borderBottomWidth: 1, borderColor: 'rgba(255, 255, 255, 0.1)' }}>
-                                    <View style={{ marginLeft: 15,width:"80%" }}>
+                                    key={i} style={{ flexDirection: 'row', width: "100%", justifyContent: 'space-between', alignItems: 'center', marginTop: 15, width: "100%", paddingBottom: 20, borderBottomWidth: 1, borderColor: 'rgba(255, 255, 255, 0.1)' }}>
+                                    <View style={{ marginLeft: 15, width: "80%" }}>
                                         <Text style={{ fontFamily: "ABRe", fontSize: 15.37, color: 'white', lineHeight: 21, }}>{v.title}</Text>
                                         <Text style={{ fontFamily: "ABRe", fontSize: 12.89, color: 'rgba(255,255,255,0.8)', lineHeight: 21, }}>{v.desc}</Text>
                                     </View>
+
                                     <Switch
-                                        // Platform="ios"
-                                        style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }], }}
-                                        trackColor={{ false: acolors.bgColor, true: acolors.primary, }}
-                                        thumbColor={isEnabled ? acolors.bgColor : 'white'}
-                                        ios_backgroundColor={isEnabled ? acolors.bgColor : 'white'}
-                                        onValueChange={() => setIsEnabled(!isEnabled)}
-                                        value={isEnabled}
+                                        trackColor={{ false: "white", true: 'grey' }}
+                                        thumbColor={auto_app_accept == '1' ? acolors.primary : "grey"}
+                                        ios_backgroundColor="#3e3e3e"
+                                        onValueChange={() => {
+                                            const reqObj = {
+                                                token: userData.token,
+                                                auto_app_accept: auto_app_accept == '0' ? '1' : '0'
+                                            }
+                                            console.log(reqObj)
+                                            setLoading(true)
+                                            apiRequest(reqObj, 'change_auto_app_accept')
+                                                .then(data => {
+                                                    console.log(data)
+                                                    setLoading(false)
+                                                    if (data.action == 'success') {
+                                                        storeItem('login_data', data.data)
+                                                        setauto_app_accept(data.data.auto_app_accept)
+                                                        forceUpdate();
+                                                    }
+                                                    else {
+                                                        alertRef.alertWithType('error', "Error", data.error)
+                                                    }
+
+                                                })
+                                                .catch(err => {
+                                                    console.log(error)
+                                                    setLoading(false)
+                                                })
+
+
+                                        }}
+                                        value={auto_app_accept == '1' ? true : false}
                                     />
+
                                 </TouchableOpacity>
                             )
                         })

@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar';
-import { Text, View, StyleSheet, TouchableOpacity, Image, SafeAreaView, FlatList, ScrollView, Dimensions, Alert } from 'react-native'
+import { Text, View, StyleSheet, TouchableOpacity, Image, SafeAreaView, FlatList, ScrollView, Dimensions, Alert, RefreshControl } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler';
 import { goBack, navigate } from '../../Navigations';
 import { acolors } from '../Components/AppColors';
@@ -36,6 +36,8 @@ const SalonProfile = () => {
 
     const [salData, setSalData] = useState([]);
 
+    const [editImgs, setEditImgs] = useState(false);
+
     const keyExtractor = ((item, index) => index.toString())
     const images = [
         require('../assets/SalonDetailImg.png'),
@@ -59,17 +61,15 @@ const SalonProfile = () => {
                 const reqObj = {
                     token: data.token
                 }
-                setLoading(true)
                 apiRequest(reqObj, 'get_sal_profile')
                     .then(data => {
-                        setLoading(false)
+                        setRefreshing(false)
                         if (data.action == 'success') {
-                            setSalData(data.data[0])
+                            setSalData(data.data)
                         }
                         else {
                             alertRef.alertWithType("error", "Error", data.error);
                         }
-
                     })
                     .catch(err => {
                         setLoading(false)
@@ -342,6 +342,45 @@ const SalonProfile = () => {
 
     }
 
+
+    function del_salon_imgs(id) {
+        retrieveItem('login_data')
+            .then(data => {
+                const reqObj = {
+                    token: data.token,
+                    id: id
+                }
+                setLoading(true)
+                apiRequest(reqObj, 'del_salon_imgs')
+                    .then(data => {
+                        setLoading(false)
+                        if (data.action == 'success') {
+                            setSalData(data.data)
+                        }
+                        else {
+                            alertRef.alertWithType("error", "Error", data.error);
+                        }
+
+                    })
+                    .catch(err => {
+                        setLoading(false)
+                    })
+            })
+    }
+
+    const wait = (timeout) => {
+        return new Promise(resolve => setTimeout(resolve, timeout));
+    }
+
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        get_sal_profile()
+        // wait(2000).then(() => setRefreshing(false));
+    }, []);
+
+
     useEffect(() => {
         // get_sal_profile()
     }, [])
@@ -352,11 +391,25 @@ const SalonProfile = () => {
                 .then(data => {
                     setUserData(data)
                     setSalData(data)
+                    forceUpdate();
                 })
         },
         [],
     ))
 
+    const MakeReview = ({ number }) => {
+        console.log(number)
+        var stars = [];
+        for (let i = 1; i <= 5; i++) {
+            stars.push(
+                // <View>
+                <RattingStarIcon width={16} height={15} color={i > number ? "grey" : null} />
+                // </View>
+            )
+        }
+        return <View style={{ flexDirection: 'row' }}>{stars}</View>
+
+    }
 
 
     return (
@@ -428,7 +481,14 @@ const SalonProfile = () => {
 
             <SafeAreaView style={{ marginTop: 22, backgroundColor: '#111111', marginTop: 0, borderTopLeftRadius: 30 }}>
 
-                <ScrollView contentContainerStyle={{ paddingBottom: 300 }}>
+                <ScrollView
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                        />
+                    }
+                    contentContainerStyle={{ paddingBottom: 300 }}>
 
                     <View style={{ flexDirection: 'row', flex: 1, paddingRight: 10 }}>
                         <View style={{ width: "25%", marginLeft: 20, }}>
@@ -623,23 +683,28 @@ const SalonProfile = () => {
                             <TouchableOpacity
 
                                 onPress={() => {
+                                    if (editImgs) {
+                                        Alert.alert(
+                                            "Upload Picture",
+                                            'How do you want to upload picture?',
 
-                                    Alert.alert(
-                                        "Upload Picture",
-                                        'How do you want to upload picture?',
+                                            [
+                                                { text: 'Camera', onPress: () => cameraUplaodSalPhotos() },
 
-                                        [
-                                            { text: 'Camera', onPress: () => cameraUplaodSalPhotos() },
+                                                { text: 'Gallery', onPress: () => gallaryUploadSalPhotos() },
+                                            ],
+                                            { cancelable: true },
+                                        );
+                                    }
+                                    else {
+                                        setEditImgs(!editImgs)
+                                    }
 
-                                            { text: 'Gallery', onPress: () => gallaryUploadSalPhotos() },
-                                        ],
-                                        { cancelable: true },
-                                    );
 
                                 }}
 
                                 style={{ padding: 5, alignSelf: 'flex-end' }}>
-                                <Text style={styles.editText}>+ Add Photos</Text>
+                                <Text style={styles.editText}>{editImgs ? "+ Add Photos" : "Edit"} </Text>
                             </TouchableOpacity>
                         </View>
 
@@ -652,14 +717,40 @@ const SalonProfile = () => {
                             horizontal={true}
                             data={imgsToShowSal[0] ? imgsToShowSal : salData?.sal_imgs}
                             renderItem={({ item }) => (
-                                <Image
-                                    style={{ width: 79, height: 69, borderRadius: 5, marginLeft: 10, borderRadius: 8 }}
-                                    source={{ uri: item.img ? item.img : item ? item : "http" }}
-                                />
+                                <View
+
+                                >
+                                    <Image
+                                        style={{ width: 79, height: 69, borderRadius: 5, marginLeft: 10, borderRadius: 8 }}
+                                        source={{ uri: item.img ? item.img : item ? item : "http" }}
+                                    />
+                                    {
+                                        editImgs && item.id &&
+
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                del_salon_imgs(item.id)
+                                            }}
+                                            style={{ position: 'absolute', bottom: 0, width: 79, alignSelf: 'center', left: 10, height: 20, backgroundColor: 'rgba(0,0,0,0.7)', alignItems: 'center', justifyContent: 'center' }}>
+                                            <Text style={{ fontWeight: 'bold', fontSize: 12, color: 'red', alignSelf: 'center' }}>Remove</Text>
+                                        </TouchableOpacity>
+                                    }
+                                </View>
                             )}
                         />
                         {
-                            imgsToShowSal[0] &&
+                            editImgs &&
+
+                            <TouchableOpacity
+                                onPress={() => {
+                                    setEditImgs(false)
+                                }}
+                                style={{ alignSelf: 'flex-end', padding: 10 }}>
+                                <Text style={[styles.editText, { margin: 0 }]}>Done</Text>
+                            </TouchableOpacity>
+                        }
+                        {
+                            imgsToShowSal[0] && editImgs &&
 
                             <MainButton
                                 text={"Upload"}
@@ -671,7 +762,51 @@ const SalonProfile = () => {
                         }
 
                         {/* Reviews */}
-                        <Text style={{ marginTop: 20, fontSize: 17, fontFamily: 'ABRe', color: 'white' }}>Reviews</Text>
+
+                        <View style={{ flexDirection: 'row', marginTop: 20, alignItems: 'center' }}>
+                            <Text style={{ fontSize: 17, fontFamily: 'ABRe', color: 'white', }}>Reviews ({salData?.sal_reviews?.length})</Text>
+                            {
+                                salData?.sal_reviews?.length > 0 &&
+                                <View style={{ position: 'absolute', right: 0, }}>
+                                    <MakeReview width={20} number={salData?.sal_ratings} />
+                                </View>
+                            }
+                        </View>
+                        {/* <Text style={{ marginTop: 20, fontSize: 17, fontFamily: 'ABRe', color: 'white', }}>Reviews ({salData?.sal_reviews?.length})</Text> */}
+                        {
+                            salData?.sal_reviews?.length > 0 &&
+                            <>
+                                {
+                                    salData?.sal_reviews?.map((v, i) => {
+                                        if (i > 3) {
+                                            return null
+                                        }
+
+                                        return (
+                                            <Reviews
+                                                key={i}
+                                                name={v.username}
+                                                image={v.profile_pic}
+                                                review={v.rev_text}
+                                                rattings={v.rev_rating}
+                                                rev_datetime={v.rev_datetime}
+                                            />
+                                        )
+                                    })
+                                }
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        console.log('pressed')
+                                        navigate('AllReviews', salData?.sal_reviews)
+                                    }}
+                                >
+                                    <Text style={{ color: acolors.primary, fontFamily: 'ABRe', fontSize: 12, marginTop: 15 }}>View all reviews</Text>
+                                </TouchableOpacity>
+                            </>
+                        }
+
+
+                        {/* <Text style={{ marginTop: 20, fontSize: 17, fontFamily: 'ABRe', color: 'white' }}>Reviews</Text> */}
                         {/* <View>
                             <Reviews
                                 name="William David:"

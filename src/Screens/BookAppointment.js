@@ -96,7 +96,7 @@ const BookAppointment = (props) => {
 
     function get_salon_slots(date) {
 
-        var device_datetime_sql = currentDateObj.getHours() + ":" + currentDateObj.getMinutes() + ":" + currentDateObj.getSeconds();
+        var device_datetime_sql = currentDateObj.getTime();
         var service_time = 0;
 
         const reqObj = {
@@ -112,14 +112,14 @@ const BookAppointment = (props) => {
         setLoading(true)
         apiRequest(reqObj, 'get_salon_slots')
             .then(data => {
-                setLoading(false)
+                setLoading(false);
                 if (data.action == 'success') {
                     if (reqObj.appoint_id) {
-                        let data1 = data.data
+                        let data1 = data.data;
                         let arr1 = [];
                         for (let key in data1) {
                             if (data1[key].ss_is_booked == '1') {
-                                arr1.push(data1[key])
+                                arr1.push(data1[key]);
                                 break;
                             }
                         }

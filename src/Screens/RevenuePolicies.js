@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Switch } from 'react-native'
 import { goBack, navigate } from '../../Navigations';
 
@@ -11,44 +11,37 @@ import { ArrowForward, ArrowRight, ChatSendIcon, GroupIcon, NotificationIcon, Se
 import { Entypo } from '@expo/vector-icons';
 import RNModal from 'react-native-modal'
 
+import { useFocusEffect } from '@react-navigation/native';
+import { apiRequest } from '../utils/apiCalls';
+import { retrieveItem, useForceUpdate, doConsole, storeItem } from '../utils/functions';
+import Loader from '../utils/Loader';
+import DropdownAlert from 'react-native-dropdownalert';
+import { urls } from '../utils/Api_urls';
+
+var alertRef;
+
+
+
 
 const RevenuePolicies = () => {
 
 
     const [tabs, setTabs] = useState('list')
-    const [logoutModal, setLogoutModal] = useState(false)
-    const [isEnabled, setIsEnabled] = useState(true)
+    const [isEnabled, setIsEnabled] = useState(false)
+
+
+    const [mobile_pay, setmobile_pay] = useState('')
+    const [userData, setUserData] = useState({});
+    const forceUpdate = useForceUpdate();
+    const [loading, setLoading] = useState(false);
+
+
 
     const settingsArr = [
         { title: "Enable/Disable Mobile Pay", desc: "Allow your clients to pay directly through the app", navigateTo: "", switch: true },
         { title: "Setup Cancelation Pay", desc: "Protect yourself from last minute cancellations", navigateTo: "" },
     ]
 
-    const LogoutModal = () => (
-        <RNModal
-            backdropColor='rgba(196, 196, 196, 0.3)'
-            isVisible={logoutModal}
-            onBackdropPress={() => setLogoutModal(false)}
-            style={{ position: 'absolute', bottom: 0, width: "80%", alignSelf: 'center' }}
-        >
-            <View style={{ backgroundColor: 'black', alignItems: 'center', justifyContent: 'center', borderRadius: 10, paddingVertical: 20, paddingHorizontal: 25 }}>
-                <Text style={{ fontSize: 20, color: '#FFFFFF', fontFamily: 'ABRe' }}>Logout from the App?</Text>
-                <MainButton
-                    text={"YES. LOG OUT"}
-                    btnStyle={{ marginTop: 20 }}
-                    textStyle={{ fontSize: 11.94 }}
-
-
-                />
-                <TouchableOpacity
-                    onPress={() => setLogoutModal(false)}
-                    style={{ width: "100%", height: 45, borderRadius: 26, marginTop: 20, borderWidth: 1, borderColor: 'white', alignItems: 'center', justifyContent: 'center' }}>
-                    <Text style={{ fontFamily: 'ABRe', fontSize: 11.94, color: 'white' }}>NOT NOW</Text>
-                </TouchableOpacity>
-            </View>
-
-        </RNModal>
-    )
 
 
     const Header = () => (
@@ -64,10 +57,24 @@ const RevenuePolicies = () => {
     )
 
 
+    useEffect(() => {
+        setLoading(true)
+        retrieveItem('login_data')
+            .then(d => {
+                setUserData(d)
+                setmobile_pay(d.mobile_pay);
+                forceUpdate();
+                setLoading(false)
+            })
+
+
+    }, []);
 
 
     return (
         <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
+            {loading && <Loader />}
+            <DropdownAlert ref={(ref) => alertRef = ref} />
             <StatusBar
                 style='light'
                 backgroundColor={acolors.bgColor}
@@ -99,13 +106,39 @@ const RevenuePolicies = () => {
                                     </View>
                                     {v.switch &&
                                         <Switch
-                                            // Platform="ios"
-                                            style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }], }}
-                                            trackColor={{ false: acolors.bgColor, true: acolors.primary, }}
-                                            thumbColor={isEnabled ? acolors.bgColor : 'white'}
-                                            ios_backgroundColor={isEnabled ? acolors.bgColor : 'white'}
-                                            onValueChange={() => setIsEnabled(!isEnabled)}
-                                            value={isEnabled}
+                                            trackColor={{ false: "white", true: 'grey' }}
+                                            thumbColor={mobile_pay == '1' ? acolors.primary : "grey"}
+                                            ios_backgroundColor="#3e3e3e"
+                                            onValueChange={() => {
+                                                const reqObj = {
+                                                    token: userData.token,
+                                                    mobile_pay_status: mobile_pay == '1' ? '0' : '1'
+                                                }
+                                                console.log(reqObj)
+                                                setLoading(true)
+                                                apiRequest(reqObj, 'mobile_pay_status')
+                                                    .then(data => {
+                                                        console.log(data)
+                                                        setLoading(false)
+                                                        if (data.action == 'success') {
+                                                            storeItem('login_data', data.data)
+                                                            setmobile_pay(data.data.mobile_pay)
+                                                            forceUpdate();
+                                                        }
+                                                        else {
+                                                            alertRef.alertWithType('error', "Error", data.error)
+                                                        }
+
+                                                    })
+                                                    .catch(err => {
+                                                        alertRef.alertWithType('error', "Error", urls.error)
+                                                        console.log(error)
+                                                        setLoading(false)
+                                                    })
+
+
+                                            }}
+                                            value={mobile_pay == '1' ? true : false}
                                         />
                                     }
                                 </TouchableOpacity>
@@ -119,7 +152,7 @@ const RevenuePolicies = () => {
 
 
             </SafeAreaView>
-            <LogoutModal />
+
 
         </View>
     )

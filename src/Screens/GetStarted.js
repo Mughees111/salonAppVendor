@@ -39,12 +39,12 @@ const GetStarted = () => {
                     btnStyle={{ marginTop: 100 }}
                     onPress={() => navigate('EmailAddress')}
                 />
-                {/* <Text style={{ alignSelf: 'center', color: 'rgba(255,255,255,1)', fontFamily: 'ABRe', textAlign: 'center', marginTop: 5 }}>or</Text>
+                <Text style={{ alignSelf: 'center', color: 'rgba(255,255,255,1)', fontFamily: 'ABRe', textAlign: 'center', marginTop: 5 }}>or</Text>
                 <MainButton
                     text="login with existing account"
                     btnStyle={{ marginTop: 10 }}
                     onPress={() => navigate('SignIn')}
-                /> */}
+                />
             </View>
 
 

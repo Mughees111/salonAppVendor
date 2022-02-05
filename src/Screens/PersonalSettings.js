@@ -11,8 +11,23 @@ import { ArrowForward, ArrowRight, ChatSendIcon, GroupIcon, NotificationIcon, Se
 import { Entypo } from '@expo/vector-icons';
 import RNModal from 'react-native-modal'
 
+import { useFocusEffect } from '@react-navigation/native';
+import { apiRequest } from '../utils/apiCalls';
+import {
+    retrieveItem, useForceUpdate, doConsole, storeItem
+} from '../utils/functions';
+import Loader from '../utils/Loader';
+import DropdownAlert from 'react-native-dropdownalert';
+import { changeLoggedIn } from '../../Common';
+
+var alertRef;
+
 
 const PersonalSettings = () => {
+
+    const forceUpdate = useForceUpdate();
+
+    const [loading, setLoading] = useState(false);
 
 
     const [tabs, setTabs] = useState('list')
@@ -37,6 +52,31 @@ const PersonalSettings = () => {
                     text={"YES. LOG OUT"}
                     btnStyle={{ marginTop: 20 }}
                     textStyle={{ fontSize: 11.94 }}
+                    onPress={() => {
+                        retrieveItem('login_data')
+                            .then(d => {
+                                const reqObj = {
+                                    token: d.token
+                                }
+                                setLoading(true)
+                                apiRequest(reqObj, 'logout_vendor')
+                                    .then(data => {
+                                        console.log(data)
+                                        setLoading(false)
+                                        if (data.action == 'success') {
+                                            storeItem('login_data','');
+                                            changeLoggedIn.changeNow(2)
+                                        }
+                                        else {
+                                            alertRef.alertWithType("error", "Error", data.error);
+                                        }
+
+                                    })
+                                    .catch(err => {
+                                        setLoading(false)
+                                    })
+                            })
+                    }}
 
 
                 />
@@ -74,6 +114,9 @@ const PersonalSettings = () => {
                 translucent={false}
             // translucent={false}
             />
+            {loading && <Loader />}
+            <DropdownAlert ref={(ref) => alertRef = ref} />
+
             <SafeAreaView style={{ marginTop: 15, width: "90%", alignSelf: 'center' }}>
                 <Header />
 

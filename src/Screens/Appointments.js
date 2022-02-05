@@ -90,12 +90,14 @@ const Appointments = () => {
                 var date1;
                 if (!date) {
                     date = new Date();
+                    console.log('setting date')
+                    console.log(date)
                 }
 
 
                 setCurrentDate(date);
                 let day = date.getDay();
-                
+
                 if (day == 0) day = 6
                 else day = day - 1
                 let sal_day_hours = data.sal_hours[day];
@@ -103,7 +105,7 @@ const Appointments = () => {
                     var sal_start_time = time_slots.indexOf(sal_day_hours[0]);
                     var sal_end_time = time_slots.indexOf(sal_day_hours[1]);
                 }
-                
+
                 var temp = []; // salon_hours
                 let j = 0;
                 for (let i = parseInt(sal_start_time); i <= parseInt(sal_end_time); i++) {
@@ -114,20 +116,25 @@ const Appointments = () => {
                 setSalHours(temp)
                 forceUpdate();
                 setLastDateFetch(date)
-                date1 = date.getFullYear() + "-" + date.getMonth() + 1 + "-" + date.getDate()
+                let month = date.getMonth() + 1;
+                date1 = date.getFullYear() + "-" + month + "-" + date.getDate()
+
                 const reqObj = {
                     token: data.token,
                     app_date: date1
                 }
+                doConsole(reqObj)
                 if (!temp[0]) {
                     // Alert.alert('asd')
                     setLoading(false)
                     setMyAppoints([]);
+                    setAppoints([]);
                     return
                 }
                 apiRequest(reqObj, 'get_sal_appoints')
                     .then(data1 => {
                         setLoading(false)
+                        console.log(data1)
                         if (data1.action == 'success') {
 
                             setAppoints(data1.data)
@@ -166,7 +173,7 @@ const Appointments = () => {
         for (let i = 0; i < salHours.length; i++) {
             for (let j = 0; j < data1.length; j++) {
                 if (salHours[i] == data1[j].app_start_time) {
-                    if (data1[j].app_status != 'cancelled') {
+                    if (data1[j].app_status == 'pending' || data1[j].app_status == 'scheduled' ) {
                         myAppointsLocal.push({
                             maxHeight: (Math.ceil(data1[j].app_est_duration / 30) * 30),
                             minHeight: parseInt(data1[j].app_est_duration),
@@ -181,9 +188,9 @@ const Appointments = () => {
                 }
             }
         }
-        doConsole('t,emp')
+
         var temp = myAppointsLocal;
-        // doConsole(temp)
+
 
         for (let i = 0; i < myAppointsLocal.length; i++) {
             if (i == 0 && myAppointsLocal[i].app_start_time != salHours[0]) {
@@ -214,8 +221,7 @@ const Appointments = () => {
 
             var diff = (time2 - time1) / 1000;
             diff /= 60;
-            console.log('diff')
-            console.log(diff)
+
             final.push(myAppointsLocal[i]);
             if (diff > 0) {
                 final.push({
@@ -267,8 +273,9 @@ const Appointments = () => {
                     let pendings = appoints.filter(item => item.app_status == 'pending');
                     let scheduled = appoints.filter(item => item.app_status == 'scheduled')
                     let cancelled = appoints.filter(item => item.app_status == 'cancelled')
+                    let completed = appoints.filter(item => item.app_status == 'completed' || item.app_status == 'completed & reviewed')
 
-                    arr1.push({ pendings, scheduled, cancelled })
+                    arr1.push({ pendings, scheduled, cancelled ,completed})
                     setLoading(false)
                     navigate('AllAppoints', arr1);
                 }}
@@ -286,16 +293,13 @@ const Appointments = () => {
             {loading && <Loader />}
             <DropdownAlert ref={(ref) => alertRef = ref} />
 
-            <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
+            <SafeAreaView style={{ marginTop: 15, width: "90%", alignSelf: 'center' }}>
                 <Header />
                 {/* <Text style={{ fontFamily: 'ABRe', fontSize: 14.67, color: 'white', alignSelf: 'center', marginTop: 5 }}>10:00 am - 7:00 pm     </Text> */}
 
                 <Calender
                     onDayPress={(v) => {
-                        // doConsole('v = ')
-                        // doConsole(v)
                         get_sal_appoints(v)
-                        // setAppDate(v)
                     }}
                 />
                 <ScrollView

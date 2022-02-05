@@ -98,9 +98,29 @@ const AddSalonPhoto = () => {
 
 
     function cameraUplaod() {
+        var x = alertRef;
+        setLoading(true)
         update_dp_2(1, userData.token, "public_image")
             .then(data => {
+                setLoading(false)
+                console.log('data2 = ')
                 console.log(data)
+                if (data.action == "success") {
+                    console.log('asd')
+                    setLoading(false)
+                    setImgsUrlForUpload(data.filename);
+                    setImgsUrlToShow(data.url)
+                }
+                else {
+                    setLoading(false)
+                    x.alertWithType('error', 'Error', data.error);
+                }
+            })
+            .catch((error) => {
+                console.log(error)
+                setLoading(false)
+                // x.alertWithType('error', 'error', "Internet Error");
+                // setLoading(false)
             })
     }
 
@@ -201,6 +221,8 @@ const AddSalonPhoto = () => {
                         style={{ marginTop: 10, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.1)', width: 120, borderRadius: 60, height: 120, alignItems: 'center', justifyContent: 'center' }}>
                         {imgsUrlToShowP ?
                             <Image
+                                onLoad={() => setLoading(false)}
+                                onLoadStart={() => setLoading(true)}
                                 style={{ width: "100%", height: "100%", borderRadius: 10, }}
                                 source={{ uri: imgsUrlToShowP }}
                             /> :
@@ -228,6 +250,8 @@ const AddSalonPhoto = () => {
                         style={{ marginTop: 10, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.1)', borderStyle: "dashed", width: "100%", borderRadius: 3, height: 187, alignItems: 'center', justifyContent: 'center' }}>
                         {imgsUrlToShow ?
                             <Image
+                                onLoad={() => setLoading(false)}
+                                onLoadStart={() => setLoading(true)}
                                 style={{ width: "100%", height: "100%", borderRadius: 10, }}
                                 source={{ uri: imgsUrlToShow }}
                             /> :

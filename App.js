@@ -67,6 +67,9 @@ import AllAppoints from './src/Screens/AllAppoints';
 import SeeAllServices from './src/Screens/SeeAllServices';
 import BookAppointment from './src/Screens/BookAppointment';
 import MakeGroup from './src/Screens/MakeGroup';
+import AllReviews from './src/Screens/AllReviews';
+import PaypalAccount from './src/Screens/PaypalAccount';
+import PaymentMethods from './src/Screens/PaymentMethod1';
 
 
 const Stack = createStackNavigator()
@@ -128,6 +131,7 @@ function SalonProfileStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }} >
       <Stack.Screen name="SalonProfile" component={SalonProfile} />
+      <Stack.Screen name="AllReviews" component={AllReviews} />
       <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
       <Stack.Screen name="EditProfile" component={EditProfile} />
       <Stack.Screen name="EditHours" component={EditHours} />
@@ -294,6 +298,7 @@ export default function App() {
       console.log(v)
       console.log(v)
       setLoggedIn(v)
+      forceUpdate();
     })
   }
 
@@ -336,9 +341,7 @@ export default function App() {
             <Stack.Navigator screenOptions={{ headerShown: false }} >
               <Stack.Screen name="AuthStack" component={AuthStack} />
             </Stack.Navigator>
-            : null
-        }
-        {
+            : 
           loggedIn == 1 &&
           <Stack.Navigator screenOptions={{ headerShown: false }} >
             <Stack.Screen name="BottomTabNavigator" component={BottomTabNavigator} />
@@ -352,6 +355,7 @@ export default function App() {
             <Stack.Screen name="RevenuePolicies" component={RevenuePolicies} />
             <Stack.Screen name="ProfileLinks" component={ProfileLinks} />
             <Stack.Screen name="SubscriptionAndBiiling" component={SubscriptionAndBiiling} />
+            <Stack.Screen name="PaymentMethod1" component={PaymentMethods} />
             <Stack.Screen name="CauffAppS" component={CauffAppS} />
             <Stack.Screen name="TermsOfUse" component={TermsOfUse} />
             <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
