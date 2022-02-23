@@ -70,6 +70,12 @@ import MakeGroup from './src/Screens/MakeGroup';
 import AllReviews from './src/Screens/AllReviews';
 import PaypalAccount from './src/Screens/PaypalAccount';
 import PaymentMethods from './src/Screens/PaymentMethod1';
+import UserChat from './src/Screens/UserChat';
+import ChatDetails from './src/Screens/ChatDetails';
+import GroupMessages from './src/Screens/GroupMessages';
+import HealthSafety from './src/Screens/HealthSafety';
+import DelAccount from './src/Screens/DelAccount';
+import Support from './src/Screens/Support';
 
 
 const Stack = createStackNavigator()
@@ -99,6 +105,17 @@ function AuthStack() {
 
 }
 
+function UserChatNavigator() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="UserChat" component={UserChat} /> 
+      <Stack.Screen name="ChatDetails" component={ChatDetails} />
+      <Stack.Screen name="GroupMessages" component={GroupMessages} />
+    </Stack.Navigator>
+  )
+}
+
+
 
 function ClientsStack() {
   return (
@@ -108,6 +125,7 @@ function ClientsStack() {
       <Stack.Screen name="NewAppoint" component={NewAppoint} />
       <Stack.Screen name="AddNewClient" component={AddNewClient} />
       <Stack.Screen name="EditClientsProfile" component={EditClientsProfile} />
+      <Stack.Screen name="UserChatNavigator" component={UserChatNavigator} />
     </Stack.Navigator>
   )
 }
@@ -292,6 +310,7 @@ export default function App() {
       });
 
   }
+
   function checkLogin() {
     loggedInObservable.subscribe((v) => {
       console.log("Yessss won the warrrrr");
@@ -301,6 +320,8 @@ export default function App() {
       forceUpdate();
     })
   }
+
+
 
   useEffect(() => {
 
@@ -341,38 +362,41 @@ export default function App() {
             <Stack.Navigator screenOptions={{ headerShown: false }} >
               <Stack.Screen name="AuthStack" component={AuthStack} />
             </Stack.Navigator>
-            : 
-          loggedIn == 1 &&
-          <Stack.Navigator screenOptions={{ headerShown: false }} >
-            <Stack.Screen name="BottomTabNavigator" component={BottomTabNavigator} />
-            <Stack.Screen name="Notifications" component={Notifications} />
+            :
+            loggedIn == 1 &&
+            <Stack.Navigator screenOptions={{ headerShown: false }} >
+              <Stack.Screen name="BottomTabNavigator" component={BottomTabNavigator} />
+              <Stack.Screen name="DelAccount" component={DelAccount} />
+              <Stack.Screen name="Notifications" component={Notifications} />
 
-            <Stack.Screen name="PersonalSettings" component={PersonalSettings} />
-            <Stack.Screen name="NotificationsS" component={NotificationsS} />
-            <Stack.Screen name="Language" component={Language} />
-            <Stack.Screen name="AdvancedSettings" component={AdvancedSettings} />
-            <Stack.Screen name="BookingSettings" component={BookingSettings} />
-            <Stack.Screen name="RevenuePolicies" component={RevenuePolicies} />
-            <Stack.Screen name="ProfileLinks" component={ProfileLinks} />
-            <Stack.Screen name="SubscriptionAndBiiling" component={SubscriptionAndBiiling} />
-            <Stack.Screen name="PaymentMethod1" component={PaymentMethods} />
-            <Stack.Screen name="CauffAppS" component={CauffAppS} />
-            <Stack.Screen name="TermsOfUse" component={TermsOfUse} />
-            <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
-            <Stack.Screen name="SendFeedBack" component={SendFeedBack} />
-            <Stack.Screen name="Confirmed" component={Confirmed} />
-            <Stack.Screen name="CancelAppointment" component={CancelAppointment} />
+              <Stack.Screen name="PersonalSettings" component={PersonalSettings} />
+              <Stack.Screen name="HealthSafety" component={HealthSafety} />
+              <Stack.Screen name="NotificationsS" component={NotificationsS} />
+              <Stack.Screen name="Language" component={Language} />
+              <Stack.Screen name="AdvancedSettings" component={AdvancedSettings} />
+              <Stack.Screen name="BookingSettings" component={BookingSettings} />
+              <Stack.Screen name="RevenuePolicies" component={RevenuePolicies} />
+              <Stack.Screen name="ProfileLinks" component={ProfileLinks} />
+              <Stack.Screen name="SubscriptionAndBiiling" component={SubscriptionAndBiiling} />
+              <Stack.Screen name="PaymentMethod1" component={PaymentMethods} />
+              <Stack.Screen name="CauffAppS" component={CauffAppS} />
+              <Stack.Screen name="Support" component={Support} />
+              <Stack.Screen name="TermsOfUse" component={TermsOfUse} />
+              <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
+              <Stack.Screen name="SendFeedBack" component={SendFeedBack} />
+              <Stack.Screen name="Confirmed" component={Confirmed} />
+              <Stack.Screen name="CancelAppointment" component={CancelAppointment} />
 
-            <Stack.Screen name="CheckOut" component={CheckOut} />
-            <Stack.Screen name="CheckOut2" component={CheckOut2} />
-            <Stack.Screen name="CheckOutComplete" component={CheckOutComplete} />
+              <Stack.Screen name="CheckOut" component={CheckOut} />
+              <Stack.Screen name="CheckOut2" component={CheckOut2} />
+              <Stack.Screen name="CheckOutComplete" component={CheckOutComplete} />
 
-            <Stack.Screen name="Chats" component={Chats} />
-            <Stack.Screen name="MassMsg" component={MassMsg} />
+              <Stack.Screen name="Chats" component={Chats} />
+              <Stack.Screen name="MassMsg" component={MassMsg} />
 
-            <Stack.Screen name="MakeGroup" component={MakeGroup} />
+              <Stack.Screen name="MakeGroup" component={MakeGroup} />
 
-          </Stack.Navigator>
+            </Stack.Navigator>
         }
       </NavigationContainer>
     </Provider>

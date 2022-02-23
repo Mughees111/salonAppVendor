@@ -55,7 +55,9 @@ const Reviews = (props) => {
                 <Text numberOfLines={3} style={{ fontSize: 14, fontFamily: 'ABRe', color: 'rgba(255,255,255,0.8)', marginTop: 5 }}>{props.review}</Text>
             </View>
             <View style={{ flexDirection: 'row', }}>
-                <MakeReview number={props.rattings} />
+                <MakeReview 
+                    key={props.key}
+                    number={props.rattings} />
             </View>
             {/* <Text style={{position: 'absolute',right: 5,fontSize:16,fontFamily:'PMe',color:'white'}}>{props.rattings}</Text> */}
         </View>

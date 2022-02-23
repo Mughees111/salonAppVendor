@@ -14,6 +14,10 @@ import Loader from '../utils/Loader';
 import DropdownAlert from 'react-native-dropdownalert';
 import { Context } from '../Context/DataContext';
 
+import * as Notifications from 'expo-notifications'
+import * as Permissions from 'expo-permissions';
+import { urls } from '../utils/Api_urls';
+
 var alertRef;
 
 
@@ -82,6 +86,49 @@ const Appointments = () => {
         "23:00",
         "23:30",
     ];
+
+    async function askNotificationPermission() {
+        const { status: existingStatus } = await Permissions.getAsync(
+            Permissions.NOTIFICATIONS
+        );
+        let finalStatus = existingStatus;
+
+
+        if (finalStatus !== 'granted') {
+            const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+            finalStatus = status;
+        }
+        if (finalStatus == 'granted') {
+            try {
+                let token = await Notifications.getExpoPushTokenAsync();
+                // setNotif_token(token.data)
+                store_location_on_server(token.data)
+            } catch (error) {
+                // alert(error);
+            }
+        }
+    }
+
+
+    async function store_location_on_server(localToken) {
+        retrieveItem('login_data')
+            .then(data => {
+                const dbData = { token: data.token ?? "", notif_key: localToken };
+                console.log(dbData);
+                console.log("push token")
+                fetch(urls.API + 'do_store_notifiation_key_salon', {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dbData),
+                })
+            })
+
+    }
+
+
 
     function get_sal_appoints(date) {
         setLoading(true)
@@ -173,7 +220,7 @@ const Appointments = () => {
         for (let i = 0; i < salHours.length; i++) {
             for (let j = 0; j < data1.length; j++) {
                 if (salHours[i] == data1[j].app_start_time) {
-                    if (data1[j].app_status == 'pending' || data1[j].app_status == 'scheduled' ) {
+                    if (data1[j].app_status == 'pending' || data1[j].app_status == 'scheduled') {
                         myAppointsLocal.push({
                             maxHeight: (Math.ceil(data1[j].app_est_duration / 30) * 30),
                             minHeight: parseInt(data1[j].app_est_duration),
@@ -238,6 +285,7 @@ const Appointments = () => {
 
     useFocusEffect(React.useCallback(() => {
         get_sal_appoints()
+        askNotificationPermission()
     }, []))
 
     // useEffect(() => {
@@ -275,7 +323,7 @@ const Appointments = () => {
                     let cancelled = appoints.filter(item => item.app_status == 'cancelled')
                     let completed = appoints.filter(item => item.app_status == 'completed' || item.app_status == 'completed & reviewed')
 
-                    arr1.push({ pendings, scheduled, cancelled ,completed})
+                    arr1.push({ pendings, scheduled, cancelled, completed })
                     setLoading(false)
                     navigate('AllAppoints', arr1);
                 }}

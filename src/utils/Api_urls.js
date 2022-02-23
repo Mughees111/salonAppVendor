@@ -3,9 +3,9 @@ export const urls = {
   // PHP_API: "http://192.168.100.4/cauaffBE/",
   // Image_Uri: "http://192.168.100.4/cauaffBE/api/",
 
-  API: "http://192.168.100.4/hairapp/api/",
-  PHP_API: "http://192.168.100.4/hairapp/",
-  Image_Uri: "http://192.168.100.4/hairapp/api/",
+  API: "http://192.168.100.35/couaff_new/api/",
+  PHP_API: "http://192.168.100.35/couaff_new/",
+  Image_Uri: "http://192.168.100.35/couaff_new/api/",
   
   // API: "https://cauaff.fictiondevelopers.com/api/",
   // PHP_API: "https://cauaff.fictiondevelopers.com",

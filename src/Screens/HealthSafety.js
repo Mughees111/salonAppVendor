@@ -18,7 +18,7 @@ import DropdownAlert from 'react-native-dropdownalert';
 
 var alertRef;
 
-const SubscriptionAndBiiling = () => {
+const HealthSafety = () => {
 
 
     const [userData, setUserData] = useState({});
@@ -26,14 +26,6 @@ const SubscriptionAndBiiling = () => {
     const [loading, setLoading] = useState(false);
     const [packages, setPackages] = useState([]);
 
-    const [expandList, setExpandList] = useState(false)
-    const prices = [
-        "Owner Only",
-        "Owner + 1 Staffer",
-        "Owner + 2 Staffer",
-        "Owner + 3 Staffer",
-
-    ];
 
     function get_packages() {
         retrieveItem('login_data')
@@ -42,12 +34,16 @@ const SubscriptionAndBiiling = () => {
                     token: d.token
                 }
                 setLoading(true)
-                apiRequest(reqObj, 'get_packages')
+                apiRequest(reqObj, 'get_health_safety')
                     .then(data => {
-                        console.log(data)
                         setLoading(false)
                         if (data.action == 'success') {
-                            setPackages(data.data)
+
+                            let arr = data.added;
+                            arr = arr.concat(data.data);
+                            // arr.push(data.added[0]);
+                            console.log(arr)
+                            setPackages(arr)
                         }
                         else alertRef.alertWithType('error', 'Error', data.error)
                     })
@@ -56,23 +52,35 @@ const SubscriptionAndBiiling = () => {
                     })
             })
     }
-    function subscribe_package(id) {
+
+
+    function add_sal_health_safety(sr_id, name, del) {
         retrieveItem('login_data')
             .then(d => {
-                const reqObj = {
-                    token: d.token,
-                    sal_id: d.sal_id,
-                    id: id
+                var reqObj = {};
+                if (del) {
+                    reqObj = {
+                        token: d.token,
+                        del_id : sr_id,
+                        name
+                    }
                 }
-                console.log(reqObj);
-                setLoading(true);
-                apiRequest(reqObj, 'subscribe_package')
+                else {
+                    reqObj = {
+                        token: d.token,
+                        sr_id,
+                        name
+                    }
+                }
+
+                setLoading(true)
+                apiRequest(reqObj, 'add_sal_health_safety')
                     .then(data => {
-                        setLoading(false);
-                        console.log(data)
+                        setLoading(false)
                         if (data.action == 'success') {
+                            // alertRef.alertWithType('success', 'Success', 'added')
                             get_packages();
-                            setLoading(false)
+                            // setPackages(data.data)
                         }
                         else alertRef.alertWithType('error', 'Error', data.error)
                     })
@@ -82,8 +90,6 @@ const SubscriptionAndBiiling = () => {
             })
     }
 
-
-  
 
     useFocusEffect(React.useCallback(() => {
         get_packages();
@@ -106,7 +112,8 @@ const SubscriptionAndBiiling = () => {
                 style={{ width: 34, height: 34, borderRadius: 34 / 2, backgroundColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center' }}>
                 <ArrowLeft />
             </TouchableOpacity>
-            <Text style={{ fontFamily: 'ABRe', fontSize: 20.67, color: 'white' }}>Your Subscription</Text>
+            <Text style={{ fontFamily: 'ABRe', fontSize: 20.67, color: 'white' }}>Health & Safety Rules</Text>
+            <View></View>
             <View></View>
         </View>
     )
@@ -119,34 +126,44 @@ const SubscriptionAndBiiling = () => {
             <DropdownAlert ref={(ref) => alertRef = ref} />
             <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
                 <Header />
-                <Text style={{ fontFamily: "ABRe", fontSize: 14, color: 'white', lineHeight: 21, marginTop: 20 }}>Change your subscription at any time</Text>
-                <Text style={{ fontFamily: "ABRe", fontSize: 14, color: 'white', marginTop: 20 }}>Choose Your Plan</Text>
+
                 <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-between' }}>
                     <FlatList
                         data={packages}
+                        contentContainerStyle={{paddingBottom:150}}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item, index }) => {
-                            console.log(index)
+
                             return (
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 15, width: "100%", paddingVertical: 10, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(255,255,255,0.5)', paddingHorizontal: 10 }}>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10, paddingBottom: 10, width: "100%", paddingVertical: 10, borderBottomWidth: 1, borderColor: 'rgba(255,255,255,0.5)', paddingHorizontal: 0 }}>
                                     <TouchableOpacity
-                                        disabled={item.is_subscribed == '1' && true}
                                         style={{ width: "100%" }}
+                                        disabled={item.is_subscribed == '1' && true}
                                         onPress={() => {
-                                            if (item.is_subscribed == '0') {
-                                            navigate('PaymentMethod1', {
-                                                app_id: item.id,
-                                            })
-                                            // subscribe_package(item.id)
-                                            }  // setExpandList(false) 
+                                            // if (item.is_added == '0') {
+                                            //     let arr = packages.filter((v)=> {
+                                            //         if(v.is_added == 1)  return v.value 
+                                            //     })
+
+                                            //     // add_sal_health_safety(item.value)
+                                            // }  // setExpandList(false) 
+                                            // else {
+                                            //     add_sal_health_safety(item.value)
+                                            // }
+                                            // if () {
+                                                add_sal_health_safety(item.id, item.name,item.is_added == '0' ? false : true)
+                                            // }
+                                            // else {
+
+                                            // }
+
+
                                         }}
                                     >
-                                        <Text style={{ fontFamily: 'ABRe', fontSize: 17, color: '#FCFCFC', textTransform: 'capitalize' }}>{item.title}</Text>
-                                        <Text style={{ fontFamily: 'ABRe', fontSize: 14, color: '#FCFCFC', textTransform: 'capitalize', marginTop: 3 }}>{item.type} (${item.price})</Text>
-                                        <Text style={{ fontFamily: 'ABRe', fontSize: 12, color: 'rgba(255,255,255,0.5)', marginTop: 3 }}>{item.description}</Text>
+                                        <Text style={{ fontFamily: 'ABRe', fontSize: 17, color: '#FCFCFC', textTransform: 'capitalize' }}>{item.name}</Text>
                                         <View
-                                            style={{ position: 'absolute', right: 15, top: 15 }}>
-                                            {item.is_subscribed == '1' ? <MarkedIcon /> : <UnMarkedIcon />}
+                                            style={{ position: 'absolute', right: 15, top: 0 }}>
+                                            {item.is_added == '1' ? <MarkedIcon height={20} width={20} /> : <UnMarkedIcon height={20} width={20} />}
                                         </View>
                                     </TouchableOpacity>
                                     {/* {
@@ -233,5 +250,5 @@ const styles = StyleSheet.create({
 
 
 
-export default SubscriptionAndBiiling
+export default HealthSafety
 

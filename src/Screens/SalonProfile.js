@@ -783,14 +783,16 @@ const SalonProfile = () => {
                                         }
 
                                         return (
-                                            <Reviews
-                                                key={i}
-                                                name={v.username}
-                                                image={v.profile_pic}
-                                                review={v.rev_text}
-                                                rattings={v.rev_rating}
-                                                rev_datetime={v.rev_datetime}
-                                            />
+                                            <View key={i}>
+                                                <Reviews
+                                                    key={i}
+                                                    name={v.username}
+                                                    image={v.profile_pic}
+                                                    review={v.rev_text}
+                                                    rattings={v.rev_rating}
+                                                    rev_datetime={v.rev_datetime}
+                                                />
+                                            </View>
                                         )
                                     })
                                 }

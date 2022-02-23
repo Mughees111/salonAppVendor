@@ -22,6 +22,7 @@ const CauffAppS = () => {
         { title: "Term of Use", navigateTo: "TermsOfUse" },
         { title: "Privacy Policy",navigateTo: "PrivacyPolicy" },
         { title: "Send Feedback", navigateTo: "SendFeedBack" },
+        { title: "Support", navigateTo: "Support" },
     ]
 
 
@@ -34,7 +35,7 @@ const CauffAppS = () => {
                 style={{ width: 34, height: 34, borderRadius: 34 / 2, backgroundColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center' }}>
                 <ArrowLeft />
             </TouchableOpacity>
-            <Text style={{ fontFamily: 'ABRe', fontSize: 20.67, color: 'white' }}>Cauaff App</Text>
+            <Text style={{ fontFamily: 'ABRe', fontSize: 20.67, color: 'white' }}>Couaff App</Text>
             <View></View>
         </View>
     )

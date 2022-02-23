@@ -181,6 +181,14 @@ const EditProfile = (props) => {
 
                         }}
                     />
+
+                    <TouchableOpacity
+                        onPress={() => navigate('DelAccount')}
+                        style={{ alignSelf: 'center', marginTop: 20 }}>
+                        <Text style={{ fontFamily: 'ABRe', fontSize: 14, color: 'red' }}>Delete Account</Text>
+                    </TouchableOpacity>
+
+
                 </ScrollView>
 
             </SafeAreaView>

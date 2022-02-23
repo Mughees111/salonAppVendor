@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, TextInput, Alert } from 'react-native'
-import { goBack, navigate } from '../../Navigations';
+import { goBack, navigate, navigateFromStack } from '../../Navigations';
 
 import { acolors } from '../Components/AppColors';
 import CustomTextInput from '../Components/CustomTextInput';
@@ -97,52 +97,55 @@ const Clients = () => {
             </TouchableOpacity>
             <Text style={{ fontFamily: 'ABRe', fontSize: 20.67, color: 'white' }}>Clients</Text>
             <TouchableOpacity
-                onPress={() => navigate('Chats')}
-            >
-                <ChatSendIcon />
+                onPress={() => navigate('UserChatNavigator'
+                // Chats
+                )}
+
+                    >
+                    <ChatSendIcon />
             </TouchableOpacity>
-        </View>
+        </View >
     )
 
 
 
-    const TabView = () => (
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 20, width: "100%", alignSelf: 'center' }}>
-            <TouchableOpacity
-                onPress={() => {
-                    setTabs('list')
-                }}
-                style={[tabs == 'list' ? styles.activeTab : styles.inActiveTab, { borderTopLeftRadius: 8, borderBottomLeftRadius: 8 }]} >
-                <Text style={tabs == 'list' ? styles.activeTabText : styles.inActiveTabText}>List({clients?.length})</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                onPress={() => {
-                    setTabs('group')
-                }}
-                style={[tabs == 'group' ? styles.activeTab : styles.inActiveTab, { borderTopRightRadius: 8, borderBottomRightRadius: 8 }]} >
-                <Text style={tabs == 'group' ? styles.activeTabText : styles.inActiveTabText}>Groups({salGroups?.length})</Text>
-            </TouchableOpacity>
-        </View>
+const TabView = () => (
+    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 20, width: "100%", alignSelf: 'center' }}>
+        <TouchableOpacity
+            onPress={() => {
+                setTabs('list')
+            }}
+            style={[tabs == 'list' ? styles.activeTab : styles.inActiveTab, { borderTopLeftRadius: 8, borderBottomLeftRadius: 8 }]} >
+            <Text style={tabs == 'list' ? styles.activeTabText : styles.inActiveTabText}>List({clients?.length})</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+            onPress={() => {
+                setTabs('group')
+            }}
+            style={[tabs == 'group' ? styles.activeTab : styles.inActiveTab, { borderTopRightRadius: 8, borderBottomRightRadius: 8 }]} >
+            <Text style={tabs == 'group' ? styles.activeTabText : styles.inActiveTabText}>Groups({salGroups?.length})</Text>
+        </TouchableOpacity>
+    </View>
 
-    )
+)
 
 
-    return (
-        <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
-            <StatusBar
-                style='light'
-                backgroundColor={acolors.bgColor}
-                translucent={false}
-            // translucent={false}
-            />
+return (
+    <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
+        <StatusBar
+            style='light'
+            backgroundColor={acolors.bgColor}
+            translucent={false}
+        // translucent={false}
+        />
 
-            {loading && <Loader />}
-            <DropdownAlert ref={(ref) => alertRef = ref} />
+        {loading && <Loader />}
+        <DropdownAlert ref={(ref) => alertRef = ref} />
 
-            <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
-                <Header />
-                <TabView />
-                {/* {
+        <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
+            <Header />
+            <TabView />
+            {/* {
                     tabs == 'list' &&
 
                     <View style={{ width: "100%", height: 42, borderWidth: 1, borderColor: 'white', borderRadius: 8, paddingHorizontal: 10, alignItems: 'center', flexDirection: 'row', marginTop: 20 }}>
@@ -162,77 +165,81 @@ const Clients = () => {
                         />
                     </View>
                 } */}
-                <ScrollView
-                    // bounces={true}
-                    contentContainerStyle={{ paddingBottom: 100 }}
-                    style={{ marginTop: 10 }}>
-                    {
-                        tabs == 'list' &&
-                        clients?.map((v, i) => {
-                            return (
-                                <TouchableOpacity
-                                    key={i}
-                                    onPress={() => navigate('ClientProfile', v)} style={{ flexDirection: 'row', marginTop: 15, width: "100%" }}>
-                                    <Image
-                                        style={{ width: 49, height: 49, borderRadius: 49 / 2 }}
-                                        source={{ uri: v.profile_pic }
-                                            // require('../assets/img1.png')
-                                        }
-                                    />
-                                    <View style={{ marginLeft: 15 }}>
-                                        <Text style={{ fontFamily: "ABRe", fontSize: 12.89, color: 'white', lineHeight: 21, }}>{v.name}</Text>
-                                        <Text style={{ fontFamily: "ABRe", fontSize: 12.89, color: 'white', lineHeight: 21 }}>{v.email}</Text>
-                                    </View>
-                                </TouchableOpacity>
-                            )
-                        })
-
-                    }
-                    {
-                        tabs == 'group' &&
-                        salGroups?.map((v, i) => {
-                            return (
-                                <TouchableOpacity
-                                    onPress={() => {
-                                        Alert.alert('Under construction')
-                                        // navigate('Chats')
-                                    }}
-                                    key={i} style={{ flexDirection: 'row', alignItems: 'center', marginTop: 15, width: "100%", paddingBottom: 20, borderBottomWidth: 1, borderColor: 'rgba(255, 255, 255, 0.1)' }}>
-                                    {
-                                        v.g_pic ? <Image
-                                            style={{ width: 36, height: 36, borderRadius: 36 / 2 }}
-                                            source={{ uri: v.g_pic }}
-                                        />
-                                            : <GroupIcon />
+            <ScrollView
+                // bounces={true}
+                contentContainerStyle={{ paddingBottom: 100 }}
+                style={{ marginTop: 10 }}>
+                {
+                    tabs == 'list' &&
+                    clients?.map((v, i) => {
+                        return (
+                            <TouchableOpacity
+                                key={i}
+                                onPress={() => navigate('ClientProfile', v)} style={{ flexDirection: 'row', marginTop: 15, width: "100%" }}>
+                                <Image
+                                    style={{ width: 49, height: 49, borderRadius: 49 / 2 }}
+                                    source={{ uri: v.profile_pic }
+                                        // require('../assets/img1.png')
                                     }
+                                />
+                                <View style={{ marginLeft: 15 }}>
+                                    <Text style={{ fontFamily: "ABRe", fontSize: 12.89, color: 'white', lineHeight: 21, }}>{v.name}</Text>
+                                    <Text style={{ fontFamily: "ABRe", fontSize: 12.89, color: 'white', lineHeight: 21 }}>{v.email}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        )
+                    })
 
-                                    <View style={{ marginLeft: 15 }}>
-                                        <Text style={{ fontFamily: "ABRe", fontSize: 12.89, color: 'white', lineHeight: 21, }}>{v.g_name}</Text>
-                                        {/* <Text style={{ fontFamily: "ABRe", fontSize: 12.89, color: 'rgba(255,255,255,0.6)', lineHeight: 21, }}>Clients registered in the last 30 days</Text> */}
-                                    </View>
-                                    <ArrowForward style={{ position: 'absolute', right: 0, top: 12 }} />
-                                </TouchableOpacity>
-                            )
-                        })
-                    }
-                </ScrollView>
+                }
+                {
+                    tabs == 'group' &&
+                    salGroups?.map((v, i) => {
+                        return (
+                            <TouchableOpacity
+                                onPress={() => {
+                                    console.log(v)
+                                    navigateFromStack('UserChatNavigator', 'GroupMessages',{
+                                        data : v
+                                    })
+                                    // Alert.alert('Under construction')
+                                    // navigate('Chats')
+                                }}
+                                key={i} style={{ flexDirection: 'row', alignItems: 'center', marginTop: 15, width: "100%", paddingBottom: 20, borderBottomWidth: 1, borderColor: 'rgba(255, 255, 255, 0.1)' }}>
+                                {
+                                    v.g_pic ? <Image
+                                        style={{ width: 36, height: 36, borderRadius: 36 / 2 }}
+                                        source={{ uri: v.g_pic }}
+                                    />
+                                        : <GroupIcon />
+                                }
+
+                                <View style={{ marginLeft: 15 }}>
+                                    <Text style={{ fontFamily: "ABRe", fontSize: 12.89, color: 'white', lineHeight: 21, }}>{v.g_name}</Text>
+                                    {/* <Text style={{ fontFamily: "ABRe", fontSize: 12.89, color: 'rgba(255,255,255,0.6)', lineHeight: 21, }}>Clients registered in the last 30 days</Text> */}
+                                </View>
+                                <ArrowForward style={{ position: 'absolute', right: 0, top: 12 }} />
+                            </TouchableOpacity>
+                        )
+                    })
+                }
+            </ScrollView>
 
 
 
 
-            </SafeAreaView>
-            <TouchableOpacity
-                onPress={() => {
-                    if (tabs == 'group') {
-                        navigate('MakeGroup', clients)
-                    }
-                    else navigate('AddNewClient')
-                }}
-                style={{ width: 58, height: 58, borderRadius: 58 / 2, backgroundColor: 'black', alignItems: 'center', justifyContent: 'center', position: 'absolute', right: 20, bottom: 20 }}>
-                <Entypo name='plus' size={30} color={"white"} />
-            </TouchableOpacity>
-        </View>
-    )
+        </SafeAreaView>
+        <TouchableOpacity
+            onPress={() => {
+                if (tabs == 'group') {
+                    navigate('MakeGroup', clients)
+                }
+                else navigate('AddNewClient')
+            }}
+            style={{ width: 58, height: 58, borderRadius: 58 / 2, backgroundColor: 'black', alignItems: 'center', justifyContent: 'center', position: 'absolute', right: 20, bottom: 20 }}>
+            <Entypo name='plus' size={30} color={"white"} />
+        </TouchableOpacity>
+    </View>
+)
 }
 
 
