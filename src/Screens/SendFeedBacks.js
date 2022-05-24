@@ -1,23 +1,69 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useCallback, useEffect, useState } from 'react'
 import { Text, View, StyleSheet, TouchableOpacity, Image, SafeAreaView, FlatList, Dimensions, Alert, ScrollView, Switch, TextInput } from 'react-native'
+import DropdownAlert from 'react-native-dropdownalert';
+import { goBack } from '../../Navigations';
 import { acolors } from '../Components/AppColors';
 import { MainButton } from '../Components/Buttons';
 import { OnBoardingHeader } from '../Components/Header';
+import Loader from '../utils/Loader';
+import { retrieveItem, useForceUpdate, doConsole, storeItem } from '../utils/functions';
+import { apiRequest } from '../utils/apiCalls';
 
-
+var alertRef;
 
 const SendFeedBack = () => {
 
     const [ans, setAns] = useState('');
+    const [text, setText] = useState('');
+    const [loading, setLoading] = useState(false);
+
+
+    function sendFeedBack() {
+
+
+        if (ans == '') {
+            alertRef.alertWithType('error', 'Error', 'Please fill in required fields');
+        }
+        retrieveItem('login_data')
+            .then(data => {
+                const postObj = {
+                    token: data?.token,
+                    text: text,
+                    is_enjoy: ans == 'yes' ? 1 : 0,
+                }
+                console.log(postObj);
+                setLoading(true)
+                apiRequest(postObj, 'send_feedback')
+                    .then(data => {
+                        setLoading(false)
+                        if (data?.action == 'success') {
+                            alertRef.alertWithType('success', 'Success');
+                            goBack();
+                        }
+                        else {
+                            alertRef.alertWithType('error', 'Error', data?.error);
+                        };
+                    })
+                    .catch(err => {
+                        setLoading(false)
+                    })
+            })
+
+    }
+
+
 
     return (
         <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
+            {loading && <Loader />}
+            <DropdownAlert ref={(ref) => alertRef = ref} />
             <StatusBar
                 style='light'
                 translucent={false}
                 backgroundColor={acolors.bgColor}
             />
+
             <SafeAreaView style={{ flex: 1, marginTop: 10 }}>
                 <View style={{ paddingHorizontal: 20 }}>
                     <OnBoardingHeader title="Send Feedback" />
@@ -46,6 +92,7 @@ const SendFeedBack = () => {
                     </TouchableOpacity>
                     <TextInput
                         textAlignVertical='top'
+                        onChangeText={setText}
                         multiline={true}
                         style={{ width: "100%", minHeight: 180, padding: 10, paddingVertical: 10, fontFamily: 'ABRe', color: 'white', borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', marginTop: 10 }}
                         placeholder='Tell us more ...'
@@ -53,12 +100,14 @@ const SendFeedBack = () => {
                     />
 
                     <MainButton
+                        onPress={() => sendFeedBack()}
                         btnStyle={{ marginTop: 50, width: "100%", alignSelf: 'center' }}
                         text={"Send"}
                     />
                 </View>
 
             </SafeAreaView >
+
         </View >
     )
 }

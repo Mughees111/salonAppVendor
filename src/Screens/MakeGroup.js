@@ -223,7 +223,7 @@ const MakeGroup = (props) => {
                                             onPress={() => {
                                                 // addMember(v)
                                             }}
-                                            style={{ position: 'absolute', bottom: 0, right: 0, width: 20, height: 20, borderRadius: 10, backgroundColor: 'black', alignItems: 'center', justifyContent: 'center' }}>
+                                            style={{ position: 'absolute', bottom: 0, right: 0, width: 20, height: 20, borderRadius: 10, backgroundColor: acolors.bgColor, alignItems: 'center', justifyContent: 'center' }}>
                                             <AntDesign style={{ alignSelf: 'center' }} name='close' size={14} color={"white"} />
                                         </TouchableOpacity> */}
 

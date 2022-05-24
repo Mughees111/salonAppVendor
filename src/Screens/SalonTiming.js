@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Dimensions, Modal, Switch, Alert } from 'react-native'
 import { goBack, navigate } from '../../Navigations';
 import { ArrowLeft, ArrowRight, ArrowRight1, FbIcon, GoogleIcon, PlusCircle } from '../Components/Svgs';
@@ -17,6 +17,9 @@ import Loader from '../utils/Loader';
 import { urls } from '../utils/Api_urls';
 import { FlatList } from 'react-native-gesture-handler';
 import { TestCode } from './TestCode';
+
+import * as Notifications from 'expo-notifications'
+import * as Permissions from 'expo-permissions';
 
 // import DateTimePickerModal from "react-native-modal-datetime-picker";
 
@@ -41,6 +44,7 @@ const SalonTiming = () => {
     const [loading, setLoading] = useState(false)
     const [setSalonTiming, setSetSalonTiming] = useState(false)
     const [salOnOf, setSalOnOf] = useState(true)
+    const [push_id, setPushId] = useState('');
 
 
     const [salon_hours, setSalonHours] = useState([
@@ -65,6 +69,35 @@ const SalonTiming = () => {
 
 
 
+    async function askNotificationPermission() {
+        const { status: existingStatus } = await Permissions.getAsync(
+            Permissions.NOTIFICATIONS
+        );
+        let finalStatus = existingStatus;
+
+
+        if (finalStatus !== 'granted') {
+            const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+            finalStatus = status;
+        }
+        if (finalStatus == 'granted') {
+            try {
+                let token = await Notifications.getExpoPushTokenAsync({
+                    experienceId: '@mughees1512/salonAppVendor'
+                });
+                // setNotif_token(token.data)
+                setPushId(token.data);
+            } catch (error) {
+                // alert(error);
+            }
+        }
+    }
+
+    useEffect(() => {
+        askNotificationPermission();
+    }, [])
+    
+
 
     async function next() {
 
@@ -75,6 +108,7 @@ const SalonTiming = () => {
                 
                 data1.step = 6;
                 data1.sal_hours = salon_hours;
+                data1.push_id = push_id;
                 console.log('data i am sending');
                 console.log(data1)
                 setLoading(true)
@@ -83,7 +117,7 @@ const SalonTiming = () => {
                     .then(data => {
                         setLoading(false)
                         // console.log('console1')
-                        console.log('data i get from server');
+                        // console.log('data i get from server');
                         console.log(data)
                         if (data.action == 'success') {
                             alertRef.alertWithType("success", "Success", "");

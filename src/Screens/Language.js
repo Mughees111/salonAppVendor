@@ -40,8 +40,9 @@ const Language = () => {
             />
             <SafeAreaView style={{ flex: 1, marginTop: 10 }}>
                 <View style={{ paddingHorizontal: 20 }}>
-                    <Header title="Settings" />
-                    <TouchableOpacity
+                    <Header title="Language" />
+                    <Text style={{ fontFamily: "ABRe", fontSize: 24.37,alignSelf:'center',marginTop:60, color: 'white', }}>Coming Soon</Text>
+                    {/* <TouchableOpacity
                         onPress={() => setLn('gb')}
                         style={{ flexDirection: 'row', alignItems: 'center', marginTop: 55, width: "100%", paddingBottom: 20, borderBottomWidth: 1, borderColor: 'rgba(255, 255, 255, 0.1)' }}>
                         <View style={{ width: 18, height: 18, borderRadius: 4, borderWidth: 2, borderColor: 'white', alignItems: 'center', justifyContent: 'center' }}>
@@ -72,7 +73,7 @@ const Language = () => {
                             <Text style={{ fontFamily: "ABRe", fontSize: 15.37, color: 'white', lineHeight: 21, }}>Espanol (Mexico)</Text>
                         </View>
 
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
             </SafeAreaView>
         </View>

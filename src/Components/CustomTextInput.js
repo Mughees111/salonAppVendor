@@ -2,7 +2,7 @@ import React from 'react'
 import { TextInput, StyleSheet } from 'react-native'
 import { acolors } from './AppColors';
 
-const CustomTextInput = ({ value, style, onChangeText, placeholder, placeholderTextColor, secureTextEntry = false, autoFocus = false, keyboardType, keyboardAppearance }) => {
+const CustomTextInput = ({ value, style, onChangeText, placeholder, placeholderTextColor, secureTextEntry = false, autoFocus = false, keyboardType, keyboardAppearance, ...props }) => {
     return (
         <TextInput
             autoCapitalize='none'
@@ -15,7 +15,7 @@ const CustomTextInput = ({ value, style, onChangeText, placeholder, placeholderT
             autoFocus={autoFocus}
             keyboardType={keyboardType}
             keyboardAppearance={keyboardAppearance ? keyboardAppearance : "default"}
-        // {...props}
+            {...props}
         />
     )
 }

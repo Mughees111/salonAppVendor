@@ -130,7 +130,7 @@ const ServiceDetails = (props) => {
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <CustomTextInput
                             onChangeText={setSTimeMins}
-                            keyboardType={'numeric'}
+                            // keyboardType={'numeric'}
                             placeholder={"Duration"}
                             value={s_time_mins}
                             style={{ marginTop: 20 }}
@@ -189,6 +189,16 @@ const ServiceDetails = (props) => {
                             <Text style={{ fontFamily: 'ABRe', fontSize: 15, color: 'white', position: 'absolute', right: 20, alignSelf: 'center', top: 10 }}>$</Text>
                         </View>
 
+
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <CustomTextInput
+                            onChangeText={setSDesc}
+                            placeholder={"Description"}
+                            value={s_desc}
+                            style={{ marginTop: 20,height:100,textAlignVertical:'top',paddingTop:15 }}
+
+                        />
                     </View>
 
 

@@ -17,6 +17,7 @@ import { Context } from '../Context/DataContext';
 import * as Notifications from 'expo-notifications'
 import * as Permissions from 'expo-permissions';
 import { urls } from '../utils/Api_urls';
+import { navigateToPost, navigateToPostNow } from '../../Common';
 
 var alertRef;
 
@@ -33,6 +34,7 @@ const Appointments = () => {
     const [appoints, setAppoints] = useState([]);
     const [app_date, setAppDate] = useState();
     const [sal_hours, setSalHours] = useState([])
+    const [notifCount, setNotifCount] = useState(0);
 
     const [currentDate, setCurrentDate] = useState('');
 
@@ -87,6 +89,24 @@ const Appointments = () => {
         "23:30",
     ];
 
+
+    const handleNotificationClick = async ()=>{
+        navigateToPost.subscribe((t)=>{
+            console.log("honor received");
+            console.log(t);
+            if(t.where=="notif"){
+                navigate("Notifications");
+                navigateToPostNow.navigate({id:0,where:"nowhere"});
+            }
+            if(t.where=="chat"){
+                navigateFromStack("UserChatNavigatorr", "ChatDetails",{user_id:0,convo_id:t?.id,picUrl:"",name:"Loading",username:"Loading..."})
+                navigateToPostNow.navigate({id:0,where:"nowhere"})
+            }
+        })
+    }
+
+
+
     async function askNotificationPermission() {
         const { status: existingStatus } = await Permissions.getAsync(
             Permissions.NOTIFICATIONS
@@ -100,7 +120,9 @@ const Appointments = () => {
         }
         if (finalStatus == 'granted') {
             try {
-                let token = await Notifications.getExpoPushTokenAsync();
+                let token = await Notifications.getExpoPushTokenAsync({
+                    experienceId: '@mughees1512/salonAppVendor'
+                });
                 // setNotif_token(token.data)
                 store_location_on_server(token.data)
             } catch (error) {
@@ -125,10 +147,7 @@ const Appointments = () => {
                     body: JSON.stringify(dbData),
                 })
             })
-
     }
-
-
 
     function get_sal_appoints(date) {
         setLoading(true)
@@ -183,10 +202,10 @@ const Appointments = () => {
                         setLoading(false)
                         console.log(data1)
                         if (data1.action == 'success') {
-
-                            setAppoints(data1.data)
+                            setAppoints(data1.data);
+                            setNotifCount(data1?.notifs);
                             forceUpdate();
-                            makeAppointsB(data1.data, temp)
+                            makeAppointsB(data1.data, temp);
                         }
                         else {
                             alertRef.alertWithType("error", "Error", data.error);
@@ -284,15 +303,15 @@ const Appointments = () => {
 
 
     useFocusEffect(React.useCallback(() => {
+        
+
         get_sal_appoints()
         askNotificationPermission()
     }, []))
 
-    // useEffect(() => {
-    //     // makeAppointsB()
-
-
-    // }, []);
+    useEffect(() => {
+        handleNotificationClick();
+    }, []);
 
 
 
@@ -308,7 +327,11 @@ const Appointments = () => {
 
             <TouchableOpacity onPress={() => navigate('Notifications')}>
                 <NotificationIcon />
-            </TouchableOpacity>
+                {notifCount > 0 && <View style={{ position: 'absolute', top: -5, right: -5, width: 15, height: 15, borderRadius: 7.5, backgroundColor: 'red', alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ color: 'white', fontSize: 8, fontFamily: 'PBo',  }}>{notifCount}</Text>
+                </View>
+                }
+            </TouchableOpacity >
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 {/* <Text style={{ fontFamily: 'ABRe', fontSize: 20.67, color: 'white' }}>Today</Text> */}
                 {/* <ArrowDown style={{ marginLeft: 10 }} /> */}
@@ -331,7 +354,7 @@ const Appointments = () => {
                 <Text style={{ fontFamily: 'ABRe', fontSize: 14.67, color: 'white' }}>See All</Text>
             </TouchableOpacity>
 
-        </View>
+        </View >
     )
 
 
@@ -423,7 +446,7 @@ const Appointments = () => {
                     navigateFromStack('AddNewClient');
                     // navigate('NewAppoint', props?.route?.params)
                 }}
-                style={{ width: 58, height: 58, borderRadius: 58 / 2, backgroundColor: 'black', alignItems: 'center', justifyContent: 'center', position: 'absolute', right: 20, bottom: 20 }}>
+                style={{ width: 58, height: 58, borderRadius: 58 / 2, backgroundColor: acolors.bgColor, alignItems: 'center', justifyContent: 'center', position: 'absolute', right: 20, bottom: 20 }}>
                 <Entypo name='plus' size={30} color={"white"} />
             </TouchableOpacity>
         </View >

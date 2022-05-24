@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1086258223313",
+    "project_id": "couaff-bizz",
+    "storage_bucket": "couaff-bizz.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1086258223313:android:0c095178b8c5cf9ee54df0",
+        "android_client_info": {
+          "package_name": "com.mughees1512.salonAppVendor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1086258223313-095jtcrqpa0klnsdigdv6pto81qlb0qh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnX6LIV8ZRpn5wPspyV8zUaCIvRCFnOWU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1086258223313-095jtcrqpa0klnsdigdv6pto81qlb0qh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

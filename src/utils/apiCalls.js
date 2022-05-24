@@ -1,4 +1,6 @@
 const { urls } = require("../utils/Api_urls");
+import { Alert } from "react-native";
+import { navigate } from "../../Navigations";
 import { doConsole } from "./../utils/functions"
 
 async function doPost(body_data, url_plus) {
@@ -24,7 +26,7 @@ async function doPost(body_data, url_plus) {
 }
 
 export async function apiRequest(body_data, url_plus) {
-  
+
   var url = urls.API;
   doConsole(" I request @ " + urls.API + url_plus);
   doConsole(body_data);
@@ -44,7 +46,11 @@ export async function apiRequest(body_data, url_plus) {
       .then((response) => response.json())
       // .then((response) => response.text())
       .then((responseJson) => {
-        // console.log(responseJson)
+        console.log(responseJson)
+        if (responseJson?.action == 'failed' && responseJson?.error_type == '99') { // 99 indicates that subscription has been expires
+          navigate('SubscriptionAndBiiling');
+          return;
+        }
         return responseJson
       }).catch((error) => {
         console.log(error)

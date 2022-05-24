@@ -343,9 +343,9 @@ const PaymentMethods = (props) => {
                         style={{ width: "100%", height: 76, flexDirection: 'row', paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', backgroundColor: '#1B1B1B', marginTop: 15 }}>
                         <Image
                             style={{ width: 40, resizeMode: 'contain' }}
-                            source={require('../assets/stripe.png')}
+                            source={require('../assets/visa.png')}
                         />
-                        <Text style={{ color: '#FCFCFC', fontFamily: 'ABRe', fontSize: 14, marginLeft: 10 }}>Stripe</Text>
+                        <Text style={{ color: '#FCFCFC', fontFamily: 'ABRe', fontSize: 14, marginLeft: 10 }}>Credit/Debit</Text>
                         <Text style={{ color: '#FCFCFC', fontFamily: 'ABRe', fontSize: 12, marginLeft: 10, marginTop: 5 }}>**********</Text>
                         <View style={{ position: 'absolute', right: 15 }}>
                             {paymentMethod == 'stripe' ? <MarkedIcon /> : <UnMarkedIcon />}

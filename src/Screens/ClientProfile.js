@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, TextInput, Dimensions } from 'react-native'
-import { goBack, navigate } from '../../Navigations';
+import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, TextInput, Dimensions, Linking } from 'react-native'
+import { goBack, navigate, navigateFromStack } from '../../Navigations';
 
 import { acolors } from '../Components/AppColors';
 import CustomTextInput from '../Components/CustomTextInput';
@@ -44,7 +44,7 @@ const ClientProfile = (props) => {
                         if (data1.action == 'success') {
                             setClientApps(data1.data)
                             // let cancelled = appoints.filter(item => item.app_status == 'cancelled')
-                            const cancel = data1.data.filter(v=>v.app_status == 'cancelled')
+                            const cancel = data1.data.filter(v => v.app_status == 'cancelled')
                             doConsole('cancel = ')
                             doConsole(cancel)
                             setCancellation(cancel)
@@ -118,15 +118,42 @@ const ClientProfile = (props) => {
 
                             </View>
                             <View>
-                                <TouchableOpacity style={{ width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', backgroundColor: 'white' }}>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        let item = props?.route?.params?.convos;
+                                        navigateFromStack('UserChatNavigator', 'ChatDetails', {
+                                            user_id: item?.user_id,
+                                            convo_id: item?.convo_id,
+                                            name: item?.name,
+                                            picUrl: item?.image
+                                        })
+
+                                    }}
+                                    style={{ width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', backgroundColor: 'white' }}>
                                     <MsgIcon />
                                 </TouchableOpacity>
                                 <Text style={{ fontFamily: 'ABRe', fontSize: 10.72, color: 'white', alignSelf: 'center', marginTop: 2 }}>Text</Text>
-                                <TouchableOpacity style={{ width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', backgroundColor: 'white', marginTop: 25 }}>
+                                <TouchableOpacity
+                                    onPress={() => {
+
+                                        if (props?.route?.params?.phone) {
+                                            Linking.openURL(`tel:+${props?.route?.params?.phone}`, '_blank');
+                                        }
+                                        else {
+                                            alertRef.alertWithType('info', "", "The user have not any phone number")
+                                        }
+
+
+                                    }}
+                                    style={{ width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', backgroundColor: 'white', marginTop: 25 }}>
                                     <CallIcon />
                                 </TouchableOpacity>
                                 <Text style={{ fontFamily: 'ABRe', fontSize: 10.72, color: 'white', alignSelf: 'center', marginTop: 2 }}>Call</Text>
-                                <TouchableOpacity style={{ width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', backgroundColor: 'white', marginTop: 25 }}>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        Linking.openURL(`mailto:${props?.route?.params?.email}`, '_blank');
+                                    }}
+                                    style={{ width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', backgroundColor: 'white', marginTop: 25 }}>
                                     <MailIcon />
                                 </TouchableOpacity>
                                 <Text style={{ fontFamily: 'ABRe', fontSize: 10.72, color: 'white', alignSelf: 'center', marginTop: 2 }}>Email</Text>
@@ -134,8 +161,8 @@ const ClientProfile = (props) => {
                         </View>
 
                         <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 10 }}>
-                              <Text style={{ fontFamily: 'ABRe', fontSize: 12, color: 'white' }}>{clientApps.length} Appointment</Text>
-                            <Text style={{ fontFamily: 'ABRe', fontSize: 12, color: 'white' }}>{cancellation.length} Calcellations</Text>
+                            <Text style={{ fontFamily: 'ABRe', fontSize: 12, color: 'white' }}>{clientApps.length} Appointment</Text>
+                            <Text style={{ fontFamily: 'ABRe', fontSize: 12, color: 'white' }}>{cancellation.length} Cancellations</Text>
                         </View>
                     </View>
                     <View style={{ flexDirection: 'row', marginTop: 20, width: "100%" }}>
@@ -170,7 +197,7 @@ const ClientProfile = (props) => {
                                         <Text style={{ fontFamily: 'ABRe', fontSize: 17.85, color: 'white' }}>{v.app_services}</Text>
                                     </View>
                                     <Text style={{ fontFamily: 'ABRe', fontSize: 15.97, color: 'white', marginLeft: 30 }}>${v.app_price}</Text>
-                                    <Text style={{ fontFamily: 'ABRe', fontSize: 15.97, color: 'white', marginLeft: 30,textTransform:'capitalize' }}>{v.app_status}</Text>
+                                    <Text style={{ fontFamily: 'ABRe', fontSize: 15.97, color: 'white', marginLeft: 30, textTransform: 'capitalize' }}>{v.app_status}</Text>
                                     {/* <ArrowRight1 /> */}
                                 </TouchableOpacity>
                             )
@@ -211,8 +238,8 @@ const ClientProfile = (props) => {
 
             </SafeAreaView>
             <TouchableOpacity
-                onPress={() => navigate('NewAppoint',props?.route?.params)}
-                style={{ width: 58, height: 58, borderRadius: 58 / 2, backgroundColor: 'black', alignItems: 'center', justifyContent: 'center', position: 'absolute', right: 20, bottom: 20 }}>
+                onPress={() => navigate('NewAppoint', props?.route?.params)}
+                style={{ width: 58, height: 58, borderRadius: 58 / 2, backgroundColor: acolors.bgColor, alignItems: 'center', justifyContent: 'center', position: 'absolute', right: 20, bottom: 20 }}>
                 <Entypo name='plus' size={30} color={"white"} />
             </TouchableOpacity>
 

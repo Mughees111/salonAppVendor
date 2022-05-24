@@ -579,12 +579,12 @@ const SalonProfile = () => {
                         {/* </View> */}
                         <Text style={[styles.simpleText, { lineHeight: 20 }]}>{salData?.sal_description}</Text>
                         {/* Tax Id */}
-                        <TouchableOpacity style={{ padding: 5, alignSelf: 'flex-end' }}>
+                        {/* <TouchableOpacity style={{ padding: 5, alignSelf: 'flex-end' }}>
                             <Text style={styles.editText}>Edit</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <Text style={styles.headingText}>Tax ID</Text>
-                            <Text style={[styles.headingText, { fontSize: 14 }]}>75654</Text>
+                            <Text style={styles.headingText}>Lincense ID</Text>
+                            <Text style={[styles.headingText, { fontSize: 14 }]}>{salData?.lincense_id}</Text>
                         </View>
                         {/* Opening Hours */}
                         <View>
@@ -667,7 +667,7 @@ const SalonProfile = () => {
 
                         {/* Location */}
 
-                        <View style={{ marginTop: 20 }}>
+                        {/* <View style={{ marginTop: 20 }}>
                             <Image
                                 style={{ width: "100%", resizeMode: 'stretch', }}
                                 source={require('../assets/map.png')}
@@ -675,7 +675,7 @@ const SalonProfile = () => {
                             <TouchableOpacity style={{ position: 'absolute', top: 0, right: 0, padding: 15 }}>
                                 <Text style={{ fontFamily: 'ABRe', fontSize: 12, color: acolors.primary, }}>Change</Text>
                             </TouchableOpacity>
-                        </View>
+                        </View> */}
 
                         {/* Photos */}
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }}>

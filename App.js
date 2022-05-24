@@ -8,6 +8,7 @@ import { NavigationContainer, StackActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 
+import { MaterialIcons } from '@expo/vector-icons'
 
 import { navigate, navigationRef, navigateFromStack } from './Navigations';
 import EmailAddress from './src/Screens/EmailAddress';
@@ -57,7 +58,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { storeItem, retrieveItem, doConsole, checkLoginSteps } from './src/utils/functions'
 import { urls } from './src/utils/Api_urls';
 import { apiRequest } from './src/utils/apiCalls';
-import { loggedInObservable } from './Common';
+import { loggedInObservable, navigateToPostNow } from './Common';
 import { Provider } from './src/Context/DataContext';
 import EditProfile from './src/Screens/EditProfile';
 import EditHours from './src/Screens/EditHours';
@@ -76,6 +77,12 @@ import GroupMessages from './src/Screens/GroupMessages';
 import HealthSafety from './src/Screens/HealthSafety';
 import DelAccount from './src/Screens/DelAccount';
 import Support from './src/Screens/Support';
+import Insights from './src/Screens/Insights';
+
+import * as Notificationss from 'expo-notifications'
+import DropdownAlert from 'react-native-dropdownalert';
+import AddCardDetails from './src/Screens/AddCardDetails';
+import AccountStatement from './src/Screens/AccountStatement';
 
 
 const Stack = createStackNavigator()
@@ -108,7 +115,7 @@ function AuthStack() {
 function UserChatNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="UserChat" component={UserChat} /> 
+      <Stack.Screen name="UserChat" component={UserChat} />
       <Stack.Screen name="ChatDetails" component={ChatDetails} />
       <Stack.Screen name="GroupMessages" component={GroupMessages} />
     </Stack.Navigator>
@@ -141,7 +148,6 @@ function AppointmentStack() {
       <Stack.Screen name="AddNewClient" component={AddNewClient} />
       <Stack.Screen name="NewAppoint" component={NewAppoint} />
     </Stack.Navigator>
-
   )
 }
 
@@ -155,6 +161,16 @@ function SalonProfileStack() {
       <Stack.Screen name="EditHours" component={EditHours} />
       <Stack.Screen name="EditServices" component={EditServices} />
       <Stack.Screen name="ServiceDetails" component={ServiceDetails} />
+    </Stack.Navigator>
+
+  )
+}
+function InsightsStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }} >
+      <Stack.Screen name="Insights" component={Insights} />
+      <Stack.Screen name="AccountStatement" component={AccountStatement} />
+      
     </Stack.Navigator>
 
   )
@@ -200,6 +216,15 @@ function BottomTabNavigator() {
         }}
         name="SalonProfileStack" component={SalonProfileStack} />
 
+      <BottomTabs.Screen
+        options={{
+          tabBarLabel: null,
+          tabBarIcon: ({ color, focused }) => (
+            <MaterialIcons name='event-note' color={color} size={22} />
+          )
+        }}
+        name="Insights" component={InsightsStack} />
+
     </BottomTabs.Navigator>
   )
 }
@@ -210,6 +235,8 @@ const useForceUpdate = () => {
   return React.useCallback(() => updateState({}), []);
 }
 
+var alertRef;
+
 
 export default function App() {
 
@@ -218,8 +245,16 @@ export default function App() {
     ABRe: require('./assets/fonts/Abel/Abel-Regular.ttf'),
     PBo: require('./assets/fonts/Poppins-Bold.ttf'),
   })
+
+
+
   const [loggedIn, setLoggedIn] = useState(0);
   const [loading, setLoading] = useState(false)
+
+  const notificationListener = React.useRef();
+  const responseListener = React.useRef();
+  const [notification, setNotification] = useState(false);
+
 
 
   const checkWithServer = (data) => {
@@ -298,6 +333,7 @@ export default function App() {
         }
         else {
           console.log('else')
+          // storeItem('login_data',)
           setLoggedIn(2)
           forceUpdate()
         }
@@ -322,10 +358,43 @@ export default function App() {
   }
 
 
+  const handleNotifClick = (notif) => {
+    if (typeof notif?.request?.content?.data?.open != 'undefined') {
+      navigateToPostNow.navigate({ id: notif?.request?.content?.data?.post_id, where: notif?.request?.content?.data?.open })
+    }
+  }
+
+
+  useEffect(() => {
+    notificationListener.current = Notificationss.addNotificationResponseReceivedListener(response => {
+      console.log("Notificationssss")
+      console.log(response);
+      setTimeout(() => {
+        handleNotifClick(response.notification);
+      }, 500)
+    });
+
+    responseListener.current = Notificationss.addNotificationReceivedListener(notification => {
+      setNotification(notification);
+      alertRef.alertWithType("", notification.request.content.title, notification.request.content.body, notification.request.content.data);
+    });
+
+    return () => {
+      Notificationss.removeNotificationSubscription(notificationListener.current);
+      Notificationss.removeNotificationSubscription(responseListener.current);
+    };
+  }, [])
+
 
   useEffect(() => {
 
-    // storeItem('login_data','')
+    // if (notification) {
+    //   console.log('yes i am a notification')
+    //   console.log(notification)
+    // }
+
+
+
     setLoading(true)
     retrieveItem('login_data')
       .then(data => {
@@ -352,6 +421,11 @@ export default function App() {
 
   return (
     <Provider>
+      <DropdownAlert updateStatusBar={false}
+        ref={ref => alertRef = ref}
+      />
+
+
       <NavigationContainer
         ref={navigationRef}
       >
@@ -368,9 +442,13 @@ export default function App() {
               <Stack.Screen name="BottomTabNavigator" component={BottomTabNavigator} />
               <Stack.Screen name="DelAccount" component={DelAccount} />
               <Stack.Screen name="Notifications" component={Notifications} />
+              <Stack.Screen name="UserChatNavigatorr" component={UserChatNavigator} />
 
               <Stack.Screen name="PersonalSettings" component={PersonalSettings} />
               <Stack.Screen name="HealthSafety" component={HealthSafety} />
+              <Stack.Screen name="PaymentMethd" component={PaymentMethd} />
+              <Stack.Screen name="AddCardDetails" component={AddCardDetails} />
+              <Stack.Screen name="Insights" component={Insights} />
               <Stack.Screen name="NotificationsS" component={NotificationsS} />
               <Stack.Screen name="Language" component={Language} />
               <Stack.Screen name="AdvancedSettings" component={AdvancedSettings} />

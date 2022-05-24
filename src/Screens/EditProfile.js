@@ -38,6 +38,11 @@ const EditProfile = (props) => {
         sal_contact_person: params?.sal_contact_person ? params?.sal_contact_person : '',
         sal_address: params?.sal_address ? params?.sal_address : '',
         sal_description: params?.sal_description ? params?.sal_description : '',
+        sal_country: params?.sal_country ? params?.sal_country : '',
+        sal_city: params?.sal_city ? params?.sal_city : '',
+        sal_phone: params?.sal_phone ? params?.sal_phone : '',
+        lincense_id: params?.lincense_id ? params?.lincense_id : '',
+        sal_email: params?.sal_email ? params?.sal_email : '',
     })
 
 
@@ -59,13 +64,24 @@ const EditProfile = (props) => {
 
         retrieveItem('login_data')
             .then(data1 => {
-                const reqObj = {
+
+                var reqObj = {
                     sal_name: editProfileData.sal_name,
                     sal_contact_person: editProfileData.sal_contact_person,
                     sal_address: editProfileData.sal_address,
                     sal_description: editProfileData.sal_description,
+                    lincense_id: editProfileData.lincense_id,
+                    sal_country: editProfileData.sal_country,
+                    sal_city: editProfileData.sal_city,
+                    sal_phone: editProfileData.sal_phone,
                     token: data1.token
                 }
+
+                if (editProfileData.sal_email !== params?.sal_email) {
+                    reqObj.sal_email = editProfileData.sal_email;
+                }
+
+                console.log(reqObj);
                 setLoading(true)
                 apiRequest(reqObj, 'update_salon')
                     .then(data => {
@@ -118,7 +134,7 @@ const EditProfile = (props) => {
             <DropdownAlert ref={(ref) => alertRef = ref} />
             <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
                 <OnBoardingHeader title="Edit Profile" />
-                <ScrollView>
+                <ScrollView contentContainerStyle={{ paddingBottom: 100 }} >
 
                     <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: acolors.white, marginTop: 25 }}>Salon name</Text>
                     <CustomTextInput
@@ -132,6 +148,35 @@ const EditProfile = (props) => {
                         }}
                         style={{ marginTop: 10 }}
                     />
+
+                    <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: acolors.white, marginTop: 25 }}>Email</Text>
+                    <CustomTextInput
+                        value={editProfileData.sal_email}
+                        placeholder={"Email"}
+                        onChangeText={(v) => {
+                            setEditProfileData({
+                                ...editProfileData,
+                                sal_email: v
+                            })
+                        }}
+                        style={{ marginTop: 10 }}
+                    />
+
+
+                    <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: acolors.white, marginTop: 25 }}>Phone No</Text>
+                    <CustomTextInput
+                        value={editProfileData.sal_phone}
+                        placeholder={"Phone"}
+                        onChangeText={(v) => {
+                            setEditProfileData({
+                                ...editProfileData,
+                                sal_phone: v
+                            })
+                        }}
+                        style={{ marginTop: 10 }}
+                    />
+
+
 
                     <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: acolors.white, marginTop: 25 }}>Salon contact person</Text>
                     <CustomTextInput
@@ -166,6 +211,44 @@ const EditProfile = (props) => {
                             setEditProfileData({
                                 ...editProfileData,
                                 sal_address: v
+                            })
+                        }}
+                        style={{ marginTop: 10 }}
+
+                    />
+                    <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: acolors.white, marginTop: 25 }}>Country</Text>
+                    <CustomTextInput
+                        placeholder={"Country"}
+                        value={editProfileData.sal_country}
+                        onChangeText={(v) => {
+                            setEditProfileData({
+                                ...editProfileData,
+                                sal_country: v
+                            })
+                        }}
+                        style={{ marginTop: 10 }}
+
+                    />
+                    <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: acolors.white, marginTop: 25 }}>City</Text>
+                    <CustomTextInput
+                        placeholder={"City"}
+                        value={editProfileData.sal_city}
+                        onChangeText={(v) => {
+                            setEditProfileData({
+                                ...editProfileData,
+                                sal_city: v
+                            })
+                        }}
+                        style={{ marginTop: 10 }}
+
+                    />
+                    <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: acolors.white, marginTop: 25 }}>Lincense id</Text>
+                    <CustomTextInput
+                        value={editProfileData.lincense_id}
+                        onChangeText={(v) => {
+                            setEditProfileData({
+                                ...editProfileData,
+                                lincense_id: v
                             })
                         }}
                         style={{ marginTop: 10 }}

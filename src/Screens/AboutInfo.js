@@ -21,6 +21,7 @@ const AboutInfo = () => {
     const [loading, setLoading] = useState(false);
     const [sal_type, setSaltype] = useState('');
     const [sal_description, setSal_description] = useState('')
+    const [lincense_id, setLincense_id] = useState('')
 
 
     function next() {
@@ -47,9 +48,11 @@ const AboutInfo = () => {
                 data1.step = 2;
                 data1.sal_name = sal_name;
                 data1.sal_contact_person = sal_contact_person;
-                data1.sal_phone = sal_phone;
+                const phone = "+1";
+                data1.sal_phone = phone + sal_phone;
                 data1.sal_type = sal_type;
                 data1.sal_description = sal_description;
+                data1.lincense_id = lincense_id;
                 storeItem('login_data', data1)
                     .then(data => {
                         navigate('PasswordSetup')
@@ -64,7 +67,7 @@ const AboutInfo = () => {
         <View style={{ flex: 1, backgroundColor: '#111111' }}>
             <StatusBar
                 style="light"
-                backgroundColor="#111111"
+                backgroundColor={acolors.statusBar}
                 translucent={false}
             />
             {loading && <Loader />}
@@ -117,6 +120,13 @@ const AboutInfo = () => {
                             onChangeText={setSalPhone}
                         />
                     </View>
+
+                    <CustomTextInput
+                        placeholder="Lincense id"
+                        style={{ marginTop: 20 }}
+                        onChangeText={setLincense_id}
+                    />
+
                     <MainButton
                         text="Continue"
                         btnStyle={{ marginTop: 30 }}

@@ -37,8 +37,9 @@ const PersonalSettings = () => {
         { title: "Notifications", desc: "Modify your language, set your notification preferences, and switch business profiles ", navigateTo: "NotificationsS" },
         { title: "Language", desc: "Access your Booking Settings and adjust Retails Information", navigateTo: "Language" },
         { title: "Health & Safety Rules", desc: "", navigateTo: "HealthSafety" },
+        { title: "Add card details for payment", desc: "", asd: "PaymentMethd", navigateTo: "AddCardDetails" },
         { title: "Logout", desc: "Access to Couaff’s Terms & Conditions And Privacy Policy", navigateTo: "logout" },
-        
+
     ]
 
     const LogoutModal = () => (
@@ -48,7 +49,7 @@ const PersonalSettings = () => {
             onBackdropPress={() => setLogoutModal(false)}
             style={{ position: 'absolute', bottom: 0, width: "80%", alignSelf: 'center' }}
         >
-            <View style={{ backgroundColor: 'black', alignItems: 'center', justifyContent: 'center', borderRadius: 10, paddingVertical: 20, paddingHorizontal: 25 }}>
+            <View style={{ backgroundColor: acolors.bgColor, alignItems: 'center', justifyContent: 'center', borderRadius: 10, paddingVertical: 20, paddingHorizontal: 25 }}>
                 <Text style={{ fontSize: 20, color: '#FFFFFF', fontFamily: 'ABRe' }}>Logout from the App?</Text>
                 <MainButton
                     text={"YES. LOG OUT"}
@@ -66,7 +67,7 @@ const PersonalSettings = () => {
                                         console.log(data)
                                         setLoading(false)
                                         if (data.action == 'success') {
-                                            storeItem('login_data','');
+                                            storeItem('login_data', '');
                                             changeLoggedIn.changeNow(2)
                                         }
                                         else {

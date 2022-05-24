@@ -35,7 +35,7 @@ const SettingsScreen = () => {
             </TouchableOpacity>
             <Text style={{ fontFamily: 'ABRe', fontSize: 20.67, color: 'white' }}>Settings</Text>
             <TouchableOpacity>
-                <VerticalDots />
+                {/* <VerticalDots /> */}
             </TouchableOpacity>
         </View>
     )
@@ -57,7 +57,7 @@ const SettingsScreen = () => {
             <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
                 <Header />
 
-                <View style={{ width: "100%", height: 42, borderWidth: 1, borderColor: 'white', borderRadius: 8, paddingHorizontal: 10, alignItems: 'center', flexDirection: 'row', marginTop: 20 }}>
+                {/* <View style={{ width: "100%", height: 42, borderWidth: 1, borderColor: 'white', borderRadius: 8, paddingHorizontal: 10, alignItems: 'center', flexDirection: 'row', marginTop: 20 }}>
                     <TouchableOpacity>
                         <SearchIcon />
                     </TouchableOpacity>
@@ -71,7 +71,7 @@ const SettingsScreen = () => {
                         // }}
                         style={{ marginLeft: 10, color: 'rgba(252, 252, 252, 1)', fontFamily: 'ABRe', flex: 1 }}
                     />
-                </View>
+                </View> */}
                 <ScrollView
                     // bounces={true}
                     contentContainerStyle={{ paddingBottom: 100 }}

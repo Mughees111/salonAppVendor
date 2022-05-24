@@ -21,7 +21,7 @@ import { changeLoggedIn } from '../../Common';
 
 var alertRef
 
-const Support = () => {
+const Support = (props) => {
 
     const forceUpdate = useForceUpdate();
     const { state, setUserGlobal } = useContext(Context);
@@ -30,49 +30,40 @@ const Support = () => {
     const userData = state.userData;
 
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [reason, setReason] = useState('');
     const [description, setDescription] = useState('')
 
 
 
-    function doDel() {
+    function send_support_msg() {
 
+        
         retrieveItem('login_data')
             .then(data => {
-
-
                 const reqObj = {
-                    sal_email: email,
-                    sal_password: password,
+                    contact_email: email,
+                    msg: description,
                     token: data?.token,
-                    reason,
-                    description
                 }
                 if (!validateEmail(email)) {
                     alertRef.alertWithType('error', "Error", "Please enter a valid email")
                     return
                 }
-                if (!password.length) {
-                    alertRef.alertWithType('error', "Error", "Please enter a valid password")
-                    return
-                }
-                if (!reason.length) {
-                    alertRef.alertWithType('error', "Error", "Please enter a valid reason")
-                    return
-                }
-                if (!description.length) {
+                if (description.length<5) {
                     alertRef.alertWithType('error', "Error", "Please enter a valid Description")
                     return
                 }
 
                 setLoading(true)
-                apiRequest(reqObj, 'delete_vendor_account')
+                apiRequest(reqObj, 'support_msg')
                     .then(data => {
+                        console.log(data)
                         setLoading(false)
                         if (data.action == 'success') {
-                            storeItem('login_data', '')
-                            changeLoggedIn.changeNow(2);
+                            alertRef.alertWithType('success', "Success", "Your request has been been sent. We will contact you soon.");
+                            setEmail('');
+                            setDescription('');
+                            props.navigation.popToTop()
+                            forceUpdate();
                         }
                         else alertRef.alertWithType('error', "Error", data.error);
                     })
@@ -97,7 +88,8 @@ const Support = () => {
                 <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: acolors.white }}>Support</Text>
                 <TouchableOpacity
                     onPress={() => {
-                        alertRef.alertWithType('warn',"Under Development")
+                        send_support_msg();
+                        // alertRef.alertWithType('warn',"Under Development")
                         // doDel()
                     }}
                 >
@@ -108,7 +100,7 @@ const Support = () => {
     }
 
     return (
-        <View style={{ flex: 1, backgroundColor: 'black' }}>
+        <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
             {loading && <Loader />}
             <DropdownAlert ref={(ref) => alertRef = ref} />
 
@@ -123,7 +115,7 @@ const Support = () => {
 
                 <View style={{ marginTop: 20, alignSelf: 'center', width: "100%" }}>
                     <View style={{ width: "100%", backgroundColor: "#222222", borderRadius: 2, paddingVertical: 20, paddingHorizontal: 10 }}>
-                        <Text style={{ fontFamily: 'ABRe', fontSize: 11, color: 'rgba(255,255,255,0.4)', flexWrap: 'wrap', marginTop: 0, width: "100%" }}>You can send us a support request here, or email us directly at <Text>support@thecut.co.</Text> We will respond to you via email as soon as possible.</Text>
+                        <Text style={{ fontFamily: 'ABRe', fontSize: 11, color: 'rgba(255,255,255,0.4)', flexWrap: 'wrap', marginTop: 0, width: "100%" }}>You can send us a support request here, or email us directly at <Text>support@couaff.com.</Text> We will respond to you via email as soon as possible.</Text>
                     </View>
                 </View>
                 <ScrollView>
@@ -135,6 +127,7 @@ const Support = () => {
                             // value={username}
                             onChangeText={setEmail}
                             autoCapitalize="none"
+                            value = {email}
                             placeholderTextColor={"rgba(255,255,255,0.4)"}
                             style={{
                                 width: "98%",
@@ -160,6 +153,7 @@ const Support = () => {
                             multiline={true}
                             // value={username}
                             onChangeText={setDescription}
+                            value = {description}
                             placeholderTextColor={"rgba(255,255,255,0.4)"}
                             textAlignVertical='top'
                             style={{

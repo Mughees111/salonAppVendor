@@ -11,7 +11,7 @@ import { MainButton } from '../Components/Buttons';
 
 const PaypalAccount = () => {
     return (
-        <View style={{ flex: 1, backgroundColor: 'black' }}>
+        <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
             <StatusBar
                 style='light'
                 backgroundColor={acolors.bgColor}

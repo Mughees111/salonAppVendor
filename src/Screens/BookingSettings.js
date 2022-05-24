@@ -52,7 +52,7 @@ const BookingSettings = () => {
             onBackdropPress={() => setLogoutModal(false)}
             style={{ position: 'absolute', bottom: 0, width: "80%", alignSelf: 'center' }}
         >
-            <View style={{ backgroundColor: 'black', alignItems: 'center', justifyContent: 'center', borderRadius: 10, paddingVertical: 20, paddingHorizontal: 25 }}>
+            <View style={{ backgroundColor: acolors.bgColor, alignItems: 'center', justifyContent: 'center', borderRadius: 10, paddingVertical: 20, paddingHorizontal: 25 }}>
                 <Text style={{ fontSize: 20, color: '#FFFFFF', fontFamily: 'ABRe' }}>Logout from the App?</Text>
                 <MainButton
                     text={"YES. LOG OUT"}

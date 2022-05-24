@@ -27,49 +27,16 @@ const PaymentMethd = () => {
         paypal: false,
         cash: false
     })
-    const prices = [
-        "Fixed",
-        "Starts at",
-        "Varies",
-        "Free",
-        "Don’t Show"
-    ];
+  
 
-    function next() {
-
+   
+    useEffect(() => {
+      
         retrieveItem('login_data')
-            .then(data => {
-                var makeMethod = '';
-                for (let key in paymentMethod) {
-                    if (paymentMethod[key] == true) {
-                        makeMethod = makeMethod + "," + key
-                    }
-                }
-                makeMethod = makeMethod.substring(1)
-                if (makeMethod.length) {
-                    setLoading(true)
-                    apiRequest({ payment_method: makeMethod, token: data.token }, 'update_salon')
-                        .then(data => {
-                            if (data.action == 'success') {
-                                setLoading(false)
-                                alertRef.alertWithType('success', 'Success');
-                                storeItem('login_data', data.data)
-                                navigate('Congrats')
-                            }
-                            else {
-                                alertRef.alertWithType('success', 'Success');
-                            }
-                        })
-                        .catch(err => {
-                            setLoading(false)
-                        })
-                }
-                else {
-                    navigate('Congrats')
-                }
-
-            })
-    }
+    
+      
+    }, [])
+    
 
 
     return (
@@ -83,9 +50,8 @@ const PaymentMethd = () => {
             {loading && <Loader />}
             <DropdownAlert ref={(ref) => alertRef = ref} />
             <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
-                <OnBoardingHeader title="Add Payment Method" />
+                <OnBoardingHeader title="Account" />
                 <ScrollView>
-                    <Text style={{ marginTop: 30, fontFamily: 'ABRe', fontSize: 16, color: acolors.white }}>Which type of payment you want to accept from clients</Text>
                     <TouchableOpacity
                         onPress={() => {
                             setPaymentMethod({
@@ -148,8 +114,8 @@ const PaymentMethd = () => {
                         text="Save"
                         btnStyle={{ marginTop: 30 }}
                         onPress={() => {
-                            next();
-                            // 
+                            
+                            
                         }}
                     />
                 </ScrollView>

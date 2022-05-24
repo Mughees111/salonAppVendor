@@ -21,7 +21,7 @@ import { changeLoggedIn } from '../../Common';
 
 var alertRef
 
-const DelAccount = () => {
+const DelAccount = (props) => {
 
     const forceUpdate = useForceUpdate();
     const { state, setUserGlobal } = useContext(Context);
@@ -40,8 +40,6 @@ const DelAccount = () => {
 
         retrieveItem('login_data')
             .then(data => {
-
-
                 const reqObj = {
                     sal_email :  email,
                     sal_password :  password,
@@ -51,33 +49,34 @@ const DelAccount = () => {
                 }
                 if (!validateEmail(email)) {
                     alertRef.alertWithType('error', "Error", "Please enter a valid email")
-                    return
+                    return;
                 }
                 if (!password.length) {
                     alertRef.alertWithType('error', "Error", "Please enter a valid password")
-                    return
+                    return;
                 }
                 if (!reason.length) {
                     alertRef.alertWithType('error', "Error", "Please enter a valid reason")
-                    return
+                    return;
                 }
                 if (!description.length) {
                     alertRef.alertWithType('error', "Error", "Please enter a valid Description")
-                    return
+                    return;
                 }
-
-                setLoading(true)
+                setLoading(true);
                 apiRequest(reqObj, 'delete_vendor_account')
                     .then(data => {
-                        setLoading(false)
+                        setLoading(false);
                         if (data.action == 'success') {
-                            storeItem('login_data', '')
-                            changeLoggedIn.changeNow(2);
+                            // Alert.alert(data.msg)
+                            props.navigation.popToTop();
+                            // storeItem('login_data', '');
+                            // changeLoggedIn.changeNow(2);
                         }
                         else alertRef.alertWithType('error', "Error", data.error);
                     })
                     .catch(err => {
-                        setLoading(false)
+                        setLoading(false);
                     })
             })
     }
@@ -94,7 +93,7 @@ const DelAccount = () => {
                     style={{ alignItems: 'center', justifyContent: 'center' }}>
                     <Text style={{ fontFamily: 'ABRe', fontSize: 14, color: '#F9F2BC' }}>Cancel</Text>
                 </TouchableOpacity>
-                <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: acolors.white }}>Delete User</Text>
+                <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: acolors.white }}>Delete Account</Text>
                 <TouchableOpacity
                     onPress={() => doDel()}
                 >
@@ -105,7 +104,7 @@ const DelAccount = () => {
     }
 
     return (
-        <View style={{ flex: 1, backgroundColor: 'black' }}>
+        <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
             {loading && <Loader />}
             <DropdownAlert ref={(ref) => alertRef = ref} />
 
@@ -185,7 +184,7 @@ const DelAccount = () => {
                                     { title: "I signed as the wrong user type" },
                                     { title: "Not Enough Features" },
                                     { title: "I am using another service" },
-                                    { title: "My shop doesn't allow it" },
+                                    // { title: "My shop doesn't allow it" },
                                     { title: "I am no longer barbering" },
                                     { title: "The price for PRO is too high" },
                                 ]}

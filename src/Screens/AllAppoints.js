@@ -17,7 +17,7 @@ var alertRef;
 
 const AllAppoints = (props) => {
 
-    const [data, setData] = useState(props?.route?.params ? props.route.params : null)
+    const data = props?.route?.params ? props.route.params : null
     const [userData, setUserData] = useState();
 
     const forceUpdate = useForceUpdate();
@@ -25,11 +25,12 @@ const AllAppoints = (props) => {
     const [loading, setLoading] = useState(false);
     const [tabs, setTabs] = useState('pendings');
 
-    const [pendings, setPendings] = useState(data[0]?.pendings);
-    const [scheduled, setScheduled] = useState(data[0]?.scheduled);
-    const [cancelled, setCancelled] = useState(data[0]?.cancelled);
-    const [completed, setCompleted] = useState(data[0]?.completed);
+    const [pendings, setPendings] = useState(data ? data[0]?.pendings : []);
+    const [scheduled, setScheduled] = useState(data ? data[0]?.scheduled : []);
+    const [cancelled, setCancelled] = useState(data ? data[0]?.cancelled : []);
+    const [completed, setCompleted] = useState(data ? data[0]?.completed : []);
 
+    const [greaterFromToday, setGreaterFromToday] = useState(false);
 
     function confirm_app(app_id) {
 
@@ -82,8 +83,10 @@ const AllAppoints = (props) => {
                     app_id: dataParam.app_id,
                     app_status: "completed"
                 }
+                doConsole(reqObj)
                 apiRequest(reqObj, 'complete_app')
                     .then(data => {
+                        doConsole(data)
                         // setLoading(false)
                         if (data.action == 'success') {
                             get_sal_appoints(dataParam.app_date, d.token)
@@ -106,10 +109,12 @@ const AllAppoints = (props) => {
 
     function get_sal_appoints(app_date, token) {
 
+        setLoading(true)
         const reqObj = {
             token,
             app_date: app_date
         }
+        doConsole('asd')
         doConsole(reqObj)
         apiRequest(reqObj, 'get_sal_appoints')
             .then(data1 => {
@@ -125,8 +130,7 @@ const AllAppoints = (props) => {
                     setScheduled(scheduled);
                     setCancelled(cancelled);
                     setCompleted(completed);
-                    setTabs('completed');
-
+                    setTabs(props.route.params.date ? 'pendings' : 'completed');
                 }
                 else {
                     alertRef.alertWithType("error", "Error", data.error);
@@ -141,13 +145,27 @@ const AllAppoints = (props) => {
     }
 
 
+    useEffect(() => {
+        if (pendings?.length) {
+            let appdate = pendings[0]?.app_date;
+            var date = new Date(Date.parse(appdate));
+            if (date.getDate() > new Date().getDate()) {
+                setGreaterFromToday(true)
+                forceUpdate();
+            }
+        }
+
+    }, [])
 
     useFocusEffect(React.useCallback(
         () => {
             retrieveItem('login_data')
                 .then(data => {
-                    setUserData(data)
+                    if (props.route.params.date) {
+                        get_sal_appoints(props.route.params.date, data.token)
 
+                    }
+                    setUserData(data)
                 })
         },
         [],
@@ -160,7 +178,7 @@ const AllAppoints = (props) => {
             <TouchableOpacity
                 onPress={() => setTabs('pendings')}
                 style={{ width: "25%", height: 40, alignItems: 'center', justifyContent: 'center', backgroundColor: tabs == 'pendings' ? acolors.primary : acolors.bgColor, borderRadius: 10 }}>
-                <Text style={{ fontFamily: 'ABRe', fontSize: 15, color: tabs == 'pendings' ? acolors.bgColor : acolors.primary }}>Pendings</Text>
+                <Text style={{ fontFamily: 'ABRe', fontSize: 15, color: tabs == 'pendings' ? acolors.bgColor : acolors.primary }}>Pending</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 onPress={() => setTabs('scheduled')}
@@ -202,7 +220,7 @@ const AllAppoints = (props) => {
             <DropdownAlert ref={(ref) => alertRef = ref} />
             <StatusBar
                 style='light'
-                backgroundColor={acolors.bgColor}
+                backgroundColor={acolors.statusBar}
                 translucent={false}
             // translucent={false}
             />
@@ -269,13 +287,16 @@ const AllAppoints = (props) => {
                                             style={{ alignSelf: 'center', width: "21%", height: 26, marginLeft: 10, borderRadius: 28, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'white', }}>
                                             <Text style={{ fontFamily: 'ABRe', fontSize: 9.24, color: 'white', }}>Reschedule</Text>
                                         </TouchableOpacity>
-                                        <TouchableOpacity
-                                            onPress={() => {
-                                                confirm_app(item.app_id)
-                                            }}
-                                            style={{ alignSelf: 'center', width: "21%", marginLeft: 10, height: 26, borderRadius: 28, alignItems: 'center', justifyContent: 'center', backgroundColor: acolors.primary }}>
-                                            <Text style={{ fontFamily: 'ABRe', fontSize: 9.24, color: '#000000', }}>Confirm</Text>
-                                        </TouchableOpacity>
+                                        {
+                                            !greaterFromToday &&
+                                            <TouchableOpacity
+                                                onPress={() => {
+                                                    confirm_app(item.app_id)
+                                                }}
+                                                style={{ alignSelf: 'center', width: "21%", marginLeft: 10, height: 26, borderRadius: 28, alignItems: 'center', justifyContent: 'center', backgroundColor: acolors.primary }}>
+                                                <Text style={{ fontFamily: 'ABRe', fontSize: 9.24, color: '#000000', }}>Confirm</Text>
+                                            </TouchableOpacity>
+                                        }
                                     </>
                                 }
                                 {
