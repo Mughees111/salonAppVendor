@@ -37,7 +37,9 @@ const PersonalSettings = () => {
         { title: "Notifications", desc: "Modify your language, set your notification preferences, and switch business profiles ", navigateTo: "NotificationsS" },
         { title: "Language", desc: "Access your Booking Settings and adjust Retails Information", navigateTo: "Language" },
         { title: "Health & Safety Rules", desc: "", navigateTo: "HealthSafety" },
-        { title: "Add card details for payment", desc: "", asd: "PaymentMethd", navigateTo: "AddCardDetails" },
+        { title: "Add card details for payment", desc: "", asd: "PaymentMethd", navigateTo:"PaymentMethd"
+        //  "AddCardDetails" 
+        },
         { title: "Logout", desc: "Access to Couaff’s Terms & Conditions And Privacy Policy", navigateTo: "logout" },
 
     ]

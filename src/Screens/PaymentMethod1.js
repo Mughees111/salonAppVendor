@@ -172,7 +172,10 @@ const PaymentMethods = (props) => {
                                         style={{
                                             justifyContent: "center"
                                         }}
-                                        onPress={() => setPaypalModal(false)}
+                                        onPress={() => {
+                                            setPaypalModal(false)
+                                            setLoading(false)
+                                        }}
                                     >
                                         <Text style={{ color: "#fff" }} >Cancel</Text>
                                     </TouchableOpacity>
@@ -185,9 +188,9 @@ const PaymentMethods = (props) => {
                                 <WebView
                                     onNavigationStateChange={_onNavigationStateChange.bind(this)}
                                     startInLoadingState={true}
-                                    onLoadStart={()=>setLoading(true)}
+                                    onLoadStart={() => setLoading(true)}
                                     onLoadProgress={() => setLoading(true)}
-                                    // onLoadEnd={()=>{Alert.alert()}}
+                                    onLoadEnd={() => { setLoading(false) }}
                                     renderLoading={() => (
                                         <Loader />
                                     )}
@@ -251,28 +254,10 @@ const PaymentMethods = (props) => {
                                 <DropdownAlert ref={ref => alertRef = ref} />
                             </View>
 
-                            <View style={{
-                                flexDirection: 'row',
-                                paddingHorizontal: "5%",
-                                backgroundColor: "#30BDEB",
-                                paddingVertical: 20,
-                                alignItems: "center"
-                            }}>
-                                <View style={{ flex: 0.2 }}>
-                                </View>
-                                <View style={{
-                                    flex: 0.6,
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}>
-                                    <Text style={{
-                                        fontSize: 16,
-                                        fontWeight: "bold",
-                                        color: "#fff"
-                                    }}>
-                                        Stripe
-                                    </Text>
-
+                            <View style={{flexDirection: 'row',paddingHorizontal: "5%",backgroundColor: "#30BDEB",paddingVertical: 20,alignItems: "center"}}>
+                                <View style={{ flex: 0.2 }}></View>
+                                <View style={{flex: 0.6,alignItems: 'center',justifyContent: 'center'}}>
+                                    <Text style={{fontSize: 16,fontWeight: "bold",color: "#fff"}}>Credit/Debit Card</Text>
                                 </View>
                                 <View style={{ flex: 0.2, alignItems: "flex-end" }}>
                                     <TouchableOpacity

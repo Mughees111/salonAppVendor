@@ -134,12 +134,17 @@ const SignIn = () => {
                                 //  navigate('BottomTabs') 
                             }}
                         />
+                        <TouchableOpacity
+                            onPress={() => navigate('ForgetPass')}
+                            style={{ alignSelf: 'flex-end', marginTop: 10 }}>
+                            <Text style={{ fontFamily: 'ABRe', fontSize: 14, color: acolors.white }}>Forgot Password?</Text>
+                        </TouchableOpacity>
 
                         <TouchableOpacity
                             style={{ marginTop: 30 }}
                             onPress={() => navigate('EmailAddress')}
                         >
-                            <Text style={{ alignSelf: 'center', fontSize: 16, color: acolors.white, marginTop: 20, fontFamily: 'ABRe' }}>Don’t have an account? Sign Up</Text>
+                            <Text style={{ alignSelf: 'center', fontSize: 16, color: acolors.white, marginTop: 20, fontFamily: 'ABRe' }}>Don’t have an account? <Text style={{color:acolors.primary}}>Sign Up</Text></Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>

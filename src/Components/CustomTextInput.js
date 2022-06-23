@@ -14,6 +14,7 @@ const CustomTextInput = ({ value, style, onChangeText, placeholder, placeholderT
             secureTextEntry={secureTextEntry}
             autoFocus={autoFocus}
             keyboardType={keyboardType}
+            
             keyboardAppearance={keyboardAppearance ? keyboardAppearance : "default"}
             {...props}
         />

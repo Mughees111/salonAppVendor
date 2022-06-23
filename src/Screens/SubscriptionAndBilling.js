@@ -38,7 +38,7 @@ const SubscriptionAndBiiling = () => {
                 setLoading(true)
                 apiRequest(reqObj, 'get_packages')
                     .then(data => {
-                        console.log(data)
+                        // console.log(data)
                         setLoading(false)
                         if (data.action == 'success') {
                             setPackages(data.data)
@@ -64,7 +64,7 @@ const SubscriptionAndBiiling = () => {
                 apiRequest(reqObj, 'subscribe_package')
                     .then(data => {
                         setLoading(false);
-                        console.log(data)
+                        // console.log(data)
                         if (data.action == 'success') {
                             get_packages();
                             setLoading(false)
@@ -135,6 +135,7 @@ const SubscriptionAndBiiling = () => {
                         data={packages}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item, index }) => {
+                            if(item.id == 1 && item.is_subscribed == 0 ) return null
                             return (
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 15, width: "100%", paddingVertical: 10, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(255,255,255,0.5)', paddingHorizontal: 10 }}>
                                     <TouchableOpacity

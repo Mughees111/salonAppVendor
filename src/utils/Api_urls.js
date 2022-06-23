@@ -25,3 +25,5 @@ export const urls = {
   // mersruveysapp@gmail.com
   // P145DeDevelopers
 };
+
+// INSERT INTO subscriptions (`sal_id`, `id`, `start_date`, `end_date`) VALUES ('3','1','2022-05-31 02:56:26','2022-06-31 02:56:26')

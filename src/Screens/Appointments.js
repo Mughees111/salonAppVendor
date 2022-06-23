@@ -136,7 +136,7 @@ const Appointments = () => {
         retrieveItem('login_data')
             .then(data => {
                 const dbData = { token: data.token ?? "", notif_key: localToken };
-                console.log(dbData);
+                // console.log(dbData);
                 console.log("push token")
                 fetch(urls.API + 'do_store_notifiation_key_salon', {
                     method: 'POST',
@@ -200,7 +200,8 @@ const Appointments = () => {
                 apiRequest(reqObj, 'get_sal_appoints')
                     .then(data1 => {
                         setLoading(false)
-                        console.log(data1)
+                        console.log('---------- data 1',data1)
+                        
                         if (data1.action == 'success') {
                             setAppoints(data1.data);
                             setNotifCount(data1?.notifs);
@@ -208,7 +209,7 @@ const Appointments = () => {
                             makeAppointsB(data1.data, temp);
                         }
                         else {
-                            alertRef.alertWithType("error", "Error", data.error);
+                            alertRef.alertWithType("error", "Error", data1.error);
                         }
 
                     })
@@ -340,12 +341,13 @@ const Appointments = () => {
                 onPress={() => {
                     setLoading(true);
                     // let arr = appoints;
+                    
                     let arr1 = [];
-                    let pendings = appoints.filter(item => item.app_status == 'pending');
+                    let pendings = appoints.filter(item => item.app_status == 'pending' || item.app_status == 'reschedule');
                     let scheduled = appoints.filter(item => item.app_status == 'scheduled')
-                    let cancelled = appoints.filter(item => item.app_status == 'cancelled')
+                    let cancelled = appoints.filter(item => item.app_status == 'cancelled' || item.app_status == 'reschedule rejected')
                     let completed = appoints.filter(item => item.app_status == 'completed' || item.app_status == 'completed & reviewed')
-
+                    console.log(pendings);
                     arr1.push({ pendings, scheduled, cancelled, completed })
                     setLoading(false)
                     navigate('AllAppoints', arr1);

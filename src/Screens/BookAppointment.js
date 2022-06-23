@@ -145,23 +145,25 @@ const BookAppointment = (props) => {
         }
 
         const servicesTotal = getServicesTotal()
+        const routeParams = props.route.params;
         const reqObj = {
             salon: true,
-            user_id: props?.route?.params?.data?.user_id,
+            user_id: routeParams?.data?.user_id,
             user_gender: gender,
             app_services: servicesTotal.servicesName,
             app_price: servicesTotal.servicesPrice,
             app_date: selectedDate,
             app_est_duration: servicesTotal.servicesTime,
             app_start_time: arr[0].ss_start_time,
-            app_status: "scheduled",
-            sal_id: props?.route?.params?.data?.sal_id,
-            app_id: props?.route?.params?.data?.app_id ? props?.route?.params?.data?.app_id : null
+            app_status: routeParams?.status ?? "scheduled",
+            sal_id: routeParams?.data?.sal_id,
+            app_id: routeParams?.data?.app_id ?? null
         }
         doConsole(reqObj);
         setLoading(true)
         apiRequest(reqObj, 'book_appoint')
             .then(data => {
+
                 setLoading(false)
                 doConsole(data)
                 if (data.action == 'success') {

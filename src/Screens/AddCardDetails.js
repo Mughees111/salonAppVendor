@@ -20,12 +20,12 @@ import { changeLoggedIn } from '../../Common';
 
 
 var alertRef;
-const AddCardDetails = () => {
+const AddCardDetails = (props) => {
 
     const forceUpdate = useForceUpdate();
     const [loading, setLoading] = useState(false);
     const [postObj, setPostObj] = useState({
-        acc_type: '',
+        acc_type: 'stripe',
         name_on_card: '',
         card_no: '',
         cvc: '',
@@ -40,7 +40,7 @@ const AddCardDetails = () => {
                 if (d) {
                     setPostObj({
                         ...postObj,
-                        acc_type: d.acc_type,
+                        acc_type: 'stripe',
                         name_on_card: d.name_on_card,
                         card_no: d.card_no,
                         cvc: d.cvc,
@@ -54,10 +54,7 @@ const AddCardDetails = () => {
     function add_account() {
 
 
-        if (!postObj.acc_type) {
-            alertRef.alertWithType('error', "Error", "Please enter account type");
-            return;
-        }
+        
         if (!postObj.acc_type) {
             alertRef.alertWithType('error', "Error", "Please enter name on card");
             return;
@@ -84,7 +81,7 @@ const AddCardDetails = () => {
                             alertRef.alertWithType('success', "Success", "");
                             storeItem('login_data', data?.data)
                             setTimeout(() => {
-                                goBack();
+                                props.navigation.popToTop();
                             }, 1000);
                         }
                         else {

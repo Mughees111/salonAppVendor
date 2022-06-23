@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, FlatList } from 'react-native'
 import { goBack, navigate } from '../../Navigations';
 import { ArrowDown, ArrowLeft, ArrowRight, CloseDropDown, FbIcon, GoogleIcon, UnMarkedIcon, MarkedIcon } from '../Components/Svgs';
@@ -27,16 +27,16 @@ const PaymentMethd = () => {
         paypal: false,
         cash: false
     })
-  
 
-   
+
+
     useEffect(() => {
-      
+
         retrieveItem('login_data')
-    
-      
+
+
     }, [])
-    
+
 
 
     return (
@@ -56,7 +56,8 @@ const PaymentMethd = () => {
                         onPress={() => {
                             setPaymentMethod({
                                 ...paymentMethod,
-                                visa: !paymentMethod.visa
+                                visa: true,
+                                paypal :  false
                             })
                         }}
                         style={{ width: "100%", height: 76, flexDirection: 'row', paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', backgroundColor: '#1B1B1B', marginTop: 15 }}>
@@ -73,7 +74,8 @@ const PaymentMethd = () => {
                         onPress={() => {
                             setPaymentMethod({
                                 ...paymentMethod,
-                                paypal: !paymentMethod.paypal
+                                paypal: true,
+                                visa : false
                             })
                         }}
                         style={{ width: "100%", height: 76, flexDirection: 'row', paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', backgroundColor: '#1B1B1B', marginTop: 15 }}>
@@ -88,22 +90,7 @@ const PaymentMethd = () => {
                         </View>
                     </TouchableOpacity>
 
-                    <TouchableOpacity
-                        onPress={() => {
-                            setPaymentMethod({
-                                ...paymentMethod,
-                                cash: !paymentMethod.cash
-                            })
-                        }}
-                        style={{ width: "100%", height: 76, flexDirection: 'row', paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', backgroundColor: '#1B1B1B', marginTop: 15 }}>
-                        <Image
-                            source={require('../assets/cashPayment.png')}
-                        />
-                        <Text style={{ color: '#FCFCFC', fontFamily: 'ABRe', fontSize: 14, marginLeft: 10 }}>Cash Payment</Text>
-                        <View style={{ position: 'absolute', right: 15 }}>
-                            {paymentMethod.cash ? <MarkedIcon /> : <UnMarkedIcon />}
-                        </View>
-                    </TouchableOpacity>
+
 
 
 
@@ -111,11 +98,17 @@ const PaymentMethd = () => {
 
 
                     <MainButton
-                        text="Save"
+                        text="Next"
                         btnStyle={{ marginTop: 30 }}
                         onPress={() => {
-                            
-                            
+                            if (paymentMethod.paypal) {
+                                navigate('PaypalAccount');
+                            }
+                            else if (paymentMethod.visa) {
+                                navigate('AddCardDetails');
+                            }
+                            else alertRef.alertWithType('error',"Error","Please select payment method");
+
                         }}
                     />
                 </ScrollView>

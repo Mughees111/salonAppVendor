@@ -368,9 +368,12 @@ export function formatDate(dateObj) {
 export function sqlDateTimeToJSDate(dateObj,timeOrDate){
   
   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
+  console.log('dateObj',dateObj);
+  
   var t = dateObj.split(/[- :]/);
-  var v = new Date(Date.UTC(t[0], t[1] - 1, t[2], t[3], t[4], t[5]));
+  // console.log('t == ',t);
+  var v = new Date(Date.UTC(t[0], t[1] - 1, t[2], t[3], t[4], t[5]??"00" ));
+  // console.log('v == ',v);
   const month = months[v.getMonth()];
   const date = v.getDate();
   const year = v.getFullYear();

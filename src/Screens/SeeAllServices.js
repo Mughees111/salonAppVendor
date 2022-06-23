@@ -41,10 +41,12 @@ const SeeAllServices = (props) => {
             bookedServices: arr,
             date: props?.route?.params?.app_date ? props?.route?.params?.app_date : null
         }
+        const routeParams = props?.route?.params;
         navigate('BookAppointment', {
             data: params,
             bookedServices: arr,
-            date: props?.route?.params?.app_date ? props?.route?.params?.app_date : null
+            date: routeParams?.app_date ?? null,
+            status : routeParams?.status ?? null
         });
     }
 

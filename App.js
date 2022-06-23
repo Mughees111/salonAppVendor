@@ -8,7 +8,7 @@ import { NavigationContainer, StackActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 
-import { MaterialIcons } from '@expo/vector-icons'
+import { MaterialIcons,MaterialCommunityIcons } from '@expo/vector-icons'
 
 import { navigate, navigationRef, navigateFromStack } from './Navigations';
 import EmailAddress from './src/Screens/EmailAddress';
@@ -83,6 +83,10 @@ import * as Notificationss from 'expo-notifications'
 import DropdownAlert from 'react-native-dropdownalert';
 import AddCardDetails from './src/Screens/AddCardDetails';
 import AccountStatement from './src/Screens/AccountStatement';
+import AddCancellation from './src/Screens/AddCancellation';
+import ForgetPass from './src/Screens/ForgetPass';
+import ForgetPassOpt from './src/Screens/ForgetPassOpt';
+import NewPass from './src/Screens/NewPass';
 
 
 const Stack = createStackNavigator()
@@ -107,6 +111,11 @@ function AuthStack() {
       <Stack.Screen name="ServiceDetails" component={ServiceDetails} />
       <Stack.Screen name="PaymentMethd" component={PaymentMethd} />
       <Stack.Screen name="Congrats" component={Congrats} />
+
+      <Stack.Screen name="ForgetPass" component={ForgetPass} />
+      <Stack.Screen name="ForgetPassOpt" component={ForgetPassOpt} />
+      <Stack.Screen name="NewPass" component={NewPass} />
+
     </Stack.Navigator>
   )
 
@@ -203,7 +212,8 @@ function BottomTabNavigator() {
         options={{
           tabBarLabel: null,
           tabBarIcon: ({ color, focused }) => (
-            <ProfileBtmIcon color={color} />
+            // <ProfileBtmIcon color={color} />
+            <MaterialCommunityIcons color={color} name="account-multiple" size={23} />
           )
         }}
         name="ClientsStack" component={ClientsStack} />
@@ -274,10 +284,10 @@ export default function App() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
+        // console.log(data)
         setLoading(false)
         doConsole(" I receive ");
-        doConsole(data);
+        // doConsole(data);
         if (data.action == "success") {
           storeItem("login_data", data.data)
             .then(dataa => {
@@ -332,14 +342,14 @@ export default function App() {
             });
         }
         else {
-          console.log('else')
+          // console.log('else')
           // storeItem('login_data',)
           setLoggedIn(2)
           forceUpdate()
         }
 
       }).catch((error) => {
-        console.log(error)
+        // console.log(error)
         setLoading(false)
         setLoggedIn(2)
         forceUpdate()
@@ -349,9 +359,8 @@ export default function App() {
 
   function checkLogin() {
     loggedInObservable.subscribe((v) => {
-      console.log("Yessss won the warrrrr");
-      console.log(v)
-      console.log(v)
+      // console.log("Yessss won the warrrrr");
+      // console.log(v)
       setLoggedIn(v)
       forceUpdate();
     })
@@ -368,7 +377,7 @@ export default function App() {
   useEffect(() => {
     notificationListener.current = Notificationss.addNotificationResponseReceivedListener(response => {
       console.log("Notificationssss")
-      console.log(response);
+      // console.log(response);
       setTimeout(() => {
         handleNotifClick(response.notification);
       }, 500)
@@ -398,8 +407,8 @@ export default function App() {
     setLoading(true)
     retrieveItem('login_data')
       .then(data => {
-        console.log('local storage data')
-        console.log(data)
+        // console.log('local storage data')
+        // console.log(data)
 
         if (data?.token) {
           checkWithServer(data)
@@ -448,6 +457,7 @@ export default function App() {
               <Stack.Screen name="HealthSafety" component={HealthSafety} />
               <Stack.Screen name="PaymentMethd" component={PaymentMethd} />
               <Stack.Screen name="AddCardDetails" component={AddCardDetails} />
+              <Stack.Screen name="PaypalAccount" component={PaypalAccount} />
               <Stack.Screen name="Insights" component={Insights} />
               <Stack.Screen name="NotificationsS" component={NotificationsS} />
               <Stack.Screen name="Language" component={Language} />
@@ -473,6 +483,7 @@ export default function App() {
               <Stack.Screen name="MassMsg" component={MassMsg} />
 
               <Stack.Screen name="MakeGroup" component={MakeGroup} />
+              <Stack.Screen name="AddCancellation" component={AddCancellation} />
 
             </Stack.Navigator>
         }

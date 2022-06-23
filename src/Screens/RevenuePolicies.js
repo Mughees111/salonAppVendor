@@ -39,7 +39,7 @@ const RevenuePolicies = () => {
 
     const settingsArr = [
         { title: "Enable/Disable Mobile Pay", desc: "Allow your clients to pay directly through the app", navigateTo: "", switch: true },
-        { title: "Setup Cancelation Pay", desc: "Protect yourself from last minute cancellations", navigateTo: "" },
+        { title: "Setup Cancelation Pay", desc: "Protect yourself from last minute cancellations", navigateTo: "AddCancellation" },
     ]
 
 

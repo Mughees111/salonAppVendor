@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Switch, Share ,Clipboard, ToastAndroid} from 'react-native'
+import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Switch, Share, Clipboard, ToastAndroid } from 'react-native'
 import { goBack, navigate } from '../../Navigations';
 
 import { acolors } from '../Components/AppColors';
@@ -22,12 +22,12 @@ const ProfileLinks = () => {
     const [isEnabled, setIsEnabled] = useState(true)
     const [profileLink, setProfileLink] = useState('');
 
- 
+
 
     const copyToClipboard = () => {
         Clipboard.setString(profileLink)
-      }
-    
+    }
+
     //   const fetchCopiedText = async () => {
     //     const text = await Clipboard.getString()
     //     // setCopiedText(text)
@@ -38,7 +38,7 @@ const ProfileLinks = () => {
 
         try {
             const result = await Share.share({
-                message: msg
+                message: profileLink
             });
             if (result.action === Share.sharedAction) {
                 console.log(result)
@@ -110,20 +110,30 @@ const ProfileLinks = () => {
                 translucent={false}
             // translucent={false}
             />
-            <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
+            <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center',flex:1 }}>
                 <Header />
                 <Text style={{ fontFamily: "ABRe", fontSize: 15.37, color: 'white', lineHeight: 21, marginTop: 30 }}>Setup your profile link</Text>
-                <View style={{ flexDirection: 'row', marginTop: 10, paddingBottom: 20, borderBottomWidth: 1, borderColor: 'rgba(255,255,255,0.3' }}>
+                <View style={{ flexDirection: 'row', marginTop: 10, paddingBottom: 20, borderColor: 'rgba(255,255,255,0.3' }}>
                     <View style={{ width: "80%", paddingVertical: 10, borderRadius: 10, backgroundColor: '#262626', justifyContent: 'center', paddingHorizontal: 10 }}>
                         <Text style={{ fontSize: 12.52, color: 'white', fontFamily: 'ABRe', }}>{profileLink}</Text>
                     </View>
-                    <TouchableOpacity 
-                        onPress={()=>{
+                </View>
+                <View style={{ width: "100%", position:'absolute',bottom:50, alignItems: 'center', justifyContent: 'space-between',flexDirection:'row', }}>
+                    <TouchableOpacity
+                        onPress={() => {
                             copyToClipboard()
                             ToastAndroid.show("Copied !", ToastAndroid.SHORT);
                         }}
-                        style={{ width: "18%", marginLeft: 10, height: 29, borderRadius: 10, backgroundColor: '#262626', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 10 }}>
-                        <Text style={{ fontSize: 12.52, color: 'white', fontFamily: 'ABRe', }}>COPY</Text>
+                        style={{ width: "45%",  height: 39, borderRadius: 10, backgroundColor: '#262626', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 10 }}>
+                        <Text style={{ fontSize: 15.52, color: 'white', fontFamily: 'ABRe', }}>COPY</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => {
+                            share();
+                            // ToastAndroid.show("Copied !", ToastAndroid.SHORT);
+                        }}
+                        style={{ width: "45%",marginLeft:-20,  height: 39, borderRadius: 10, backgroundColor: acolors.primary, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 10 }}>
+                        <Text style={{ fontSize: 15.52, color: acolors.bgColor, fontFamily: 'ABRe', }}>SHARE</Text>
                     </TouchableOpacity>
                 </View>
 

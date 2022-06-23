@@ -548,6 +548,7 @@ const SalonProfile = () => {
                             <Text style={{ fontFamily: 'ABRe', fontSize: 14, color: '#FFFFFF', lineHeight: 15 }}>{salData?.sal_contact_person}
                                 <Text style={{ color: 'rgba(255,255,255,0.5)' }}> (Owner)</Text>
                             </Text>
+                            <Text style={{ fontFamily: 'ABRe', fontSize: 14, color: 'rgba(255,255,255,0.8)', marginTop: 3, }}>{salData?.sal_city}, {salData?.sal_country}</Text>
                             <Text style={{ fontFamily: 'ABRe', fontSize: 14, color: 'rgba(255,255,255,0.8)', marginTop: 3, }}>{salData?.sal_address}</Text>
                             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
                                 <Text style={{ fontFamily: 'ABRe', fontSize: 12, color: '#FFFFFF' }}>4.5</Text>
@@ -865,7 +866,6 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontFamily: 'ABRe',
         color: 'rgba(255,255,255,0.8)',
-
     },
     editText: {
         fontFamily: 'ABRe',
