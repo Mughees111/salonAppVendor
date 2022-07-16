@@ -2,13 +2,15 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Dimensions } from 'react-native'
 import { goBack, navigate } from '../../Navigations';
-import { ArrowLeft, ArrowRight, FbIcon, GoogleIcon, PlusCircle } from '../Components/Svgs';
+import { ArrowDown, ArrowLeft, ArrowRight, FbIcon, GoogleIcon, PlusCircle } from '../Components/Svgs';
 import { acolors } from '../Components/AppColors';
 import CustomTextInput from '../Components/CustomTextInput';
 import PrivacyPicker from '../Components/PrivacyPicker';
 import { MainButton } from '../Components/Buttons';
 import { OnBoardingHeader } from '../Components/Header';
 
+import ReactNativeModal from 'react-native-modal';
+import { Title, Body, Button, Header, Left, Radio, Right } from 'native-base';
 
 
 import { apiRequest } from '../utils/apiCalls';
@@ -43,7 +45,12 @@ const EditProfile = (props) => {
         sal_phone: params?.sal_phone ? params?.sal_phone : '',
         lincense_id: params?.lincense_id ? params?.lincense_id : '',
         sal_email: params?.sal_email ? params?.sal_email : '',
+        selectedCat: params?.categories ?? []
     })
+
+    const [catData, setCatData] = useState([]);
+    // const [selectedCat, setSelectedCat] = useState([]);
+    const [selectCatModal, setSelectCatModal] = useState(false);
 
 
 
@@ -65,6 +72,11 @@ const EditProfile = (props) => {
         retrieveItem('login_data')
             .then(data1 => {
 
+                var catIds = [];
+                for (let key of editProfileData.selectedCat) {
+                    catIds.push(key?.id);
+                }
+
                 var reqObj = {
                     sal_name: editProfileData.sal_name,
                     sal_contact_person: editProfileData.sal_contact_person,
@@ -74,7 +86,9 @@ const EditProfile = (props) => {
                     sal_country: editProfileData.sal_country,
                     sal_city: editProfileData.sal_city,
                     sal_phone: editProfileData.sal_phone,
+                    categories: catIds,
                     token: data1.token
+
                 }
 
                 if (editProfileData.sal_email !== params?.sal_email) {
@@ -115,11 +129,137 @@ const EditProfile = (props) => {
 
     }
 
+    function getCategories() {
+        setLoading(true);
+        apiRequest({ token: '' }, 'get_categories_v')
+            .then(data => {
+                setLoading(false);
+                if (data.action == 'success') {
+
+                    setCatData(data.data)
+                }
+                else alertRef.alertWithType('error', 'Error', data.error);
+
+
+            })
+            .catch(err => {
+                setLoading(false);
+            })
+
+    }
+
+    function addCategoryToArray(v) {
+
+        let data = editProfileData.selectedCat;
+        let arr = data;
+        // console.log(data)
+        console.log('len', data.length)
+        if (data.length == 0) {
+            console.log('000')
+            arr = [];
+            arr.push(v);
+        }
+        for (let key in data) {
+            console.log(key)
+            if (data[key].id == v.id) {
+                arr.splice(key, 1);
+            }
+            else {
+                if ((parseInt(key) + 1) == data.length) {
+                    arr.push(v);
+                }
+            }
+        }
+        console.log('arr== ', arr);
+        setEditProfileData({
+            ...editProfileData,
+            selectedCat: arr
+        });
+        // setSelectedCat(arr);
+        forceUpdate();
+
+        // console.log('params?.categories', typeof params?.categories, params?.categories);
+        // // let arr = editProfileData.selectedCat;
+        // if (Object.keys(arr).includes(v)) {
+        //     console.log('includes');
+        //     let foundIndex = arr.indexOf(v);
+        //     arr.splice(foundIndex, 1);
+        // }
+        // else {
+        //     console.log('not includes');
+        //     arr.push(v);
+        // }
+      
+
+    }
+
+    function checkExist(v) {
+        let data = editProfileData.selectedCat;
+        for (let key in data) {
+            if (data[key].id == v.id) {
+                return true
+            }
+            else {
+                if ((parseInt(key) + 1) == data.length) {
+                    return false
+                }
+            }
+        }
+    }
+
     useEffect(() => {
+        getCategories();
+        console.log(editProfileData.selectedCat)
         if (!props?.route?.params?.sal_id) {
             goBack();
         }
     }, [])
+
+
+    const headerPicker = () => {
+        return (
+            <Header style={{ backgroundColor: acolors.bgColor }}>
+                <Left>
+                    <Button
+                        style={{
+                            shadowOffset: null,
+                            shadowColor: null,
+                            shadowRadius: null,
+                            shadowOpacity: null,
+                            marginLeft: 3,
+                        }}
+                        transparent
+                        onPress={() => {
+                            setSelectCatModal(false)
+                        }}
+                    >
+                        <Text style={{ color: '#fff' }}>Close</Text>
+                    </Button>
+                </Left>
+                {/* <Body>
+                    <Text style={{ color: "white", fontSize: 20, }}>Choose</Text>
+                </Body> */}
+                <Right>
+                    <Button
+                        style={{
+                            shadowOffset: null,
+                            shadowColor: null,
+                            shadowRadius: null,
+                            shadowOpacity: null,
+                            marginLeft: 3,
+                        }}
+                        transparent
+                        onPress={() => {
+                            setSelectCatModal(false)
+                        }}
+                    >
+                        <Text style={{ color: '#fff' }}>Done</Text>
+                    </Button>
+                </Right>
+
+            </Header>
+        )
+    }
 
 
     return (
@@ -242,6 +382,25 @@ const EditProfile = (props) => {
                         style={{ marginTop: 10 }}
 
                     />
+                    <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: acolors.white, marginTop: 25 }}>Category</Text>
+                    <TouchableOpacity
+                        onPress={() => setSelectCatModal(true)}
+                        style={{ width: "100%", height: 42, marginTop: 15, borderWidth: 1, borderColor: '#FCFCFC', borderRadius: 8, alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', paddingHorizontal: 10 }}>
+                        {!editProfileData.selectedCat.length ? <Text style={{ color: acolors.white, fontSize: 14, fontFamily: "ABRe" }}>Salon Category</Text>
+                            :
+                            <View style={{ flexDirection: 'row', marginLeft: -2 }}>
+                                {editProfileData.selectedCat.map((v, i) => {
+                                    return (
+                                        <Text style={{ color: acolors.white, fontSize: 14, fontFamily: "ABRe", marginLeft: 2 }}>{v.title}, </Text>
+                                    )
+                                })
+                                }
+                            </View>
+                        }
+                        <ArrowDown />
+                    </TouchableOpacity>
+
+
                     <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: acolors.white, marginTop: 25 }}>Lincense id</Text>
                     <CustomTextInput
                         value={editProfileData.lincense_id}
@@ -276,6 +435,48 @@ const EditProfile = (props) => {
 
             </SafeAreaView>
 
+            <ReactNativeModal
+                isVisible={selectCatModal}
+                style={{ margin: 0, marginTop: 20 }}
+
+            >
+                {headerPicker()}
+                <View style={{ width: "100%", height: "100%", backgroundColor: 'white', paddingHorizontal: 20, paddingTop: 20 }}>
+                    {
+                        catData?.map((v, i) => {
+                            return (
+                                <TouchableOpacity
+                                    key={v?.id}
+                                    onPress={() => addCategoryToArray(v)}
+                                    style={{ flexDirection: 'row', justifyContent: 'space-between', width: "100%", marginTop: 15, paddingBottom: 10, borderBottomWidth: 0.5, borderColor: 'grey' }}
+                                >
+
+                                    <Text style={{ color: '#363636', fontSize: 20, fontFamily: "ABRe" }}>
+                                        {v?.title}
+                                    </Text>
+
+                                    {
+                                        checkExist(v) ? (
+                                            <Radio selected={true} />
+                                        ) : (
+                                            <Radio selected={false} />
+                                        )
+                                    }
+
+
+                                </TouchableOpacity>
+                            )
+                        })
+                    }
+
+
+
+
+                </View>
+
+            </ReactNativeModal>
+
+
         </View>
     )
 }
@@ -299,5 +500,7 @@ const styles = StyleSheet.create({
 })
 
 export default EditProfile
+
+
 
 

@@ -22,6 +22,7 @@ const AllAppoints = (props) => {
 
     const forceUpdate = useForceUpdate();
     // const { state, setUserGlobal } = useContext(Context);
+    const filterFlatListRef = React.useRef();
     const [loading, setLoading] = useState(false);
     const [tabs, setTabs] = useState('pendings');
 
@@ -29,6 +30,7 @@ const AllAppoints = (props) => {
     const [scheduled, setScheduled] = useState([]);
     const [cancelled, setCancelled] = useState([]);
     const [completed, setCompleted] = useState([]);
+    const [isDoneScrolling, setIsDoneScrolling] = useState(false);
     let renderConfirmBtn;
     let renderCompleteBtn
     // const [pendings, setPendings] = useState(data ? data[0]?.pendings : []);
@@ -93,7 +95,8 @@ const AllAppoints = (props) => {
                     .then(data => {
                         // setLoading(false)
                         if (data.action == 'success') {
-                            get_sal_appoints(dataParam.app_date, d.token)
+                            get_all_appoints(d.token)
+                            // get_sal_appoints(dataParam.app_date, d.token)
                             // alertRef.alertWithType("success", "Success");
                             // forceUpdate();
                         }
@@ -146,7 +149,7 @@ const AllAppoints = (props) => {
     }
 
 
-    function get_all_appoints(token) {
+    function get_all_appoints(token, id) {
 
         setLoading(true);
         const reqObj = { token }
@@ -159,11 +162,24 @@ const AllAppoints = (props) => {
                     let scheduled = item.filter(item => item.app_status == 'scheduled')
                     let cancelled = item.filter(item => item.app_status == 'cancelled' || item.app_status == 'rejected')
                     let completed = item.filter(item => item.app_status == 'completed' || item.app_status == 'completed & reviewed')
+                    if (id) {
+                        for (let key of data1.data) {
+                            if (key.app_id == id) {
+                                key.toScroll = true;
+                                if (key.app_status == 'pending') setTabs('pendings');
+                                if (key.app_status == 'scheduled') setTabs('scheduled');
+                                if (key.app_status == 'cancelled') setTabs('cancelled');
+                                if (key.app_status == 'rejected') setTabs('cancelled');
+                                if (key.app_status == 'completed') setTabs('completed');
+                                if (key.app_status == 'completed & reviewed') setTabs('completed');
+                            }
+                        }
+                    }
+
                     setPendings(pendings);
                     setScheduled(scheduled);
                     setCancelled(cancelled);
                     setCompleted(completed);
-                    // setTabs(props.route.params.date ? 'pendings' : 'completed');
                 }
                 else {
                     alertRef.alertWithType("error", "Error", data.error);
@@ -173,9 +189,18 @@ const AllAppoints = (props) => {
             .catch(err => {
                 setLoading(false)
             })
+    }
 
+    function scrollToIndexNow(index) {
+        setIsDoneScrolling(true)
+        setTimeout(() => filterFlatListRef.current.scrollToIndex({ index: index || 0 }), 120)
 
     }
+
+    const getItemLayout = (data, index) => (
+        { length: 480, offset: 500 * index, index }
+    )
+
 
 
     useEffect(() => {
@@ -194,11 +219,14 @@ const AllAppoints = (props) => {
         () => {
             retrieveItem('login_data')
                 .then(data => {
-                    get_all_appoints(data.token)
-                    if (props.route.params.date) {
-                        get_sal_appoints(props.route.params.date, data.token)
 
-                    }
+                    const id = props.route?.params?.data?.post_id ?? null
+                    console.log('id ==', id)
+                    get_all_appoints(data.token, id)
+                    // if (props.route.params.date) {
+                    //     get_sal_appoints(props.route.params.date, data.token)
+
+                    // }
                     setUserData(data)
                 })
         },
@@ -222,7 +250,7 @@ const AllAppoints = (props) => {
             <TouchableOpacity
                 onPress={() => setTabs('cancelled')}
                 style={{ width: "25%", height: 40, alignItems: 'center', justifyContent: 'center', backgroundColor: tabs == 'cancelled' ? acolors.primary : acolors.bgColor, borderRadius: 10 }}>
-                <Text style={{ fontFamily: 'ABRe', fontSize: 15, color: tabs == 'cancelled' ? acolors.bgColor : acolors.primary }}>Cancelled</Text>
+                <Text style={{ fontFamily: 'ABRe', fontSize: 15, color: tabs == 'cancelled' ? acolors.bgColor : acolors.primary }}>Canceled</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 onPress={() => setTabs('completed')}
@@ -259,7 +287,7 @@ const AllAppoints = (props) => {
         var t = dateTime.split(/[- :]/);
         var v = new Date(Date.UTC(t[0], t[1] - 1, t[2], t[3], t[4], t[5] ?? "00"));
         let date = new Date();
-        console.log('v==', v, "date == ", date);
+
         if (v < date) return false;
         else return true;
 
@@ -270,7 +298,6 @@ const AllAppoints = (props) => {
         var t = dateTime.split(/[- :]/);
         var v = new Date(Date.UTC(t[0], t[1] - 1, t[2], t[3], t[4], t[5] ?? "00"));
         let date = new Date();
-        console.log('v==', v, "date == ", date);
         if (date < v) return false;
         else return true;
 
@@ -309,11 +336,15 @@ const AllAppoints = (props) => {
                                     tabs == 'completed' ? completed :
                                         null
                     }
-                    keyExtractor={(item, index) => index.toString()}
+                    ref={filterFlatListRef}
+                    getItemLayout={getItemLayout}
+                    keyExtractor={(item, index) => item.app_id.toString()}
                     renderItem={({ item, index }) => {
+                        item.toScroll && !isDoneScrolling && scrollToIndexNow(index);
                         if (tabs == 'pendings') {
-                            let date = item.app_date + " " + item.app_start_time
-                            renderConfirmBtn = checkRenderConfirmBtn(date);
+                            let date = item.app_date + " " + item.app_start_time;
+                            if (item.app_status == 'reschedule') renderConfirmBtn = false
+                            else renderConfirmBtn = checkRenderConfirmBtn(date);
                         }
                         if (tabs == 'scheduled') {
                             let date = item.app_date + " " + item.app_end_time;
@@ -322,7 +353,7 @@ const AllAppoints = (props) => {
 
 
                         return (
-                            <View style={{ paddingBottom: 15, borderBottomWidth: 1, borderColor: 'rgba(255,255,255,0.1)', marginTop: 5 }}>
+                            <View style={{ paddingBottom: 15, borderBottomWidth: 1, borderWidth: item.toScroll ? 1 : 0, borderColor: item.toScroll ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.1)', marginTop: 5, borderRadius: item.toScroll ? 10 : 0 }}>
                                 <View
                                     onPress={() => navigate('ClientProfile')} style={{ flexDirection: 'row', marginTop: 15, width: "100%" }}>
                                     <Image
@@ -342,8 +373,9 @@ const AllAppoints = (props) => {
                                             <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 5 }}>{item?.app_start_time} - {item?.app_end_time} ({item?.app_date})</Text>
                                             <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 10 }}>{item?.app_services}</Text>
                                             <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 10, marginBottom: 3 }}>{item?.is_paid == 1 ? "Paid: $" + item?.app_price : "Cash Appointment"}</Text>
-                                            <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 10, marginBottom: 3 }}>Status: {item.app_status}</Text>
-                                            {item.app_status == 'reschedule' && <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 10, marginBottom: 3 }}>Status: Reschedule <Text style={{ color: '#40A7BE' }}> (Customer Approval pending) </Text> </Text>}
+
+                                            {item.app_status == 'reschedule' ? <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 10, marginBottom: 3 }}>Status: Reschedule <Text style={{ color: '#40A7BE' }}> (Pending approval from client) </Text> </Text> :
+                                                <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 10, marginBottom: 3 }}>Status: {item.app_status}</Text>}
                                         </View>
                                     </View>
                                     {

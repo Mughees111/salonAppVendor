@@ -397,6 +397,8 @@ export default function App() {
 
   useEffect(() => {
 
+    
+
     // if (notification) {
     //   console.log('yes i am a notification')
     //   console.log(notification)

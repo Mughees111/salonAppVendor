@@ -48,7 +48,7 @@ const Notifications = () => {
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
-        get_notifs()
+        get_notifs();
     }, []);
 
 
@@ -110,9 +110,15 @@ const Notifications = () => {
                                     activeOpacity={item.screen?0:1}
                                     onPress={() => {
                                         const date = item.date_time.split(' ');
-                                        item.screen && navigate(item.screen,{
-                                            date : date[0]
-                                        })
+                                        console.log(item)
+                                        const params = {
+                                            data : item.data
+                                        }
+                                        console.log('params',params);
+                                        item.data?.screen && navigate(item.data.screen, params);
+                                        // item.screen && navigate(item.screen,{
+                                        //     date : date[0]
+                                        // })
                                     }}
                                     style={{ width: "100%", paddingVertical: 12, paddingHorizontal: 15, marginTop: 12, backgroundColor: 'black', borderRadius: 10 }}>
                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>

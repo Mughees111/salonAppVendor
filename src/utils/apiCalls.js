@@ -45,12 +45,11 @@ export async function apiRequest(body_data, url_plus) {
   return (
     fetch(url + url_plus, configs)
       .then((response) => response.json())
-      // .then((response) => response.text())
       .then((responseJson) => {
-        console.log(responseJson)
+        // console.log(responseJson)
         if (responseJson?.action == 'failed' && responseJson?.error_type == '99') { // 99 indicates that subscription has been expires
           setTimeout(() => {
-            navigate('SubscriptionAndBiiling');  
+            navigate('SubscriptionAndBiiling');
           }, 2500);
         }
         return responseJson
@@ -62,7 +61,7 @@ export async function apiRequest(body_data, url_plus) {
 
   // return {isError,data};
 }
-
+// .then((response) => response.text())
 
 async function doPostDoc(response, url_plus, token = "", path) {
 

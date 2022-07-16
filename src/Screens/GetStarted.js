@@ -32,8 +32,8 @@ const GetStarted = () => {
                 source={require('../assets/onBoarding1Mask.png')}
             />
             <View style={{ width: "90%", alignSelf: 'center', position: 'absolute', bottom: 150 }}>
-                <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'white', fontSize: 21, fontFamily: 'ABRe' }}>Welcome to the future of your Saloon</Text>
-                <Text style={{ alignSelf: 'center', color: 'rgba(255,255,255,0.6)', fontFamily: 'ABRe', textAlign: 'center', marginTop: 45 }}>Get an overview of how you are performing & motivate yourself to achieve even moew.</Text>
+                <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'white', fontSize: 21, fontFamily: 'ABRe' }}>Welcome to the future of your Salon</Text>
+                <Text style={{ alignSelf: 'center', color: 'rgba(255,255,255,0.6)', fontFamily: 'ABRe', textAlign: 'center', marginTop: 45 }}>Get an overview of how you are performing & motivate yourself to achieve even more.</Text>
                 <MainButton
                     text="Get Started"
                     btnStyle={{ marginTop: 100 }}

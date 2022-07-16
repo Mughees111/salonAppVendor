@@ -51,7 +51,8 @@ const Address = () => {
     const [states, setStates] = useState([]);
     const [cities, setCities] = useState([]);
 
-    const GOOGLE_MAPS = 'AIzaSyBSw0D88sjoodik8ALNNMhccUL-WQbpwJo';
+    const production = false;
+    const GOOGLE_MAPS = production ? 'AIzaSyBSw0D88sjoodik8ALNNMhccUL-WQbpwJo' : 'AIzaSyA1R8WBbKJnXN6Wbwc8Tq1rCIK_sT3_FO8';
 
 
     const [userSelectedLocation, setUserSelectedLocation] = useState({
