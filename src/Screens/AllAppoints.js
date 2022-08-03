@@ -13,6 +13,8 @@ import { retrieveItem, useForceUpdate, doConsole, sqlDateTimeToJSDate } from '..
 import Loader from '../utils/Loader';
 import DropdownAlert from 'react-native-dropdownalert';
 
+
+
 var alertRef;
 
 const AllAppoints = (props) => {
@@ -374,8 +376,15 @@ const AllAppoints = (props) => {
                                             <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 10 }}>{item?.app_services}</Text>
                                             <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 10, marginBottom: 3 }}>{item?.is_paid == 1 ? "Paid: $" + item?.app_price : "Cash Appointment"}</Text>
 
-                                            {item.app_status == 'reschedule' ? <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 10, marginBottom: 3 }}>Status: Reschedule <Text style={{ color: '#40A7BE' }}> (Pending approval from client) </Text> </Text> :
-                                                <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 10, marginBottom: 3 }}>Status: {item.app_status}</Text>}
+                                            {item.app_status == 'reschedule' ? <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 5, marginBottom: 3 }}>Status: Reschedule <Text style={{ color: '#40A7BE' }}> (Pending approval from client) </Text> </Text> :
+                                                <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 5, marginBottom: 3 }}>Status: {item.app_status}</Text>}
+                                            {item.come_to_location == '1' &&
+                                                <View style={{ }}>
+                                                    {/* : Reschedule <Text style={{ color: '#40A7BE' }}> (Pending approval from client) </Text> </Text> : */}
+                                                    <Text style={{ fontFamily: 'ABRe', fontSize: 10.22, color: 'white', marginTop: 5, marginBottom: 3 }}>Come to location: <Text style={{ color: '#40A7BE' }}> Yes</Text> </Text>
+                                                    <Text style={{ fontFamily: 'ABRe', fontSize: 10.22, color: 'white', marginTop: 5, marginBottom: 3 }}>Address: {item.location_address}</Text>
+                                                </View>
+                                            }
                                         </View>
                                     </View>
                                     {

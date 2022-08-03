@@ -1,6 +1,6 @@
 
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView } from 'react-native'
 import { ArrowRight, FbIcon, GoogleIcon, ArrowLeft } from '../Components/Svgs';
 import { acolors } from '../Components/AppColors';
@@ -9,8 +9,57 @@ import CustomTextInput from '../Components/CustomTextInput';
 import PrivacyPicker from '../Components/PrivacyPicker';
 import { MainButton } from '../Components/Buttons';
 import { goBack, navigate } from '../../Navigations';
+import { apiRequest } from '../utils/apiCalls';
+import Loader from '../utils/Loader';
+import DropdownAlert from 'react-native-dropdownalert';
 
-const NewPass = () => {
+var alertRef;
+
+const NewPass = (props) => {
+
+    const [newPass, setNewPass] = useState('');
+    const [cPass, setCPass] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    function doNewPass() {
+
+        
+        if (newPass.length < 8) {
+            alertRef.alertWithType('error', 'Error', 'Password length must be 8');
+            return;
+        }
+        if (newPass != cPass) {
+            alertRef.alertWithType('error', 'Error', 'Confirm password doesnot match');
+            return;
+        }
+        setLoading(true);
+
+        const reqObj = {
+            new_pass: newPass,
+            slip: props?.route?.params?.slip
+        }
+
+        apiRequest(reqObj, 'new_password_v')
+            .then(data => {
+                setLoading(false);
+                if (data.action == 'success') {
+                    alertRef.alertWithType('success', 'Success', 'Your password has been changes');
+                    navigate('SignIn');
+                    return;
+                }
+                else {
+                    alertRef.alertWithType("error", "Error", data.error);
+                    setLoading(false);
+                }
+            })
+            .catch(err => {
+                setLoading(false);
+                alertRef.alertWithType("error", "Error", 'Network Error');
+            })
+    }
+
+
+
     return (
         <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
             <StatusBar
@@ -18,6 +67,8 @@ const NewPass = () => {
                 backgroundColor={acolors.bgColor}
                 translucent={false}
             />
+            {loading && <Loader />}
+            <DropdownAlert ref={(ref) => alertRef = ref} />
             <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }}>
                     <TouchableOpacity onPress={() => goBack()} style={{ width: 34, height: 34, borderRadius: 34 / 2, backgroundColor: 'rgba(255,255,255,0.1)', alignItems: 'center', justifyContent: 'center' }}>
@@ -32,17 +83,19 @@ const NewPass = () => {
                     <CustomTextInput
                         placeholder="Your new password"
                         style={{ marginTop: 20 }}
+                        onChangeText={setNewPass}
                     />
 
                     <CustomTextInput
                         placeholder="Retype your new password"
                         style={{ marginTop: 15, }}
+                        onChangeText={setCPass}
                     />
 
                     <MainButton
                         text="Save Password"
                         btnStyle={{ marginTop: 60 }}
-                        onPress={() => { navigate('SignIn') }}
+                        onPress={() => { doNewPass() }}
                     />
 
                 </ScrollView>

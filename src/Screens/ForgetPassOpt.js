@@ -1,61 +1,109 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView } from 'react-native'
 import { goBack, navigate } from '../../Navigations';
-import { ArrowLeft, ArrowRight, FbIcon, GoogleIcon } from '../Components/Svgs';
+import { ArrowLeft, ArrowRight, FbIcon, GoogleIcon, LOGO } from '../Components/Svgs';
 import { acolors } from '../Components/AppColors';
 import CustomTextInput from '../Components/CustomTextInput';
 import PrivacyPicker from '../Components/PrivacyPicker';
 import { MainButton } from '../Components/Buttons';
+import CodeInput from 'react-native-confirmation-code-input';
+import { apiRequest } from '../utils/apiCalls';
+import Loader from '../utils/Loader';
+import DropdownAlert from 'react-native-dropdownalert';
 
-const ForgetPassOpt = () => {
+var alertRef;
+const ForgetPassOpt = (props) => {
+
+
+    const [otp, setOTP] = useState('');
+    const [loading, setLoading] = useState(false)
+
+    function verifyOTP() {
+
+        setLoading(true)
+        const reqObj = {
+            code: otp,
+            slip: props?.route?.params?.slip
+        }
+
+        apiRequest(reqObj, 'verify_otp')
+            .then(data => {
+                setLoading(false)
+                console.log('data == ' , data);
+                if (data.action == 'success') {
+                    navigate('NewPass', {
+                        slip: props?.route?.params?.slip
+                    });
+                }
+                else {
+                    setLoading(false);
+                    alertRef.alertWithType("error", "Error", data.error);
+                }
+            })
+            .catch(err => {
+                setLoading(false);
+                alertRef.alertWithType("error", "Error", 'Network Error');
+            })
+    }
+
     return (
-        <View style={{ flex: 1, backgroundColor: acolors.bgColor }}>
+        <View style={{ flex: 1,backgroundColor:acolors.bgColor }}>
             <StatusBar
                 style='light'
                 backgroundColor={acolors.bgColor}
                 translucent={false}
             />
+            {loading && <Loader />}
+            <DropdownAlert ref={(ref) => alertRef = ref} />
+            <SafeAreaView style={{ marginTop: 35, width: "90%", alignSelf: 'center' }}>
+                <View style={{ alignSelf: "center", alignItems: "center" }}>
 
-            <SafeAreaView style={{ marginTop: 10, width: "90%", alignSelf: 'center' }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <TouchableOpacity
-                        onPress={() => goBack()}
-                        style={{ width: 34, height: 34, borderRadius: 34 / 2, backgroundColor: 'rgba(255,255,255,0.1)', alignItems: 'center', justifyContent: 'center' }}>
-                        <ArrowLeft />
-                    </TouchableOpacity>
-                    <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: acolors.white }}>Forgot Password</Text>
-                    <Text>          </Text>
+                    <LOGO />
                 </View>
                 <ScrollView>
                     <Text style={{ marginTop: 20, fontFamily: 'PBl', fontSize: 22, color: acolors.primary }}>OTP</Text>
-                    <Text style={{ marginTop: 3, fontFamily: 'ABRe', fontSize: 16, color: acolors.white }}>Please enter OTP that we have sent you on your phone number</Text>
+                    <Text style={{ marginTop: 3, fontFamily: 'PRe', fontSize: 16, color: acolors.white }}>Enter OTP to continue</Text>
 
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 14 }}>
-                        <CustomTextInput
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 30 }}>
+
+                        {/* <View style={rootStyle}> */}
+                        <CodeInput
+                            // ref="codeInputRef2"
+                            secureTextEntry
+                            // compareWithCode='AsDW2'
+                            activeColor={acolors.white}
+                            inactiveColor={acolors.white}
+                            keyboardType='numeric'
+                            autoFocus={false}
+                            ignoreCase={true}
+                            inputPosition='center'
+                            size={50}
+                            codeLength={6}
+                            onFulfill={(isValid) => { setOTP(isValid) }}
+                            containerStyle={{ marginTop: 30 }}
+                            codeInputStyle={{ width: 42, height: 42, borderRadius: 8, borderWidth: 1.3 }}
+                        />
+
+
+                        {/* <CustomTextInput
                             autoFocus={true}
                             keyboardType="number-pad"
                             style={{ width: 42, height: 42, borderRadius: 8, borderWidth: 1.3 }}
                         />
+                     
                         <CustomTextInput
                             style={{ width: 42, height: 42, borderRadius: 8, borderWidth: 1.3, marginLeft: 12 }}
                         />
                         <CustomTextInput
                             style={{ width: 42, height: 42, borderRadius: 8, borderWidth: 1.3, marginLeft: 12 }}
-                        />
-                        <CustomTextInput
-                            style={{ width: 42, height: 42, borderRadius: 8, borderWidth: 1.3, marginLeft: 12 }}
-                        />
+                        /> */}
 
                     </View>
 
 
-                    <MainButton
-                        text="Submit"
-                        onPress={() => navigate('NewPass')}
-                        btnStyle={{ marginTop: 60 }}
-                    />
-                    {/* <Text style={{ alignSelf: 'center', fontSize: 16, color: acolors.white, marginTop: 15, fontFamily: 'ABRe' }}>or continue with</Text>
+
+                    {/* <Text style={{ alignSelf: 'center', fontSize: 16, color: acolors.white, marginTop: 15, fontFamily: 'PMe' }}>or continue with</Text>
                     <View style={{ alignSelf: 'center', flexDirection: 'row', marginTop: 15 }}>
                         <TouchableOpacity style={{ width: 92, height: 48, borderWidth: 1, borderColor: acolors.white, borderRadius: 56, alignItems: 'center', justifyContent: 'center', }}>
                             <FbIcon />
@@ -65,13 +113,32 @@ const ForgetPassOpt = () => {
                         </TouchableOpacity>
                     </View>
                     <TouchableOpacity>
-                        <Text style={{ alignSelf: 'center', fontSize: 16, color: acolors.white, marginTop: 20, fontFamily: 'ABRe' }}>Already have an account? Sign In</Text>
+                        <Text style={{ alignSelf: 'center', fontSize: 16, color: acolors.white, marginTop: 20, fontFamily: 'PMe' }}>Already have an account? Sign In</Text>
                     </TouchableOpacity> */}
                 </ScrollView>
 
             </SafeAreaView>
+            <TouchableOpacity
+                onPress={() => verifyOTP()}
+                disabled={otp.length == 6 ? false : true}
+                style={{
+                    width: "100%",
+                    height: 45,
+                    backgroundColor: acolors.primary,
+                    alignItems: 'center',
+                    justifyContent: 'center',
 
-        </View>
+                    borderRadius: 23,
+                    position: 'absolute',
+                    bottom: 50,
+                    width: "89%",
+                    alignSelf: 'center',
+                    opacity: otp.length == 4 ? 1 : 0.6
+                }}>
+                <Text style={{ color: '#111111', fontFamily: 'PMe', fontSize: 16 }}>Next</Text>
+            </TouchableOpacity>
+
+        </View >
     )
 }
 

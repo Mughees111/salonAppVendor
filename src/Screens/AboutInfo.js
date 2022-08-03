@@ -27,6 +27,7 @@ const AboutInfo = () => {
     const [sal_type, setSaltype] = useState('');
     const [sal_description, setSal_description] = useState('')
     const [lincense_id, setLincense_id] = useState('');
+    const [isMobile, setIsMobile] = useState('0');
 
     const [catData, setCatData] = useState([]);
     const [selectedCat, setSelectedCat] = useState([]);
@@ -92,6 +93,7 @@ const AboutInfo = () => {
                 data1.sal_type = sal_type;
                 data1.sal_description = sal_description;
                 data1.lincense_id = lincense_id;
+                data1.is_mobile = isMobile;
                 var catIds = [];
                 for (let key of selectedCat) {
                     catIds.push(key?.id);
@@ -257,15 +259,15 @@ const AboutInfo = () => {
                         }
                         <ArrowDown />
                     </TouchableOpacity>
-
-                    {/* // <PrivacyPicker
-                    //     selected={{ title: "Salon Category" }}
-                    //     data={catData}
-                    //     onValueChange={(index, title) => {
-                    //         setSaltype(title.title)
-                    //     }}
-                    // /> */}
-
+                    <View style={{ width: "100%", height: 42, marginTop: 15, borderWidth: 1, borderColor: '#FCFCFC', borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
+                        <PrivacyPicker
+                            selected={{ title: "Are you mobile?" }}
+                            data={[{title:"Yes"},{title : "No"}]}
+                            onValueChange={(index, title) => {
+                                setIsMobile(title.title == 'Yes' ? 1 : 0);
+                            }}
+                        />
+                    </View>
                     <View style={{ flexDirection: 'row', }}>
                         <View style={{ width: "17%", height: 42, marginTop: 15, borderWidth: 1, borderColor: '#FCFCFC', borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
                             {/* <Text>92</Text> */}

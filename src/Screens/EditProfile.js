@@ -45,7 +45,9 @@ const EditProfile = (props) => {
         sal_phone: params?.sal_phone ? params?.sal_phone : '',
         lincense_id: params?.lincense_id ? params?.lincense_id : '',
         sal_email: params?.sal_email ? params?.sal_email : '',
-        selectedCat: params?.categories ?? []
+        selectedCat: params?.categories ?? [],
+        isMobile: params?.is_mobile
+        
     })
 
     const [catData, setCatData] = useState([]);
@@ -86,6 +88,7 @@ const EditProfile = (props) => {
                     sal_country: editProfileData.sal_country,
                     sal_city: editProfileData.sal_city,
                     sal_phone: editProfileData.sal_phone,
+                    is_mobile: editProfileData.isMobile,
                     categories: catIds,
                     token: data1.token
 
@@ -139,21 +142,17 @@ const EditProfile = (props) => {
                     setCatData(data.data)
                 }
                 else alertRef.alertWithType('error', 'Error', data.error);
-
-
             })
             .catch(err => {
                 setLoading(false);
             })
-
     }
+
 
     function addCategoryToArray(v) {
 
         let data = editProfileData.selectedCat;
         let arr = data;
-        // console.log(data)
-        console.log('len', data.length)
         if (data.length == 0) {
             console.log('000')
             arr = [];
@@ -170,28 +169,14 @@ const EditProfile = (props) => {
                 }
             }
         }
-        console.log('arr== ', arr);
         setEditProfileData({
             ...editProfileData,
             selectedCat: arr
         });
-        // setSelectedCat(arr);
         forceUpdate();
-
-        // console.log('params?.categories', typeof params?.categories, params?.categories);
-        // // let arr = editProfileData.selectedCat;
-        // if (Object.keys(arr).includes(v)) {
-        //     console.log('includes');
-        //     let foundIndex = arr.indexOf(v);
-        //     arr.splice(foundIndex, 1);
-        // }
-        // else {
-        //     console.log('not includes');
-        //     arr.push(v);
-        // }
-      
-
     }
+
+
 
     function checkExist(v) {
         let data = editProfileData.selectedCat;
@@ -400,6 +385,19 @@ const EditProfile = (props) => {
                         <ArrowDown />
                     </TouchableOpacity>
 
+                    <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: acolors.white, marginTop: 25 }}>Are you mobile?</Text>
+                    <View style={{ width: "100%", height: 42, marginTop: 15, borderWidth: 1, borderColor: '#FCFCFC', borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
+                        <PrivacyPicker
+                            selected={{ title: editProfileData?.isMobile == 1 ? "Yes" : "No" }}
+                            data={[{title:"Yes"},{title : "No"}]}
+                            onValueChange={(index, title) => {
+                                setEditProfileData({
+                                    ...editProfileData,
+                                    isMobile: title.title == 'Yes' ? 1 : 0
+                                })                                
+                            }}
+                        />
+                    </View>
 
                     <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: acolors.white, marginTop: 25 }}>Lincense id</Text>
                     <CustomTextInput

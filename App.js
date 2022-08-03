@@ -101,7 +101,7 @@ function AuthStack() {
       <Stack.Screen name="EmailAddress" component={EmailAddress} />
       <Stack.Screen name="AboutInfo" component={AboutInfo} />
       <Stack.Screen name="PasswordSetup" component={PasswordSetup} />
-      {/* <Stack.Screen name="SearchAddress" component={SearchAddress} /> */}
+      
       <Stack.Screen name="Address" component={Address} />
       <Stack.Screen name="MapLocation" component={MapLocation} />
       <Stack.Screen name="SalonTiming" component={SalonTiming} />
@@ -115,8 +115,9 @@ function AuthStack() {
       <Stack.Screen name="ForgetPass" component={ForgetPass} />
       <Stack.Screen name="ForgetPassOpt" component={ForgetPassOpt} />
       <Stack.Screen name="NewPass" component={NewPass} />
-
+{/* <Stack.Screen name="SearchAddress" component={SearchAddress} /> */}
     </Stack.Navigator>
+    
   )
 
 }
