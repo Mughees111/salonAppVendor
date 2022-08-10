@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, TextInput, Alert } from 'react-native'
+import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, TextInput, Alert, Linking } from 'react-native'
 import { ArrowDown, ArrowForward, ArrowLeft, ArrowRight, ChatSendIcon, GroupIcon, NotificationIcon, SearchIcon } from '../Components/Svgs';
 import { Entypo } from '@expo/vector-icons';
 import { acolors } from '../Components/AppColors';
@@ -118,6 +118,21 @@ const PendingAppoint = (props) => {
                                         <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 5 }}>{item?.app_start_time} - {item?.app_end_time} ({item?.app_date})</Text>
                                         <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 10 }}>{item?.app_services}</Text>
                                         <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 10, marginBottom: 3 }}>{item?.is_paid == 1 ? "Paid: $" + item?.app_price : "Cash Appointment"}</Text>
+                                        <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 10, marginBottom: 3, textTransform: 'capitalize' }}>Gender: {item.user_gender} </Text>
+                                        {item.come_to_location == '1' &&
+                                            <View style={{}}>
+                                                {/* : Reschedule <Text style={{ color: '#40A7BE' }}> (Pending approval from client) </Text> </Text> : */}
+                                                <Text style={{ fontFamily: 'ABRe', fontSize: 10.22, color: 'white', marginTop: 5, marginBottom: 3 }}>Come to location: <Text style={{ color: '#40A7BE' }}> Yes</Text> </Text>
+                                                <TouchableOpacity
+                                                    onPress={() => {
+                                                        Linking.openURL(`https://www.google.com/maps/dir/?api=1&origin=&destination=${item?.location_address}`);
+                                                    }}
+                                                >
+                                                    <Text style={{ fontFamily: 'ABRe', fontSize: 10.22, color: 'white', marginTop: 5, marginBottom: 3 }}>Address:<Text style={{ textDecorationLine: 'underline' }}>  {item.location_address}</Text></Text>
+                                                </TouchableOpacity>
+
+                                            </View>
+                                        }
                                     </View>
                                 </View>
 

@@ -71,6 +71,7 @@ const Confirmed = (props) => {
                         <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', }}>{params?.app_start_time} - {params?.app_end_time} ({params?.app_date})</Text>
                         <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', }}>{params?.app_services}</Text>
                         <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 5 }}>{params?.is_paid == 1 ? "Paid: $" + params?.app_price : "Cash Appointment"}</Text>
+                        <Text style={{ fontFamily: 'ABRe', fontSize: 9.22, color: 'white', marginTop: 5,textTransform:'capitalize' }}>Gender: {params?.user_gender}</Text>
                     </View>
                 </View>
             </View>
@@ -135,9 +136,9 @@ const Confirmed = (props) => {
                 </View>
 
                 <PendingAppintView />
-                <TouchableOpacity style={{ alignSelf: 'flex-end', marginTop: 10 }}>
+                {/* <TouchableOpacity style={{ alignSelf: 'flex-end', marginTop: 10 }}>
                     <Text style={{ fontFamily: 'ABRe', color: acolors.primary, fontSize: 15.37, }}>Add to Calender</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
 
 
 

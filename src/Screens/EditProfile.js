@@ -41,18 +41,24 @@ const EditProfile = (props) => {
         sal_address: params?.sal_address ? params?.sal_address : '',
         sal_description: params?.sal_description ? params?.sal_description : '',
         sal_country: params?.sal_country ? params?.sal_country : '',
+        sal_state: params?.sal_state ? params?.sal_state : '',
         sal_city: params?.sal_city ? params?.sal_city : '',
         sal_phone: params?.sal_phone ? params?.sal_phone : '',
         lincense_id: params?.lincense_id ? params?.lincense_id : '',
         sal_email: params?.sal_email ? params?.sal_email : '',
         selectedCat: params?.categories ?? [],
         isMobile: params?.is_mobile
-        
+
     })
 
     const [catData, setCatData] = useState([]);
     // const [selectedCat, setSelectedCat] = useState([]);
     const [selectCatModal, setSelectCatModal] = useState(false);
+
+    const [countries, setCountries] = useState([]);
+    const [states, setStates] = useState([]);
+    const [cities, setCities] = useState([]);
+
 
 
 
@@ -86,22 +92,22 @@ const EditProfile = (props) => {
                     sal_description: editProfileData.sal_description,
                     lincense_id: editProfileData.lincense_id,
                     sal_country: editProfileData.sal_country,
+                    sal_state: editProfileData.state,
                     sal_city: editProfileData.sal_city,
                     sal_phone: editProfileData.sal_phone,
                     is_mobile: editProfileData.isMobile,
                     categories: catIds,
                     token: data1.token
-
                 }
 
                 if (editProfileData.sal_email !== params?.sal_email) {
                     reqObj.sal_email = editProfileData.sal_email;
                 }
 
-                console.log(reqObj);
                 setLoading(true)
                 apiRequest(reqObj, 'update_salon')
                     .then(data => {
+                        console.log(data)
                         setLoading(false);
                         if (data.action == 'success') {
 
@@ -136,30 +142,28 @@ const EditProfile = (props) => {
         setLoading(true);
         apiRequest({ token: '' }, 'get_categories_v')
             .then(data => {
-                setLoading(false);
+                
                 if (data.action == 'success') {
 
                     setCatData(data.data)
                 }
                 else alertRef.alertWithType('error', 'Error', data.error);
+                get_countries();
             })
             .catch(err => {
                 setLoading(false);
             })
     }
 
-
     function addCategoryToArray(v) {
 
         let data = editProfileData.selectedCat;
         let arr = data;
         if (data.length == 0) {
-            console.log('000')
             arr = [];
             arr.push(v);
         }
         for (let key in data) {
-            console.log(key)
             if (data[key].id == v.id) {
                 arr.splice(key, 1);
             }
@@ -176,8 +180,6 @@ const EditProfile = (props) => {
         forceUpdate();
     }
 
-
-
     function checkExist(v) {
         let data = editProfileData.selectedCat;
         for (let key in data) {
@@ -192,9 +194,72 @@ const EditProfile = (props) => {
         }
     }
 
+    function get_countries() {
+        setLoading(true);
+        apiRequest('', 'get_countries')
+            .then(data => {
+                
+                if (data?.action == 'success') {
+                    setCountries(data.data);
+                    if (editProfileData?.sal_country) {
+                        let data2 = data.data;
+                        for (let key of data2) {
+                            if (key.name == editProfileData.sal_country) {
+                                get_states(key.id);
+                                break;
+                            }
+                        }
+                    }
+                    else setLoading(false);
+                }
+                else setLoading(false);
+            })
+            .catch(err => {
+                setLoading(false)
+            })
+    }
+
+    function get_states(id) {
+        setLoading(true)
+        apiRequest({ country_id: id }, 'get_states')
+            .then(data => {
+                
+                if (data?.action == 'success') {
+                    setStates(data.data)
+                    if (editProfileData?.sal_state) {
+                        let data2 = data.data
+                        for (let key of data2) {
+                            if (key.name == editProfileData.sal_state) {
+                                get_cities(key.id);
+                                break;
+                            }
+                        }
+                    }
+                    else setLoading(false);
+                }
+                else setLoading(false);
+            })
+            .catch(err => {
+                setLoading(false)
+            })
+    }
+
+    function get_cities(id) {
+        setLoading(true)
+        apiRequest({ state_id: id }, 'get_cities')
+            .then(data => {
+                setLoading(false);
+                if (data?.action == 'success') {
+                    setCities(data.data)
+                }
+            })
+            .catch(err => {
+                setLoading(false)
+            })
+    }
+
     useEffect(() => {
         getCategories();
-        console.log(editProfileData.selectedCat)
         if (!props?.route?.params?.sal_id) {
             goBack();
         }
@@ -245,6 +310,25 @@ const EditProfile = (props) => {
             </Header>
         )
     }
+
+    const CountriesPrivacyPicker = React.useCallback(() => {
+        return (
+            <PrivacyPicker
+                selected={{ title: editProfileData?.sal_country ? editProfileData?.sal_country : "Country" }}
+                data={countries}
+                onValueChange={(i, v) => {
+                    setEditProfileData({
+                        ...editProfileData,
+                        sal_country: v.title
+                    })
+                    get_states(v.id)
+                    // editProfileData?.sal_country
+                    // setSalCountry(v.title)
+                    // get_states(v.id)
+                }}
+            />
+        )
+    }, [editProfileData?.sal_country]);
 
 
     return (
@@ -342,31 +426,86 @@ const EditProfile = (props) => {
 
                     />
                     <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: acolors.white, marginTop: 25 }}>Country</Text>
-                    <CustomTextInput
-                        placeholder={"Country"}
-                        value={editProfileData.sal_country}
-                        onChangeText={(v) => {
-                            setEditProfileData({
-                                ...editProfileData,
-                                sal_country: v
-                            })
-                        }}
-                        style={{ marginTop: 10 }}
+                    {
+                        countries?.length ?
+                            <View style={{ width: "100%", height: 42, borderRadius: 8, borderWidth: 1, borderColor: acolors.white, color: acolors.white, fontFamily: 'ABRe', paddingRight: 10, alignItems: 'center', paddingTop: 10, marginTop: 15 }}>
+                                <CountriesPrivacyPicker />
+                            </View>
+                            :
+                            <CustomTextInput
+                                placeholder={"Country"}
+                                value={editProfileData.sal_country}
+                                onChangeText={(v) => {
+                                    setEditProfileData({
+                                        ...editProfileData,
+                                        sal_country: v
+                                    })
+                                }}
+                                style={{ marginTop: 10 }}
+                            />
+                    }
+                    <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: acolors.white, marginTop: 25 }}>State</Text>
+                    {
+                        states?.length ?
+                            <View style={{ width: "100%", height: 42, borderRadius: 8, borderWidth: 1, borderColor: acolors.white, color: acolors.white, fontFamily: 'ABRe', paddingRight: 10, alignItems: 'center', paddingTop: 10, marginTop: 15 }}>
+                                <PrivacyPicker
+                                    selected={{ title: editProfileData.sal_state ?? "State" }}
+                                    data={states}
+                                    onValueChange={(i, v) => {
+                                        setEditProfileData({
+                                            ...editProfileData,
+                                            sal_state: v.title
+                                        })
+                                        get_cities(v.id)
+                                    }}
+                                />
+                            </View>
+                            :
+                            <CustomTextInput
+                                placeholder={"State"}
+                                value={editProfileData.sal_state}
+                                onChangeText={(v) => {
+                                    setEditProfileData({
+                                        ...editProfileData,
+                                        sal_state: v
+                                    })
+                                }}
+                                style={{ marginTop: 10 }}
 
-                    />
+                            />
+                    }
                     <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: acolors.white, marginTop: 25 }}>City</Text>
-                    <CustomTextInput
-                        placeholder={"City"}
-                        value={editProfileData.sal_city}
-                        onChangeText={(v) => {
-                            setEditProfileData({
-                                ...editProfileData,
-                                sal_city: v
-                            })
-                        }}
-                        style={{ marginTop: 10 }}
+                    {
+                        states?.length ?
+                            <View style={{ width: "100%", height: 42, borderRadius: 8, borderWidth: 1, borderColor: acolors.white, color: acolors.white, fontFamily: 'ABRe', paddingRight: 10, alignItems: 'center', paddingTop: 10, marginTop: 15 }}>
+                                <PrivacyPicker
+                                    selected={{ title: editProfileData.sal_city ?? "City" }}
+                                    data={cities}
+                                    onValueChange={(i, v) => {
 
-                    />
+                                        setEditProfileData({
+                                            ...editProfileData,
+                                            sal_city: v.title
+                                        })
+                                    }}
+                                />
+                            </View>
+                            :
+                            <CustomTextInput
+                                placeholder={"City"}
+                                value={editProfileData.sal_city}
+                                onChangeText={(v) => {
+                                    setEditProfileData({
+                                        ...editProfileData,
+                                        sal_city: v
+                                    })
+                                }}
+                                style={{ marginTop: 10 }}
+
+                            />
+                    }
+
+
                     <Text style={{ fontFamily: 'ABRe', fontSize: 16, color: acolors.white, marginTop: 25 }}>Category</Text>
                     <TouchableOpacity
                         onPress={() => setSelectCatModal(true)}
@@ -389,12 +528,12 @@ const EditProfile = (props) => {
                     <View style={{ width: "100%", height: 42, marginTop: 15, borderWidth: 1, borderColor: '#FCFCFC', borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}>
                         <PrivacyPicker
                             selected={{ title: editProfileData?.isMobile == 1 ? "Yes" : "No" }}
-                            data={[{title:"Yes"},{title : "No"}]}
+                            data={[{ title: "Yes" }, { title: "No" }]}
                             onValueChange={(index, title) => {
                                 setEditProfileData({
                                     ...editProfileData,
                                     isMobile: title.title == 'Yes' ? 1 : 0
-                                })                                
+                                })
                             }}
                         />
                     </View>
